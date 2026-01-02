@@ -14,6 +14,7 @@ import paige.subsonic.api.model.AnyTracks
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
+import platform.CoreGraphics.CGSizeMake
 import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
@@ -89,35 +90,34 @@ class IOSMediaPlayer(
 	private fun setupRemoteCommands() {
 		val commandCenter = MPRemoteCommandCenter.sharedCommandCenter()
 
-		commandCenter.playCommand.addTarget(
-			this,
-			NSSelectorFromString("resume")
-		)
-		commandCenter.pauseCommand.addTarget(
-			this,
-			NSSelectorFromString("pause")
-		)
-		commandCenter.nextTrackCommand.addTarget(
-			this,
-			NSSelectorFromString("next")
-		)
-		commandCenter.previousTrackCommand.addTarget(
-			this,
-			NSSelectorFromString("previous")
-		)
+		commandCenter.playCommand.addTargetWithHandler {
+			resume()
+			MPRemoteCommandHandlerStatusSuccess
+		}
 
-		commandCenter.changePlaybackPositionCommand.addTarget(
-			this,
-			NSSelectorFromString("changePlaybackPositionCommand")
-		)
-	}
+		commandCenter.pauseCommand.addTargetWithHandler {
+			pause()
+			MPRemoteCommandHandlerStatusSuccess
+		}
 
-	@Suppress("unused")
-	@ObjCAction
-	fun changePlaybackPositionCommand(event: Any) {
-		val positionEvent = event as? MPChangePlaybackPositionCommandEvent
-		if (positionEvent != null) {
-			seekToTime(positionEvent.positionTime)
+		commandCenter.nextTrackCommand.addTargetWithHandler {
+			next()
+			MPRemoteCommandHandlerStatusSuccess
+		}
+
+		commandCenter.previousTrackCommand.addTargetWithHandler {
+			previous()
+			MPRemoteCommandHandlerStatusSuccess
+		}
+
+		commandCenter.changePlaybackPositionCommand.addTargetWithHandler { event ->
+			val positionEvent = event as? MPChangePlaybackPositionCommandEvent
+			if (positionEvent != null) {
+				seekToTime(positionEvent.positionTime)
+				MPRemoteCommandHandlerStatusSuccess
+			} else {
+				MPRemoteCommandHandlerStatusCommandFailed
+			}
 		}
 	}
 
@@ -246,14 +246,16 @@ class IOSMediaPlayer(
 		info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(player.currentTime())
 		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_isPaused.value) 0.0 else 1.0
 
-		// todo: async
-		track.coverArt?.let { NSData.dataWithContentsOfURL(NSURL(string = it)) }?.let {
-			info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
-				UIImage(
-					data = it
-				)
-			)
-		}
+		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
+			boundsSize = CGSizeMake(512.0, 512.0),
+			requestHandler = {
+				return@MPMediaItemArtwork track.coverArt
+					?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
+					?.let { NSURL.URLWithString(it) }
+					?.let { NSData.dataWithContentsOfURL(it) }
+					?.let { UIImage(data = it) } ?: UIImage()
+			}
+		)
 
 		MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = info
 	}

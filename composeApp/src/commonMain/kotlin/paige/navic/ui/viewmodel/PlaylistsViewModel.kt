@@ -20,9 +20,6 @@ class PlaylistsViewModel(
 	private val _selectedPlaylist = MutableStateFlow<Playlist?>(null)
 	val selectedPlaylist: StateFlow<Playlist?> = _selectedPlaylist.asStateFlow()
 
-	private val _error = MutableStateFlow<Exception?>(null)
-	val error = _error.asStateFlow()
-
 	init {
 		viewModelScope.launch {
 			SessionManager.isLoggedIn.collect {
@@ -39,10 +36,6 @@ class PlaylistsViewModel(
 		_selectedPlaylist.value = null
 	}
 
-	fun clearError() {
-		_error.value = null
-	}
-
 	fun refreshPlaylists() {
 		viewModelScope.launch {
 			_playlistsState.value = UiState.Loading
@@ -51,20 +44,6 @@ class PlaylistsViewModel(
 				_playlistsState.value = UiState.Success(playlists)
 			} catch (e: Exception) {
 				_playlistsState.value = UiState.Error(e)
-			}
-		}
-	}
-
-	fun deleteSelectedAlbum() {
-		val album = _selectedPlaylist.value ?: return
-		viewModelScope.launch {
-			try {
-				repository.deletePlaylist(album.id)
-				refreshPlaylists()
-			} catch (e: Exception) {
-				_error.value = e
-			} finally {
-				clearSelection()
 			}
 		}
 	}

@@ -17,6 +17,7 @@ import paige.subsonic.api.model.AlbumListResponse
 import paige.subsonic.api.model.AlbumResponse
 import paige.subsonic.api.model.ArtistResponse
 import paige.subsonic.api.model.ArtistsResponse
+import paige.subsonic.api.model.CreateShareResponse
 import paige.subsonic.api.model.EmptyResponse
 import paige.subsonic.api.model.ErrorResponse
 import paige.subsonic.api.model.ListType
@@ -30,6 +31,8 @@ import paige.subsonic.api.model.Starred2Response
 import paige.subsonic.api.model.StarredResponse
 import paige.subsonic.api.model.SubsonicResponse
 import paige.subsonic.api.model.UserResponse
+import kotlin.time.Clock
+import kotlin.time.Duration
 
 
 class SubsonicApi(
@@ -331,6 +334,30 @@ class SubsonicApi(
 				auth
 			).toString()
 		}
+	}
+
+	suspend fun createShare(
+		id: String? = null,
+		expires: Duration? = null
+	): SubsonicResponse<CreateShareResponse> {
+		return client
+			.get("rest/createShare") {
+				parameter("id", id)
+				parameter("expires", if (expires != null) "${Clock.System.now()
+					.plus(expires)
+					.toEpochMilliseconds()}" else null)
+			}
+			.body<SubsonicResponse<CreateShareResponse>>()
+	}
+
+	suspend fun deleteShare(
+		id: String
+	): SubsonicResponse<CreateShareResponse> {
+		return client
+			.get("rest/deleteShare") {
+				parameter("id", id)
+			}
+			.body<SubsonicResponse<CreateShareResponse>>()
 	}
 
 	fun downloadUrl(id: String): String = buildUrl("download", mapOf("id" to id)).toString()

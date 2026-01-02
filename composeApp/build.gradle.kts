@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -20,7 +21,17 @@ kotlin {
 	).forEach { iosTarget ->
 		iosTarget.binaries.framework {
 			baseName = "ComposeApp"
-			isStatic = true
+			if (buildType == NativeBuildType.RELEASE) {
+				isStatic = false
+				freeCompilerArgs += listOf(
+					"-Xopt-in=kotlin.RequiresOptIn",
+					"-Xdisable-phases=Devirtualization",
+					"-Xdisable-phases=GlobalValueNumbering"
+				)
+				linkerOpts("-Wl,-dead_strip")
+			} else {
+				isStatic = true
+			}
 		}
 	}
 
@@ -30,6 +41,7 @@ kotlin {
 			implementation(libs.composeMultiplatform.runtime)
 			implementation(libs.composeMultiplatform.foundation)
 			implementation(libs.composeMultiplatform.material3)
+			implementation(libs.composeMultiplatform.material3.adaptive.navigation3)
 			implementation(libs.composeMultiplatform.material3.windowSizeClass)
 			implementation(libs.composeMultiplatform.ui)
 			implementation(libs.composeMultiplatform.components.resources)
@@ -41,8 +53,12 @@ kotlin {
 			implementation(libs.wavySlider)
 			implementation(libs.ktor.serialization.json)
 			implementation(libs.jetbrains.navigation3.ui)
-			implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
-			implementation("dev.burnoo:compose-remember-setting:1.0.3")
+			implementation(libs.kmpalette.core)
+			implementation(libs.kmpalette.extensions.network)
+			implementation(libs.ktor.client.core)
+			implementation(libs.materialKolor)
+			implementation(libs.multiplatformSettings.noArg)
+			implementation(libs.multiplatformSettings.remember)
 		}
 		androidMain.dependencies {
 			implementation(libs.androidx.activity.compose)
@@ -52,15 +68,16 @@ kotlin {
 			implementation(libs.androidx.media3.ui)
 		}
 		iosMain.dependencies {
-			implementation(libs.ktor.client.darwin)
+			implementation(libs.ktor.client.darwin
+			)
 		}
 	}
+
 }
 
 android {
 	namespace = "paige.navic"
 	compileSdk = libs.versions.android.compileSdk.get().toInt()
-
 	defaultConfig {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
@@ -76,6 +93,14 @@ android {
 	buildTypes {
 		getByName("release") {
 			isMinifyEnabled = true
+			isDebuggable = false
+			isProfileable = false
+			isJniDebuggable = false
+			isShrinkResources = true
+			proguardFiles(
+				getDefaultProguardFile("proguard-android-optimize.txt"),
+				"proguard-rules.pro"
+			)
 		}
 	}
 	compileOptions {

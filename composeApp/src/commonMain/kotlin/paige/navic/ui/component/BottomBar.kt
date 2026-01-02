@@ -5,13 +5,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationItemIconPosition
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.library_music
@@ -20,6 +21,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.Library
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
 import paige.navic.Playlists
 
 private enum class NavItem(
@@ -33,7 +35,6 @@ private enum class NavItem(
 
 @Composable
 private fun NavItems(
-	backStack: SnapshotStateList<Any>,
 	item: @Composable (
 		Boolean,
 		() -> Unit,
@@ -41,6 +42,7 @@ private fun NavItems(
 		@Composable () -> Unit
 	) -> Unit
 ) {
+	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
 	NavItem.entries.forEach { navItem ->
 		item(
@@ -63,13 +65,14 @@ private fun NavItems(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun BottomBar(backStack: SnapshotStateList<Any>) {
+fun BottomBar() {
+	val ctx = LocalCtx.current
 	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
 
 	AnimatedContent(targetState = useShortNavbar) { short ->
-		if (!short) {
+		if (!short && ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 			NavigationBar {
-				NavItems(backStack) { selected, onClick, icon, label ->
+				NavItems { selected, onClick, icon, label ->
 					NavigationBarItem(
 						selected = selected,
 						onClick = onClick,
@@ -80,8 +83,11 @@ fun BottomBar(backStack: SnapshotStateList<Any>) {
 			}
 		} else {
 			ShortNavigationBar {
-				NavItems(backStack) { selected, onClick, icon, label ->
+				NavItems { selected, onClick, icon, label ->
 					ShortNavigationBarItem(
+						iconPosition = if (ctx.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
+							NavigationItemIconPosition.Start
+						else NavigationItemIconPosition.Top,
 						selected = selected,
 						onClick = onClick,
 						icon = icon,
