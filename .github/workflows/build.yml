@@ -55,7 +55,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v6
         with:
-          name: navic-release
+          name: navic-release-android
           path: composeApp/build/outputs/apk/release/*.apk
   build-ipa:
     name: Build iOS IPA
@@ -88,5 +88,5 @@ jobs:
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v6
         with:
-          name: navic-release
+          name: navic-release-ios
           path: iosApp/packages/*.ipa
