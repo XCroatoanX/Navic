@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -76,7 +75,7 @@ android {
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
 		versionCode = 1
-		versionName = "1.0.0-alpha02"
+		versionName = "1.0.0-alpha03"
 	}
 	packaging {
 		resources {
