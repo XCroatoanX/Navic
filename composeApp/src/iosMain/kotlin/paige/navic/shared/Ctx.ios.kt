@@ -1,4 +1,4 @@
-package paige.navic
+package paige.navic.shared
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.darkColorScheme

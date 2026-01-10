@@ -66,10 +66,10 @@ import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.Ctx
+import paige.navic.shared.Ctx
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.MediaPlayer
+import paige.navic.shared.MediaPlayer
 
 private class MediaBarScope(
 	val player: MediaPlayer,

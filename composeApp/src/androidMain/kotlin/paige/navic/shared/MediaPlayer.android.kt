@@ -1,4 +1,4 @@
-package paige.navic
+package paige.navic.shared
 
 import android.content.ComponentName
 import android.content.Context

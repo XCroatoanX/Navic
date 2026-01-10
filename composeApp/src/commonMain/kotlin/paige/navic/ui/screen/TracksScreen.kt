@@ -52,7 +52,7 @@ import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
-import paige.navic.MediaPlayer
+import paige.navic.shared.MediaPlayer
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox

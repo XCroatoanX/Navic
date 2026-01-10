@@ -43,7 +43,7 @@ import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.Ctx
+import paige.navic.shared.Ctx
 import paige.navic.Library
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack

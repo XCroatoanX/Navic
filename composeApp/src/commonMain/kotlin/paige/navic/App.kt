@@ -28,6 +28,10 @@ import androidx.navigation3.ui.NavDisplay.transitionSpec
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import paige.navic.shared.Ctx
+import paige.navic.shared.MediaPlayer
+import paige.navic.shared.rememberCtx
+import paige.navic.shared.rememberMediaPlayer
 import paige.navic.ui.component.layout.BottomBar
 import paige.navic.ui.component.layout.MainScaffold
 import paige.navic.ui.component.layout.TopBar

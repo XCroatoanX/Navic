@@ -1,4 +1,4 @@
-package paige.navic
+package paige.navic.shared
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State

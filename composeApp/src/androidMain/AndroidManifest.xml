@@ -32,7 +32,7 @@
 			</intent-filter>
 		</activity>
 		<service
-			android:name=".PlaybackService"
+			android:name=".shared.PlaybackService"
 			android:foregroundServiceType="mediaPlayback"
 			android:permission="paige.navic.permission.PLAYBACK_SERVICE"
 			android:exported="true">
