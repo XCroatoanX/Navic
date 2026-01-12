@@ -43,7 +43,6 @@ import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.shared.Ctx
 import paige.navic.Library
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -51,6 +50,7 @@ import paige.navic.Playlists
 import paige.navic.Search
 import paige.navic.Settings
 import paige.navic.data.model.User
+import paige.navic.shared.Ctx
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.dialog.LoginDialog
@@ -104,6 +104,7 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 			navigationIcon = { NavigationIcon() },
 			actions = {
 				Actions(
+					onLogOut = { viewModel.logout() },
 					onSetShowLogin = { showLogin = it }
 				)
 			},
@@ -142,6 +143,7 @@ private fun TopBarScope.NavigationIcon() {
 
 @Composable
 private fun TopBarScope.Actions(
+	onLogOut: () -> Unit,
 	onSetShowLogin: (shown: Boolean) -> Unit
 ) {
 	val user = (loginState as? LoginState.Success)?.data
@@ -204,6 +206,7 @@ private fun TopBarScope.Actions(
 						text = Res.string.action_log_out,
 						onClick = {
 							ctx.clickSound()
+							onLogOut()
 							onSetShowLogin(false)
 						},
 						leadingIcon = Res.drawable.logout
