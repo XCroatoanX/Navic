@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
+import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import ir.mahozad.multiplatform.wavyslider.material3.WaveHeight
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import navic.composeapp.generated.resources.Res
@@ -91,6 +92,11 @@ import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.screen.LyricsScreen
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.Playlist
+
+object MediaBarDefaults {
+	val height = 117.9.dp
+	val heightNoSeekbar = 75.dp
+}
 
 private class MediaBarScope(
 	val player: MediaPlayer,
@@ -126,7 +132,10 @@ fun MediaBar(expanded: Boolean) {
 
 @Composable
 private fun MediaBarScope.MainContent() {
-	Column(Modifier.height(117.9.dp)) {
+	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
+	Column(Modifier.height(if (alwaysShowSeekbar)
+		MediaBarDefaults.height
+	else MediaBarDefaults.heightNoSeekbar)) {
 		Row(
 			modifier = Modifier.padding(
 				top = 15.dp
@@ -141,7 +150,9 @@ private fun MediaBarScope.MainContent() {
 			Info(rowScope = this@Row)
 			Controls(expanded = false)
 		}
-		ProgressBar(expanded = false)
+		if (alwaysShowSeekbar) {
+			ProgressBar(expanded = false)
+		}
 	}
 }
 
