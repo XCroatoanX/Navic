@@ -4,10 +4,11 @@ import android.os.Build
 import android.view.SoundEffectConstants
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -15,7 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(
+	ExperimentalMaterial3WindowSizeClassApi::class,
+	ExperimentalMaterial3ExpressiveApi::class
+)
 @Composable
 actual fun rememberCtx(): Ctx {
 	val view = LocalView.current
@@ -37,7 +41,7 @@ actual fun rememberCtx(): Ctx {
 				else
 					if (darkTheme)
 						darkColorScheme()
-					else lightColorScheme()
+					else expressiveLightColorScheme()
 			override val sizeClass = sizeClass
 		}
 	}

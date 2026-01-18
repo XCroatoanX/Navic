@@ -5,10 +5,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -53,13 +50,13 @@ import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -156,6 +153,7 @@ private fun MediaBarScope.MainContent() {
 	}
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.DetailsContent() {
 	val pagerState = rememberPagerState(pageCount = { 2 })
@@ -202,7 +200,8 @@ private fun MediaBarScope.DetailsContent() {
 				val color by animateColorAsState(
 					if (pagerState.currentPage == iteration)
 						MaterialTheme.colorScheme.onSurface
-					else MaterialTheme.colorScheme.onSurface.copy(alpha = .25f)
+					else MaterialTheme.colorScheme.onSurface.copy(alpha = .25f),
+					animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 				)
 				Box(
 					modifier = Modifier
@@ -217,6 +216,7 @@ private fun MediaBarScope.DetailsContent() {
 }
 
 //region views
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.PlayerView() {
 	val paused by player.isPaused
@@ -224,11 +224,7 @@ private fun MediaBarScope.PlayerView() {
 		if (paused)
 			256.dp
 		else 290.dp,
-		animationSpec = spring(
-			dampingRatio = Spring.DampingRatioLowBouncy,
-			stiffness = Spring.StiffnessLow,
-			visibilityThreshold = Dp.VisibilityThreshold
-		)
+		animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
 	)
 	var moreShown by remember { mutableStateOf(false) }
 	Column(
@@ -301,16 +297,19 @@ private fun MediaBarScope.PlayerView() {
 //endregion views
 
 //region components
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.AlbumArtContainer(
 	modifier: Modifier = Modifier,
 	expanded: Boolean
 ) {
+	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
 	with(sharedTransitionScope) {
 		Surface(
 			modifier = modifier.sharedElement(
 				sharedContentState = rememberSharedContentState(key = "image"),
-				animatedVisibilityScope = animatedVisibilityScope
+				animatedVisibilityScope = animatedVisibilityScope,
+				boundsTransform = { _, _ -> animationSpec }
 			),
 			shape = ContinuousRoundedRectangle(if (expanded) 18.dp else 12.dp),
 			color = MaterialTheme.colorScheme.surfaceVariant
@@ -332,18 +331,21 @@ private fun MediaBarScope.AlbumArt(
 	)
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.Info(
 	rowScope: RowScope
 ) {
 	val currentIndex by player.currentIndex
+	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
 	with(sharedTransitionScope) {
 		with(rowScope) {
 			Column(
 				modifier = Modifier
 					.sharedElement(
 						sharedContentState = rememberSharedContentState(key = "info"),
-						animatedVisibilityScope = animatedVisibilityScope
+						animatedVisibilityScope = animatedVisibilityScope,
+						boundsTransform = { _, _ -> animationSpec }
 					)
 					.weight(1f),
 				verticalArrangement = Arrangement.Center
@@ -368,7 +370,8 @@ private fun MediaBarScope.Info(
 private fun MediaBarScope.Controls(expanded: Boolean) {
 	val paused by player.isPaused
 	val size by animateDpAsState(
-		if (expanded) 40.dp else 32.dp
+		if (expanded) 40.dp else 32.dp,
+		animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
 	)
 	val contentPadding = if (!expanded) PaddingValues(horizontal = 4.dp) else ButtonDefaults.contentPaddingFor(
 		60.dp
@@ -392,11 +395,14 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 		checkedContentColor = MaterialTheme.colorScheme.onPrimary
 	)
 
+	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
+
 	with(sharedTransitionScope) {
 		Row(
 			modifier = Modifier.sharedElement(
 				sharedContentState = rememberSharedContentState(key = "controls"),
-				animatedVisibilityScope = animatedVisibilityScope
+				animatedVisibilityScope = animatedVisibilityScope,
+				boundsTransform = { _, _ -> animationSpec }
 			).then(
 				if (expanded) {
 					Modifier
@@ -474,7 +480,7 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 	val interactionSource = remember { MutableInteractionSource() }
@@ -483,22 +489,26 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 	val waveHeight by animateDpAsState(
 		if (paused)
 			0.dp
-		else SliderDefaults.WaveHeight
+		else SliderDefaults.WaveHeight,
+		animationSpec = MaterialTheme.motionScheme.fastEffectsSpec()
 	)
 	val thumbColor by animateColorAsState(
 		if (expanded)
 			MaterialTheme.colorScheme.onSurface
-		else Color.Unspecified
+		else Color.Unspecified,
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 	val inactiveTrackColor by animateColorAsState(
 		if (expanded)
 			MaterialTheme.colorScheme.onSurface.copy(alpha = .25f)
-		else Color.Unspecified
+		else Color.Unspecified,
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 	val activeTickColor by animateColorAsState(
 		if (expanded)
 			MaterialTheme.colorScheme.onSurface
-		else Color.Unspecified
+		else Color.Unspecified,
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 	val colors = SliderDefaults.colors(
 		thumbColor = thumbColor,
@@ -506,12 +516,14 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 		activeTickColor = activeTickColor,
 		inactiveTrackColor = inactiveTrackColor
 	)
+	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
 	with(sharedTransitionScope) {
 		WavySlider(
 			modifier = Modifier
 				.sharedElement(
 					sharedContentState = rememberSharedContentState(key = "progress"),
-					animatedVisibilityScope = animatedVisibilityScope
+					animatedVisibilityScope = animatedVisibilityScope,
+					boundsTransform = { _, _ -> animationSpec }
 				)
 				.fillMaxWidth()
 				.padding(horizontal = 15.dp),

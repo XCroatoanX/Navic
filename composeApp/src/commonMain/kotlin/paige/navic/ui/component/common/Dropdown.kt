@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ fun Dropdown(
 	}
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DropdownItem(
 	modifier: Modifier = Modifier,
@@ -64,7 +66,8 @@ fun DropdownItem(
 			MaterialTheme.colorScheme.onSurface.copy(alpha = .95f)
 		} else {
 			MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
-		}
+		},
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 	FormRow(
 		color = containerColor,

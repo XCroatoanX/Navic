@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -114,7 +114,7 @@ fun App() {
 							sceneStrategy = sceneStrategy,
 							onBack = { backStack.removeLastOrNull() },
 							entryProvider = entryProvider {
-								entry<Library>(metadata = metadata + ListDetailSceneStrategy.listPane()) {
+								entry<Library>(metadata = metadata + SupportingPaneSceneStrategy.mainPane()) {
 									LibraryScreen()
 								}
 								entry<Playlists>(metadata = metadata) {
@@ -132,7 +132,7 @@ fun App() {
 								entry<SettingsBehaviour> {
 									SettingsBehaviourScreen()
 								}
-								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
+								entry<Tracks>(metadata = SupportingPaneSceneStrategy.supportingPane()) { key ->
 									TracksScreen(key.partialCollection)
 								}
 								entry<Search> {

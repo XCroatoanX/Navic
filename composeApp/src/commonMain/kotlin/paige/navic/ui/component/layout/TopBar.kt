@@ -40,12 +40,14 @@ import navic.composeapp.generated.resources.logout
 import navic.composeapp.generated.resources.search
 import navic.composeapp.generated.resources.settings
 import navic.composeapp.generated.resources.title_appearance
+import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_behaviour
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.Artists
 import paige.navic.Library
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -83,6 +85,7 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 	val title = when (backStack.last()) {
 		Library -> Res.string.title_library
 		Playlists -> Res.string.title_playlists
+		Artists -> Res.string.title_artists
 		Settings -> Res.string.title_settings
 		SettingsAppearance -> Res.string.title_appearance
 		SettingsBehaviour -> Res.string.title_behaviour
@@ -92,7 +95,8 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 	val expandedHeight by animateDpAsState(
 		if (backStack.last() != Search)
 			TopAppBarDefaults.TopAppBarExpandedHeight
-		else 0.dp
+		else 0.dp,
+		animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
 	)
 
 	with(

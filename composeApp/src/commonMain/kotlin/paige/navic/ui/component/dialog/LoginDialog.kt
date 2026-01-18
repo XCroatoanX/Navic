@@ -4,28 +4,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.burnoo.compose.remembersetting.rememberStringSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_log_in
@@ -45,10 +44,6 @@ fun LoginDialog(
 	val ctx = LocalCtx.current
 	val scrollState = rememberScrollState()
 
-	var instanceUrl by rememberStringSetting("instanceUrl", "")
-	var username by rememberStringSetting("username", "")
-	var password by rememberStringSetting("password", "")
-
 	val loginState by viewModel.loginState.collectAsState()
 
 	AlertDialog(
@@ -63,21 +58,19 @@ fun LoginDialog(
 					Text(it.error.message ?: "$it")
 				}
 				OutlinedTextField(
-					value = instanceUrl,
-					onValueChange = { instanceUrl = it },
+					state = viewModel.instanceState,
 					label = { Text(stringResource(Res.string.option_account_navidrome_instance)) },
 					placeholder = { Text("demo.navidrome.org") },
-					maxLines = 1,
+					lineLimits = TextFieldLineLimits.SingleLine,
 					keyboardOptions = KeyboardOptions(
 						autoCorrectEnabled = false,
 						keyboardType = KeyboardType.Uri
 					)
 				)
 				OutlinedTextField(
-					value = username,
-					onValueChange = { username = it },
+					state = viewModel.usernameState,
 					label = { Text(stringResource(Res.string.option_account_username)) },
-					maxLines = 1,
+					lineLimits = TextFieldLineLimits.SingleLine,
 					modifier = Modifier.semantics {
 						contentType = ContentType.Username
 					},
@@ -85,19 +78,9 @@ fun LoginDialog(
 						autoCorrectEnabled = false
 					)
 				)
-				OutlinedTextField(
-					value = password,
-					onValueChange = { password = it },
-					label = { Text(stringResource(Res.string.option_account_password)) },
-					visualTransformation = PasswordVisualTransformation(),
-					maxLines = 1,
-					modifier = Modifier.semantics {
-						contentType = ContentType.Password
-					},
-					keyboardOptions = KeyboardOptions(
-						autoCorrectEnabled = false,
-						keyboardType = KeyboardType.Password
-					)
+				OutlinedSecureTextField(
+					state = viewModel.passwordState,
+					label = { Text(stringResource(Res.string.option_account_password)) }
 				)
 			}
 		},
@@ -105,14 +88,7 @@ fun LoginDialog(
 			Button(
 				shape = ContinuousCapsule,
 				onClick = {
-					viewModel.login(
-						if (
-							!instanceUrl.startsWith("https://")
-							&& !instanceUrl.startsWith("http://")
-						) "https://$instanceUrl" else instanceUrl,
-						username,
-						password
-					)
+					viewModel.login()
 				},
 				enabled = loginState !is LoginState.Loading,
 				content = {

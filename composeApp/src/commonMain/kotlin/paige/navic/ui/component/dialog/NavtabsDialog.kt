@@ -12,8 +12,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -96,6 +98,7 @@ class NavtabsViewModel(
 }
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavtabsDialog(
 	presented: Boolean,
@@ -136,7 +139,10 @@ fun NavtabsDialog(
 						) { tab ->
 							ReorderableItem(
 								reorderableState,
-								key = tab.id
+								key = tab.id,
+								animateItemModifier = Modifier.animateItem(
+									placementSpec = MaterialTheme.motionScheme.fastSpatialSpec()
+								)
 							) { isDragging ->
 								NavtabRow(
 									tab = tab,
@@ -160,6 +166,7 @@ fun NavtabsDialog(
 	}
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ReorderableCollectionItemScope.NavtabRow(
 	tab: NavbarTab,
@@ -168,7 +175,8 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 ) {
 	val haptic = LocalHapticFeedback.current
 	val elevation by animateDpAsState(
-		if (isDragging) 4.dp else 0.dp
+		if (isDragging) 4.dp else 0.dp,
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 
 	Surface(

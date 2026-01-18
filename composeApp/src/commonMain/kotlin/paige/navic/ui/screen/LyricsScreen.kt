@@ -112,10 +112,7 @@ fun LyricsScreen(
 
 							val padding by animateDpAsState(
 								if (isActive) 20.dp else 12.dp, label = "padding",
-								animationSpec = spring(
-									dampingRatio = Spring.DampingRatioMediumBouncy,
-									stiffness = Spring.StiffnessLow
-								),
+								animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
 							)
 
 							KaraokeText(
@@ -161,11 +158,13 @@ fun KaraokeText(
 
 	val smoothProgress by animateFloatAsState(
 		targetValue = progress,
-		animationSpec = spring(stiffness = Spring.StiffnessLow, visibilityThreshold = 0.001f),
-		label = "smoothProgress"
+		animationSpec = spring(stiffness = Spring.StiffnessLow, visibilityThreshold = 0.001f)
 	)
 
-	val inactiveAlpha by animateFloatAsState(if (isActive) 1f else 0.35f, label = "alpha")
+	val inactiveAlpha by animateFloatAsState(
+		if (isActive) 1f else 0.35f, label = "alpha",
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
+	)
 
 	Box(
 		modifier = modifier.clickable {

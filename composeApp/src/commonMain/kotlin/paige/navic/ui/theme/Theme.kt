@@ -2,7 +2,10 @@ package paige.navic.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -13,6 +16,7 @@ import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import dev.zt64.compose.pipette.HsvColor
 import paige.navic.LocalCtx
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavicTheme(
 	colorScheme: ColorScheme? = null,
@@ -38,7 +42,8 @@ fun NavicTheme(
 		}
 	}
 
-	MaterialTheme(
+	MaterialExpressiveTheme(
+		motionScheme = MotionScheme.expressive(),
 		colorScheme = colorScheme(),
 		typography = if (useSystemFont)
 			MaterialTheme.typography

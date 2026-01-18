@@ -1,5 +1,6 @@
 package paige.navic.ui.viewmodel
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,10 @@ import paige.navic.util.LoginState
 class LoginViewModel : ViewModel() {
 	private val _loginState = MutableStateFlow<LoginState<User?>>(LoginState.LoggedOut)
 	val loginState: StateFlow<LoginState<User?>> = _loginState.asStateFlow()
+
+	val instanceState = TextFieldState()
+	val usernameState = TextFieldState()
+	val passwordState = TextFieldState()
 
 	init {
 		loadUser()
@@ -29,15 +34,20 @@ class LoginViewModel : ViewModel() {
 		}
 	}
 
-	fun login(
-		instanceUrl: String,
-		username: String,
-		password: String
-	) {
+	fun login() {
 		viewModelScope.launch {
 			_loginState.value = LoginState.Loading
 			_loginState.value = try {
-				SessionManager.login(instanceUrl, username, password)
+				SessionManager.login(
+					instanceState.text.toString().let {
+						if (
+							!it.startsWith("https://")
+							&& !it.startsWith("http://")
+						) "https://$it" else it
+					},
+					usernameState.text.toString(),
+					passwordState.text.toString()
+				)
 				if (SessionManager.currentUser != null) {
 					LoginState.Success(SessionManager.currentUser)
 				} else {
