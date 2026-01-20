@@ -19,9 +19,9 @@ Visit [releases][RELEASES] and get the latest [`.apk`][APK_DOWNLOAD] or [`.ipa`]
 
 ## Screenshots
 
-| Library                                         | Player                                          | Settings                                        | Quick settings                                  |
-|-------------------------------------------------|-------------------------------------------------|-------------------------------------------------|-------------------------------------------------|
-| <img src=".github/screenshot1.png" width="200"> | <img src=".github/screenshot2.png" width="200"> | <img src=".github/screenshot3.png" width="200"> | <img src=".github/screenshot4.png" width="200"> |
+| Library                                     | Player                                     | Lyrics                                     | Quick settings                                     | Albums                                     | Settings                                     |
+|---------------------------------------------|--------------------------------------------|--------------------------------------------|----------------------------------------------------|--------------------------------------------|----------------------------------------------|
+| <img src=".github/library.png" width="200"> | <img src=".github/player.png" width="200"> | <img src=".github/lyrics.png" width="200"> | <img src=".github/quick-settings.png" width="200"> | <img src=".github/albums.png" width="200"> | <img src=".github/settings.png" width="200"> |
 
 ## Star History
 
