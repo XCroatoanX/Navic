@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -44,13 +41,11 @@ import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.subtitle_system_font
-import navic.composeapp.generated.resources.switch_off
-import navic.composeapp.generated.resources.switch_on
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
+import paige.navic.ui.component.common.SettingSwitch
 import paige.navic.ui.component.dialog.NavtabsDialog
 import paige.navic.ui.theme.mapleMono
 
@@ -222,25 +217,5 @@ fun SettingsAppearanceScreen() {
 	NavtabsDialog(
 		presented = showNavtabsDialog,
 		onDismissRequest = { showNavtabsDialog = false }
-	)
-}
-
-@Composable
-private fun SettingSwitch(
-	checked: Boolean,
-	onCheckedChange: (Boolean) -> Unit
-) {
-	Switch(
-		checked = checked,
-		onCheckedChange = onCheckedChange,
-		thumbContent = {
-			Icon(
-				vectorResource(
-					if (checked) Res.drawable.switch_on else Res.drawable.switch_off
-				),
-				contentDescription = null,
-				modifier = Modifier.size(SwitchDefaults.IconSize)
-			)
-		}
 	)
 }

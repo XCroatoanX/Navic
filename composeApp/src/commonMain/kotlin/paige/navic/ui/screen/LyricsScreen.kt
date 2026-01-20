@@ -7,6 +7,11 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +19,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,6 +53,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_loading_lyrics
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.viewmodel.LyricsViewModel
@@ -91,12 +102,30 @@ fun LyricsScreen(
 	val density = LocalDensity.current
 	val listState = rememberLazyListState()
 
+	var lyricsAutoscroll by rememberBooleanSetting("lyricsAutoscroll", true)
+
+	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
+	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
+
 	AnimatedContent(
 		state,
-		modifier = Modifier.fillMaxSize()
+		modifier = Modifier.fillMaxSize(),
+		transitionSpec = {
+			(fadeIn(
+				animationSpec = effectSpec
+			) + scaleIn(
+				initialScale = 0.8f,
+				animationSpec = spatialSpec
+			)) togetherWith (fadeOut(
+				animationSpec = effectSpec
+			) + scaleOut(
+				animationSpec = spatialSpec
+			))
+		}
 	) { uiState ->
 		when (uiState) {
 			is UiState.Error -> ErrorBox(uiState)
+			is UiState.Loading -> LoadingScreen()
 			is UiState.Success -> {
 				val lyrics = uiState.data
 				if (!lyrics.isNullOrEmpty()) {
@@ -105,6 +134,8 @@ fun LyricsScreen(
 					}
 
 					LaunchedEffect(activeIndex) {
+						if (!lyricsAutoscroll) return@LaunchedEffect
+
 						val layoutInfo = listState.layoutInfo
 						val activeItem = layoutInfo.visibleItemsInfo
 							.firstOrNull { it.index == activeIndex }
@@ -175,14 +206,33 @@ fun LyricsScreen(
 					placeholder()
 				}
 			}
-			else -> placeholder()
 		}
 	}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun KaraokeText(
+private fun LoadingScreen() {
+	Column(
+		Modifier.fillMaxSize(),
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
+	) {
+		ContainedLoadingIndicator(
+			Modifier.size(80.dp)
+		)
+		Text(
+			stringResource(Res.string.notice_loading_lyrics),
+			textAlign = TextAlign.Center,
+			fontWeight = FontWeight(600),
+			color = MaterialTheme.colorScheme.onSurfaceVariant
+		)
+	}
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun KaraokeText(
 	text: String,
 	progress: Float,
 	isActive: Boolean,
@@ -195,6 +245,8 @@ fun KaraokeText(
 		targetValue = progress,
 		animationSpec = spring(stiffness = Spring.StiffnessLow, visibilityThreshold = 0.001f)
 	)
+
+	var lyricsBeatByBeat by rememberBooleanSetting("lyricsBeatByBeat", true)
 
 	val inactiveAlpha by animateFloatAsState(
 		if (isActive) 1f else 0.35f, label = "alpha",
@@ -221,7 +273,7 @@ fun KaraokeText(
 				fontSize = 32.sp,
 				fontWeight = FontWeight(600),
 				style = MaterialTheme.typography.headlineLargeEmphasized,
-				modifier = Modifier.graphicsLayer(
+				modifier = if (lyricsBeatByBeat) Modifier.graphicsLayer(
 					compositingStrategy = CompositingStrategy.Offscreen
 				).drawWithCache {
 					onDrawWithContent {
@@ -266,7 +318,7 @@ fun KaraokeText(
 							accumulatedWidth += lineWidth
 						}
 					}
-				}
+				} else Modifier
 			)
 		}
 	}

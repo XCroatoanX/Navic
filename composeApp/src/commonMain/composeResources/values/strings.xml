@@ -17,6 +17,7 @@
 	<string name="subtitle_appearance">Customise how things look</string>
 	<string name="subtitle_behaviour">Change how things work</string>
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
+	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
 
 	<string name="option_system_font">Use system font</string>
 	<string name="option_dynamic_colour">Use dynamic colour</string>
@@ -30,6 +31,8 @@
 	<string name="option_account_navidrome_instance">Instance</string>
 	<string name="option_account_username">Username</string>
 	<string name="option_account_password">Password</string>
+	<string name="option_lyrics_autoscroll">Lyrics auto scrolling</string>
+	<string name="option_lyrics_beat_by_beat">Beat-by-beat lyrics</string>
 
 	<plurals name="count_songs">
 		<item quantity="one">%1$d song</item>
@@ -70,6 +73,7 @@
 	<string name="notice_deleted_share">Deleted share.</string>
 	<string name="notice_copied">Copied to clipboard.</string>
 	<string name="notice_expiry">Expires in %1$s.</string>
+	<string name="notice_loading_lyrics">Loading lyrics...\nThis might take a while.</string>
 
 	<string name="info_action_is_permanent">This cannot be undone!</string>
 	<string name="info_error">Something went wrong.</string>
