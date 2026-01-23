@@ -6,10 +6,11 @@ import paige.subsonic.api.model.ListType
 
 open class AlbumsRepository {
 	open suspend fun getAlbums(
+		offset: Int = 0,
 		listType: ListType = ListType.ALPHABETICAL_BY_ARTIST
 	): List<Album> {
 		return SessionManager.api
-			.getAlbumList(type = listType, size = 500)
+			.getAlbumList(type = listType, size = 30, offset = offset)
 			.data.albumList.album.orEmpty().map { album ->
 				album.copy(
 					coverArt = SessionManager.api

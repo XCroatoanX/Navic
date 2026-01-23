@@ -23,7 +23,11 @@ open class AlbumsViewModel(
 	val starredState = _starredState.asStateFlow()
 
 	private val _selectedAlbum = MutableStateFlow<Album?>(null)
-	val selectedAlbum: StateFlow<Album?> = _selectedAlbum.asStateFlow()
+	val selectedAlbum = _selectedAlbum.asStateFlow()
+
+	private val _offset = MutableStateFlow(0)
+	private val _isPaginating = MutableStateFlow(false)
+	val isPaginating: StateFlow<Boolean> = _isPaginating
 
 	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
@@ -38,12 +42,29 @@ open class AlbumsViewModel(
 
 	fun refreshAlbums() {
 		viewModelScope.launch {
+			_offset.value = 0
 			_albumsState.value = UiState.Loading
 			try {
-				val albums = repository.getAlbums(_listType.value)
+				val albums = repository.getAlbums(listType = _listType.value, offset = _offset.value)
 				_albumsState.value = UiState.Success(albums)
 			} catch (e: Exception) {
 				_albumsState.value = UiState.Error(e)
+			}
+		}
+	}
+
+	fun paginate() {
+		viewModelScope.launch {
+			val newOffset = _offset.value + 30
+			_isPaginating.value = true
+			try {
+				val newAlbums = repository.getAlbums(listType = _listType.value, offset = newOffset)
+				_albumsState.value = (_albumsState.value as UiState.Success).let {
+					it.copy(data = it.data + newAlbums)
+				}
+				_offset.value = newOffset
+			} finally {
+				_isPaginating.value = false
 			}
 		}
 	}

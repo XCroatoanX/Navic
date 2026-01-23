@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +41,7 @@ import paige.navic.util.shimmerLoading
 @Composable
 fun ArtGrid(
 	modifier: Modifier = Modifier,
+	state: LazyGridState = rememberLazyGridState(),
 	content: LazyGridScope.() -> Unit
 ) {
 	val ctx = LocalCtx.current
@@ -46,6 +49,7 @@ fun ArtGrid(
 	var artGridItemSize by rememberFloatSetting("artGridItemSize", 150f)
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
+		state = state,
 		columns = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
 			GridCells.Fixed(artGridItemsPerRow)
 		else GridCells.Adaptive(artGridItemSize.dp),
