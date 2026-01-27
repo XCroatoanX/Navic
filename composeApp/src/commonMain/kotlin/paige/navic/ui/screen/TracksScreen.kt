@@ -73,9 +73,11 @@ import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
+import paige.navic.ui.component.common.Marquee
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.NestedTopBar
 import paige.navic.ui.component.layout.TopBarButton
+import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
@@ -288,7 +290,7 @@ private fun TracksScreenScope.Metadata() {
 	Column(horizontalAlignment = Alignment.CenterHorizontally) {
 		Text(
 			tracks.title ?: stringResource(Res.string.info_unknown_album),
-			style = MaterialTheme.typography.headlineMedium,
+			style = MaterialTheme.typography.headlineSmall,
 			textAlign = TextAlign.Center
 		)
 		Text(
@@ -298,13 +300,15 @@ private fun TracksScreenScope.Metadata() {
 				tracks.artistId?.let { id ->
 					backStack.add(Screen.Artist(id))
 				}
-			}
+			},
+			style = MaterialTheme.typography.bodyMedium,
+			fontFamily = defaultFont(grade = 100, round = 100f)
 		)
 		Text(
 			"${tracks.genre ?: "Unknown genre"} • ${tracks.year ?: "Unknown year"}",
 			color = MaterialTheme.colorScheme.onSurfaceVariant,
 			style = MaterialTheme.typography.bodySmall,
-			fontWeight = FontWeight(600)
+			fontFamily = defaultFont(grade = 100, round = 100f)
 		)
 	}
 	Row(
@@ -375,7 +379,9 @@ private fun TracksScreenScope.TrackRow(
 			horizontalArrangement = Arrangement.spacedBy(12.dp)
 		) {
 			Column {
-				Text(track.title, maxLines = 1)
+				Marquee {
+					Text(track.title, maxLines = 1)
+				}
 				Text(
 					track.artist.orEmpty(),
 					style = MaterialTheme.typography.bodySmall,
