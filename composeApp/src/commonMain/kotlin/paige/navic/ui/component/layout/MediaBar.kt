@@ -98,6 +98,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlayerUiState
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
+import paige.navic.ui.component.common.Marquee
 import paige.navic.ui.screen.LyricsScreen
 import paige.navic.util.toHHMMSS
 import paige.subsonic.api.model.Album
@@ -382,11 +383,13 @@ private fun MediaBarScope.Info(
 					.weight(1f),
 				verticalArrangement = Arrangement.Center
 			) {
-				Text(
-					playerState.tracks?.tracks?.getOrNull(currentIndex)?.title.orEmpty(),
-					fontWeight = FontWeight(600),
-					maxLines = 1
-				)
+				Marquee {
+					Text(
+						playerState.tracks?.tracks?.getOrNull(currentIndex)?.title.orEmpty(),
+						fontWeight = FontWeight(600),
+						maxLines = 1
+					)
+				}
 				Text(
 					playerState.tracks?.tracks?.getOrNull(currentIndex)?.artist.orEmpty(),
 					style = MaterialTheme.typography.titleSmall,

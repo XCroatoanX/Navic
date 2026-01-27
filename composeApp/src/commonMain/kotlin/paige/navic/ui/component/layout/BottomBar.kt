@@ -1,7 +1,8 @@
 package paige.navic.ui.component.layout
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -72,18 +73,16 @@ private enum class NavItem(
 	)
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomBar(
 	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(com.russhwolf.settings.Settings(), Json) }
 ) {
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
-	var useShortNavbar = Settings.shared.useShortNavbar
 	val state by viewModel.state.collectAsState()
 
 	AnimatedContent(
-		!useShortNavbar
+		!Settings.shared.useShortNavbar
 			&& ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
 	) {
 		val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
@@ -107,7 +106,16 @@ fun BottomBar(
 							backStack.add(item.destination)
 						},
 						icon = {
-							Icon(vectorResource(if (selected) item.icon else item.iconUnselected), null)
+							Crossfade(
+								selected,
+								animationSpec = tween(3000)
+							) { selected ->
+								if (selected) {
+									Icon(vectorResource(item.icon), null)
+								} else {
+									Icon(vectorResource(item.iconUnselected), null)
+								}
+							}
 						},
 						label = {
 							Text(stringResource(item.label))
@@ -137,7 +145,15 @@ fun BottomBar(
 							backStack.add(item.destination)
 						},
 						icon = {
-							Icon(vectorResource(if (selected) item.icon else item.iconUnselected), null)
+							Crossfade(
+								selected
+							) { selected ->
+								if (selected) {
+									Icon(vectorResource(item.icon), null)
+								} else {
+									Icon(vectorResource(item.iconUnselected), null)
+								}
+							}
 						},
 						label = {
 							Text(stringResource(item.label))

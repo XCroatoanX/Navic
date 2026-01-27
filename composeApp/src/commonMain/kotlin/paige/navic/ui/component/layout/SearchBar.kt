@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
@@ -138,11 +139,16 @@ fun SearchBar(
 								backStack.add(Screen.Artist(artist.id))
 							}
 						}
+						if (tracks.isEmpty()) return@Column
 						Column {
 							Text(
 								stringResource(Res.string.title_songs),
-								style = MaterialTheme.typography.headlineSmall,
-								modifier = Modifier.padding(horizontal = 20.dp)
+								style = MaterialTheme.typography.titleMediumEmphasized,
+								fontWeight = FontWeight(600),
+								modifier = Modifier
+									.height(32.dp)
+									.padding(top = 8.dp)
+									.padding(horizontal = 20.dp)
 							)
 							tracks.forEach { track ->
 								TrackRow(track = track) {

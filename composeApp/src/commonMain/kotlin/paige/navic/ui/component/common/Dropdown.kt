@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
-import paige.navic.ui.theme.googleSans
+import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun Dropdown(
@@ -80,7 +80,7 @@ fun DropdownItem(
 			text = {
 				Text(
 					stringResource(text),
-					fontFamily = googleSans(
+					fontFamily = defaultFont(
 						grade = 100,
 						width = 104f
 					),
