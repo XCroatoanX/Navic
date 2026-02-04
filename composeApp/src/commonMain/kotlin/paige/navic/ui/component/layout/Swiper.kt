@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -27,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -111,7 +109,6 @@ fun Swiper(
 		Box(
 			modifier = Modifier
 				.offset { IntOffset(offsetX.value.roundToInt(), 0) }
-				.rotate(offsetX.value / 60f)
 				.draggable(
 					orientation = Orientation.Horizontal,
 					state = rememberDraggableState { delta ->
@@ -148,7 +145,7 @@ private fun SwipeIndicatorIcon(
 		contentDescription = null,
 		tint = MaterialTheme.colorScheme.onSurface,
 		modifier = Modifier
-			.padding((progress * 20).dp)
+			.padding((progress * 10).dp)
 			.size(32.dp)
 			.alpha(if (isVisible) progress else 0f)
 			.scale(if (isVisible) 0.5f + (progress * 0.5f) else 0.5f)
