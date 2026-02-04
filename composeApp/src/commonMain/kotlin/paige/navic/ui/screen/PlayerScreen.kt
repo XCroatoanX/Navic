@@ -276,7 +276,7 @@ fun PlayerScreen(
 
 	val progressBar = @Composable {
 		val waveHeight by animateDpAsState(
-			if (!playerState.isPaused && !Settings.shared.useWavySlider)
+			if (!playerState.isPaused && Settings.shared.useWavySlider)
 				6.dp
 			else 0.dp
 		)
