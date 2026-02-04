@@ -3,6 +3,7 @@ package paige.navic.ui.screen
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -163,7 +164,14 @@ fun PlayerScreen(
 				}
 			},
 			supportingContent = {
-				Marquee {
+				Marquee(
+					modifier = Modifier.clickable(enabled) {
+						track?.artistId?.let { id ->
+							backStack.remove(Screen.Player)
+							backStack.add(Screen.Artist(id))
+						}
+					}
+				) {
 					if (track != null) {
 						track.artist?.let { artist ->
 							Text(artist)
