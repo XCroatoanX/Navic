@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -60,9 +63,11 @@ import navic.composeapp.generated.resources.musicbrainz
 import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.shuffle
+import navic.composeapp.generated.resources.star
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
@@ -82,8 +87,6 @@ import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
 import paige.navic.util.toHHMMSS
-import paige.subsonic.api.model.Album
-import paige.subsonic.api.model.Playlist
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
@@ -172,7 +175,8 @@ fun TracksScreen(
 					}
 				}
 			})
-		}
+		},
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		AnimatedContent(
 			tracks,
@@ -191,12 +195,11 @@ fun TracksScreen(
 							modifier = Modifier
 								.background(MaterialTheme.colorScheme.surface)
 								.verticalScroll(scrollState)
-								.padding(12.dp)
-								.padding(bottom = 200.dp),
-							horizontalAlignment = Alignment.CenterHorizontally,
-							verticalArrangement = Arrangement.spacedBy(10.dp)
+								.padding(top = 16.dp, end = 16.dp, start = 16.dp),
+							horizontalAlignment = Alignment.CenterHorizontally
 						) {
 							Metadata()
+							Spacer(Modifier.height(10.dp))
 							Form {
 								tracks.tracks.onEachIndexed { index, track ->
 									Box {
@@ -231,7 +234,9 @@ fun TracksScreen(
 												text = if (starred == true)
 													Res.string.action_remove_star
 												else Res.string.action_star,
-												leadingIcon = Res.drawable.unstar,
+												leadingIcon = if (starred == true)
+													Res.drawable.star
+												else Res.drawable.unstar,
 												onClick = {
 													if (starred == true)
 														viewModel.unstarSelectedTrack()
@@ -244,6 +249,7 @@ fun TracksScreen(
 									}
 								}
 							}
+							Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 						}
 					}
 				}
@@ -287,6 +293,7 @@ private fun TracksScreenScope.Metadata() {
 				}
 			}
 	)
+	Spacer(Modifier.height(10.dp))
 	Column(horizontalAlignment = Alignment.CenterHorizontally) {
 		Text(
 			tracks.title ?: stringResource(Res.string.info_unknown_album),
@@ -311,6 +318,7 @@ private fun TracksScreenScope.Metadata() {
 			fontFamily = defaultFont(grade = 100, round = 100f)
 		)
 	}
+	Spacer(Modifier.height(10.dp))
 	Row(
 		modifier = Modifier.padding(horizontal = 15.dp),
 		horizontalArrangement = Arrangement.spacedBy(
@@ -332,14 +340,7 @@ private fun TracksScreenScope.Metadata() {
 		OutlinedButton(
 			modifier = Modifier.weight(1f),
 			onClick = {
-				when (tracks) {
-					is Album -> player.play(tracks.copy(
-						song = tracks.song?.shuffled()
-					), 0)
-					is Playlist -> player.play(tracks.copy(
-						entry = tracks.entry?.shuffled()
-					), 0)
-				}
+				player.shufflePlay(tracks)
 			},
 			shape = shape
 		) {

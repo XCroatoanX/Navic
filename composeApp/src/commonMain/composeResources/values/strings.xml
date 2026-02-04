@@ -28,6 +28,7 @@
 	<string name="option_dynamic_colour">Use dynamic colour</string>
 	<string name="option_accent_colour">Accent colour</string>
 	<string name="option_short_navigation_bar">Shorter navigation bar</string>
+	<string name="option_use_wavy_slider">Wavy progress bar</string>
 	<string name="option_always_show_seekbar">Show seek bar</string>
 	<string name="option_cover_art_rounding">Cover artwork rounding</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
@@ -75,6 +76,7 @@
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_shuffle">Shuffle</string>
+	<string name="action_repeat">Repeat</string>
 	<string name="action_delete">Delete</string>
 	<string name="action_cancel">Cancel</string>
 	<string name="action_share">Share</string>
@@ -89,6 +91,7 @@
 	<string name="action_see_all">See all</string>
 	<string name="action_view_on_lastfm">View on last.fm</string>
 	<string name="action_view_on_musicbrainz">View on MusicBrainz</string>
+	<string name="action_lyrics">Lyrics</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
@@ -103,5 +106,7 @@
 	<string name="info_error_hide">Hide details</string>
 	<string name="info_unknown_album">Unknown Album</string>
 	<string name="info_unknown_artist">Unknown Artist</string>
+	<string name="info_unknown_year">Unknown Year</string>
 	<string name="info_needs_log_in">You need to log in first. Tap the account button in the top right.</string>
+	<string name="info_not_playing">Not Playing</string>
 </resources>

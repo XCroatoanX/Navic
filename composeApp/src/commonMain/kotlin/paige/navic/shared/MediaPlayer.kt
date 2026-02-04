@@ -17,6 +17,8 @@ data class PlayerUiState(
 	val currentTrack: Track? = null,
 	val currentIndex: Int = -1,
 	val isPaused: Boolean = false,
+	val isShuffleEnabled: Boolean = false,
+	val repeatMode: Int = 0,
 	val progress: Float = 0f,
 	val isLoading: Boolean = false
 )
@@ -32,27 +34,52 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	abstract fun seek(normalized: Float)
 	abstract fun next()
 	abstract fun previous()
+	abstract fun toggleShuffle()
+	abstract fun toggleRepeat()
+	abstract fun shufflePlay(tracks: TrackCollection)
 
-	protected fun scrobbleSubmission(oldIndex: Int) {
+	protected fun scrobbleSubmission(trackId: String?) {
 		viewModelScope.launch {
-			val tracks = _uiState.value.tracks?.tracks ?: return@launch
-			tracks.getOrNull(oldIndex)?.let { track ->
-				try {
-					SessionManager.api.scrobble(track.id, Clock.System.now().toEpochMilliseconds(), submission = true)
-				} catch (e: Exception) { println(e) }
-			}
+			try {
+				trackId?.let {
+					SessionManager.api.scrobble(
+						it,
+						Clock.System.now().toEpochMilliseconds(),
+						submission = true
+					)
+				}
+			} catch (_: Exception) {}
 		}
 	}
 
-	protected fun scrobbleNowPlaying(newIndex: Int) {
+	protected fun scrobbleNowPlaying(trackId: String?) {
 		viewModelScope.launch {
-			val tracks = _uiState.value.tracks?.tracks ?: return@launch
-			tracks.getOrNull(newIndex)?.let { track ->
-				try {
-					SessionManager.api.scrobble(track.id, Clock.System.now().toEpochMilliseconds(), submission = false)
-				} catch (e: Exception) { println(e) }
-			}
+			try {
+				trackId?.let {
+					SessionManager.api.scrobble(
+						it,
+						Clock.System.now().toEpochMilliseconds(),
+						submission = false
+					)
+				}
+			} catch (_: Exception) {}
 		}
+	}
+
+	fun togglePlay() {
+		if (!_uiState.value.isPaused) {
+			pause()
+		} else {
+			resume()
+		}
+	}
+
+	suspend fun starTrack() {
+		SessionManager.api.star(_uiState.value.currentTrack?.id?.let { listOf(it) })
+	}
+
+	suspend fun unstarTrack() {
+		SessionManager.api.unstar(_uiState.value.currentTrack?.id?.let { listOf(it) })
 	}
 }
 

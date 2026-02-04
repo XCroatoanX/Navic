@@ -166,6 +166,7 @@ class Settings(
 ) : BasePreferenceManager(settings) {
 	var useSystemFont by preference(false)
 	var dynamicColour by preference(true)
+	var detachedBar by preference(true)
 	var accentColourH by preference(0f)
 	var accentColourS by preference(0f)
 	var accentColourV by preference(1f)
@@ -174,6 +175,7 @@ class Settings(
 	var artGridItemsPerRow by preference(2)
 	var artGridItemSize by preference(150f)
 	var alwaysShowSeekbar by preference(true)
+	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
 	var scrobblePercentage by preference(.7f)
