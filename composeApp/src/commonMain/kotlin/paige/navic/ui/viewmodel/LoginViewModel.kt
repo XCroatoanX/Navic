@@ -57,7 +57,7 @@ class LoginViewModel : ViewModel() {
 			return
 		}
 
-		if (!Regex("^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$").matches(rawInput)) {
+		if (!Regex("^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})(:\\d{1,5})?([/\\w .-]*)*/?\$").matches(rawInput)) {
 			instanceError = "Invalid instance format"
 			return
 		}
