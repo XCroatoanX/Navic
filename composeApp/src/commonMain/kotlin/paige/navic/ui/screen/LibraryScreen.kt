@@ -155,7 +155,7 @@ fun LibraryScreen(
 					destination = Screen.Albums(true, ListType.FREQUENT),
 					start = false
 				)
-				if (isLoggedIn) {
+				if (!isLoggedIn) {
 					item(span = { GridItemSpan(maxLineSpan) }) {
 						Text(
 							stringResource(Res.string.info_needs_log_in),
