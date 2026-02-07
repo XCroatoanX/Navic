@@ -22,21 +22,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.discord
+import navic.composeapp.generated.resources.github
 import navic.composeapp.generated.resources.info
 import navic.composeapp.generated.resources.palette
 import navic.composeapp.generated.resources.settings_normal
 import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
 import navic.composeapp.generated.resources.subtitle_behaviour
+import navic.composeapp.generated.resources.subtitle_chat
+import navic.composeapp.generated.resources.subtitle_source
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_behaviour
+import navic.composeapp.generated.resources.title_chat
 import navic.composeapp.generated.resources.title_settings
+import navic.composeapp.generated.resources.title_source
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -90,6 +97,22 @@ fun SettingsScreen() {
 					foregroundColor = Color(0xFF2C2C2C),
 					backgroundColor = Color(0xFFC7C7C7)
 				)
+				PageRow(
+					link = "https://github.com/paigely/Navic",
+					icon = Res.drawable.github,
+					title = Res.string.title_source,
+					subtitle = Res.string.subtitle_source,
+					foregroundColor = Color(0xFF2C2C2C),
+					backgroundColor = Color(0xFFC7C7C7)
+				)
+				PageRow(
+					link = "https://discord.gg/TBcnNX66PH",
+					icon = Res.drawable.discord,
+					title = Res.string.title_chat,
+					subtitle = Res.string.subtitle_chat,
+					foregroundColor = Color(0xFF2C2C2C),
+					backgroundColor = Color(0xFFC7C7C7)
+				)
 			}
 			Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 		}
@@ -99,7 +122,8 @@ fun SettingsScreen() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PageRow(
-	destination: NavKey,
+	link: String? = null,
+	destination: NavKey? = null,
 	icon: DrawableResource,
 	iconSize: Dp = 22.dp,
 	title: StringResource,
@@ -107,15 +131,21 @@ private fun PageRow(
 	foregroundColor: Color,
 	backgroundColor: Color
 ) {
+	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	FormRow(
 		onClick = {
-			backStack.lastOrNull()?.let {
-				if (it is Screen.Settings) {
-					if (it !is Screen.Settings.Root) {
-						backStack.removeLastOrNull()
+			link?.let { link ->
+				uriHandler.openUri(link)
+			}
+			destination?.let { destination ->
+				backStack.lastOrNull()?.let {
+					if (it is Screen.Settings) {
+						if (it !is Screen.Settings.Root) {
+							backStack.removeLastOrNull()
+						}
+						backStack.add(destination)
 					}
-					backStack.add(destination)
 				}
 			}
 		},
