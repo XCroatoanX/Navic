@@ -63,17 +63,26 @@ import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_repeat
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.action_track_info
+import navic.composeapp.generated.resources.action_view_album
+import navic.composeapp.generated.resources.action_view_artist
+import navic.composeapp.generated.resources.action_view_playlist
+import navic.composeapp.generated.resources.album_unselected
+import navic.composeapp.generated.resources.artist_unselected
+import navic.composeapp.generated.resources.info
 import navic.composeapp.generated.resources.info_not_playing
 import navic.composeapp.generated.resources.lyrics
 import navic.composeapp.generated.resources.more_horiz
 import navic.composeapp.generated.resources.note
 import navic.composeapp.generated.resources.pause
 import navic.composeapp.generated.resources.play_arrow
+import navic.composeapp.generated.resources.playlist_add
 import navic.composeapp.generated.resources.repeat
 import navic.composeapp.generated.resources.repeat_on
 import navic.composeapp.generated.resources.shuffle
@@ -92,11 +101,13 @@ import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.common.BlendBackground
 import paige.navic.ui.component.common.Dropdown
+import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.MarqueeText
 import paige.navic.ui.component.common.playPauseIconPainter
 import paige.navic.ui.component.layout.Swiper
 import paige.navic.ui.viewmodel.PlayerViewModel
 import paige.navic.util.toHHMMSS
+import paige.subsonic.api.model.Playlist
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -192,7 +203,53 @@ fun PlayerScreen(
 				expanded = expanded,
 				onDismissRequest = { expanded = false }
 			) {
-
+				DropdownItem(
+					onClick = {
+						playerState.tracks?.let { tracks ->
+							expanded = false
+							backStack.remove(Screen.Player)
+							backStack.add(Screen.Tracks(tracks))
+						}
+					},
+					text = when (playerState.tracks) {
+						is Playlist -> Res.string.action_view_playlist
+						else -> Res.string.action_view_album
+					},
+					leadingIcon = Res.drawable.album_unselected
+				)
+				DropdownItem(
+					onClick = {
+						playerState.tracks?.artistId?.let { artistId ->
+							expanded = false
+							backStack.remove(Screen.Player)
+							backStack.add(Screen.Artist(artistId))
+						}
+					},
+					text = Res.string.action_view_artist,
+					leadingIcon = Res.drawable.artist_unselected
+				)
+				DropdownItem(
+					onClick = {
+						track?.let { track ->
+							expanded = false
+							backStack.remove(Screen.Player)
+							backStack.add(Screen.AddToPlaylist(listOf(track)))
+						}
+					},
+					text = Res.string.action_add_to_playlist,
+					leadingIcon = Res.drawable.playlist_add
+				)
+				DropdownItem(
+					onClick = {
+						track?.let { track ->
+							expanded = false
+							backStack.remove(Screen.Player)
+							backStack.add(Screen.TrackInfo(track))
+						}
+					},
+					text = Res.string.action_track_info,
+					leadingIcon = Res.drawable.info
+				)
 			}
 		}
 	}

@@ -24,6 +24,9 @@ class TracksViewModel(
 	private val _selectedTrack = MutableStateFlow<Track?>(null)
 	val selectedTrack: StateFlow<Track?> = _selectedTrack.asStateFlow()
 
+	private val _selectedIndex = MutableStateFlow<Int?>(null)
+	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
+
 	private val _albumInfoState = MutableStateFlow<UiState<AlbumInfo>>(UiState.Loading)
 	val albumInfoState = _albumInfoState.asStateFlow()
 
@@ -60,9 +63,10 @@ class TracksViewModel(
 		}
 	}
 
-	fun selectTrack(track: Track) {
+	fun selectTrack(track: Track, index: Int) {
 		viewModelScope.launch {
 			_selectedTrack.value = track
+			_selectedIndex.value = index
 			_starredState.value = UiState.Loading
 			_albumInfoState.value = UiState.Loading
 			try {
@@ -76,6 +80,21 @@ class TracksViewModel(
 
 	fun clearSelection() {
 		_selectedTrack.value = null
+		_selectedIndex.value = null
+	}
+
+	fun removeFromPlaylist() {
+		val selection = _selectedIndex.value ?: return
+		clearSelection()
+		viewModelScope.launch {
+			try {
+				SessionManager.api.updatePlaylist(
+					playlistId = partialCollection.id,
+					indexesToRemove = listOf(selection)
+				)
+				refreshTracks()
+			} catch (_: Exception) { }
+		}
 	}
 
 	fun starSelectedTrack() {

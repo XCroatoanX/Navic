@@ -19,6 +19,7 @@ import paige.subsonic.api.model.AlbumResponse
 import paige.subsonic.api.model.ArtistInfoResponse
 import paige.subsonic.api.model.ArtistResponse
 import paige.subsonic.api.model.ArtistsResponse
+import paige.subsonic.api.model.CreatePlaylistResponse
 import paige.subsonic.api.model.CreateShareResponse
 import paige.subsonic.api.model.EmptyResponse
 import paige.subsonic.api.model.ErrorResponse
@@ -33,6 +34,7 @@ import paige.subsonic.api.model.Starred2Response
 import paige.subsonic.api.model.StarredResponse
 import paige.subsonic.api.model.SubsonicResponse
 import paige.subsonic.api.model.TopSongsResponse
+import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.UserResponse
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -367,6 +369,20 @@ class SubsonicApi(
 		}
 	}
 
+	suspend fun createPlaylist(
+		name: String,
+		tracks: List<Track> = emptyList()
+	): SubsonicResponse<CreatePlaylistResponse> {
+		return client
+			.get("rest/createPlaylist") {
+				parameter("name", name)
+				tracks.forEach { track ->
+					parameter("songId", track.id)
+				}
+			}
+			.body<SubsonicResponse<CreatePlaylistResponse>>()
+	}
+
 	suspend fun createShare(
 		id: String? = null,
 		expires: Duration? = null
@@ -463,5 +479,29 @@ class SubsonicApi(
 		).toString()
 
 		return client.get(url).body()
+	}
+
+	suspend fun updatePlaylist(
+		playlistId: String,
+		name: String? = null,
+		comment: String? = null,
+		public: Boolean? = null,
+		tracksToAdd: List<Track> = emptyList(),
+		indexesToRemove: List<Int> = emptyList()
+	): SubsonicResponse<EmptyResponse> {
+		return client
+			.get("rest/updatePlaylist") {
+				parameter("playlistId", playlistId)
+				parameter("name", name)
+				parameter("comment", comment)
+				parameter("public", public)
+				tracksToAdd.forEach { track ->
+					parameter("songIdToAdd", track.id)
+				}
+				indexesToRemove.forEach { idx ->
+					parameter("songIndexToRemove", idx)
+				}
+			}
+			.body<SubsonicResponse<EmptyResponse>>()
 	}
 }

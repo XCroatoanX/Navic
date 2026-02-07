@@ -38,6 +38,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
@@ -57,9 +58,11 @@ import paige.navic.shared.rememberCtx
 import paige.navic.shared.rememberMediaPlayer
 import paige.navic.ui.component.layout.BottomBar
 import paige.navic.ui.component.layout.PlayerBar
+import paige.navic.ui.screen.AddToPlaylistScreen
 import paige.navic.ui.screen.AlbumsScreen
 import paige.navic.ui.screen.ArtistScreen
 import paige.navic.ui.screen.ArtistsScreen
+import paige.navic.ui.screen.CreatePlaylistScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.LyricsScreen
 import paige.navic.ui.screen.PlayerScreen
@@ -94,6 +97,8 @@ private val config = SavedStateConfiguration {
 			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
 			subclass(Screen.TrackInfo::class, Screen.TrackInfo.serializer())
 			subclass(Screen.Artist::class, Screen.Artist.serializer())
+			subclass(Screen.AddToPlaylist::class, Screen.AddToPlaylist.serializer())
+			subclass(Screen.CreatePlaylist::class, Screen.CreatePlaylist.serializer())
 
 			// settings
 			subclass(Screen.Settings.Root::class, Screen.Settings.Root.serializer())
@@ -163,8 +168,9 @@ fun App() {
 							.fillMaxSize()
 							.background(MaterialTheme.colorScheme.surface),
 						backStack = backStack,
-						sceneStrategy = rememberListDetailSceneStrategy<NavKey>()
-							then remember { BottomSheetSceneStrategy() },
+						sceneStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
+							then remember { DialogSceneStrategy() }
+							then rememberListDetailSceneStrategy(),
 						onBack = { backStack.removeLastOrNull() },
 						entryProvider = entryProvider(backStack),
 						transitionSpec = {
@@ -235,6 +241,12 @@ private fun entryProvider(
 		}
 		entry<Screen.Artist>(metadata = detailPane("root")) { key ->
 			ArtistScreen(key.artist)
+		}
+		entry<Screen.AddToPlaylist>(metadata = DialogSceneStrategy.dialog()) { key ->
+			AddToPlaylistScreen(key.tracks, key.playlistToExclude)
+		}
+		entry<Screen.CreatePlaylist>(metadata = DialogSceneStrategy.dialog()) { key ->
+			CreatePlaylistScreen(key.tracks)
 		}
 
 		// settings

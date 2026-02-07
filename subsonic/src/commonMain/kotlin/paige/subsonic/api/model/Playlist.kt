@@ -8,6 +8,11 @@ data class PlaylistResponse(
 )
 
 @Serializable
+data class CreatePlaylistResponse(
+	val playlist: Playlist
+)
+
+@Serializable
 data class PlaylistsResponse(
 	val playlists: PlaylistsData
 ) {

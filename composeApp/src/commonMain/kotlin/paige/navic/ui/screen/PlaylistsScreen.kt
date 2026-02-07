@@ -5,10 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,16 +24,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
+import navic.composeapp.generated.resources.action_new
 import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.add
 import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.playlist_remove
 import navic.composeapp.generated.resources.share
+import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
@@ -58,6 +68,8 @@ fun PlaylistsScreen(
 	nested: Boolean = false,
 	viewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() }
 ) {
+	val ctx = LocalCtx.current
+	val backStack = LocalNavStack.current
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -72,7 +84,28 @@ fun PlaylistsScreen(
 				NestedTopBar({ Text(stringResource(Res.string.title_playlists)) })
 			}
 		},
-		contentWindowInsets = WindowInsets.statusBars
+		contentWindowInsets = WindowInsets.statusBars,
+		floatingActionButton = {
+			ExtendedFloatingActionButton(
+				modifier = Modifier.offset(y = -LocalContentPadding.current.calculateBottomPadding()),
+				shape = ContinuousRoundedRectangle(14.dp),
+				onClick = {
+					ctx.clickSound()
+					if (backStack.lastOrNull() !is Screen.CreatePlaylist) {
+						backStack.add(Screen.CreatePlaylist())
+					}
+				},
+				text = {
+					Text(stringResource(Res.string.action_new))
+				},
+				icon = {
+					Icon(
+						imageVector = vectorResource(Res.drawable.add),
+						contentDescription = stringResource(Res.string.title_create_playlist)
+					)
+				}
+			)
+		}
 	) { innerPadding ->
 		RefreshBox(
 			modifier = Modifier

@@ -47,8 +47,12 @@ import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_all_to_playlist
+import navic.composeapp.generated.resources.action_add_to_another_playlist
+import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_play
+import navic.composeapp.generated.resources.action_remove_from_playlist
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_shuffle
@@ -59,13 +63,18 @@ import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.info
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
+import navic.composeapp.generated.resources.info_unknown_genre
+import navic.composeapp.generated.resources.info_unknown_year
 import navic.composeapp.generated.resources.lastfm
 import navic.composeapp.generated.resources.more_vert
 import navic.composeapp.generated.resources.musicbrainz
 import navic.composeapp.generated.resources.play_arrow
+import navic.composeapp.generated.resources.playlist_add
+import navic.composeapp.generated.resources.playlist_remove
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.star
+import navic.composeapp.generated.resources.subtitle_playlist
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -81,6 +90,7 @@ import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.common.MarqueeText
+import paige.navic.ui.component.common.RefreshBox
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.NestedTopBar
 import paige.navic.ui.component.layout.TopBarButton
@@ -89,6 +99,8 @@ import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
 import paige.navic.util.toHHMMSS
+import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.Playlist
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
@@ -114,6 +126,7 @@ fun TracksScreen(
 
 	val tracks by viewModel.tracksState.collectAsState()
 	val selection by viewModel.selectedTrack.collectAsState()
+	val selectedIndex by viewModel.selectedIndex.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -175,96 +188,150 @@ fun TracksScreen(
 								shareId = (tracks as? UiState.Success)?.data?.id
 							},
 						)
+						DropdownItem(
+							containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+							text = Res.string.action_add_all_to_playlist,
+							leadingIcon = Res.drawable.playlist_add,
+							enabled = tracks is UiState.Success,
+							onClick = {
+								expanded = false
+								if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
+									backStack.add(
+										Screen.AddToPlaylist(
+											(tracks as? UiState.Success)?.data?.tracks.orEmpty()
+										)
+									)
+								}
+							},
+						)
 					}
 				}
 			})
 		},
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
-		AnimatedContent(
-			tracks,
-			modifier = Modifier.padding(innerPadding)
-		) {
-			when (it) {
-				is UiState.Loading -> TracksScreenPlaceholder()
-				is UiState.Error -> ErrorBox(it)
-				is UiState.Success -> {
-					val tracks = it.data
-					TracksScreenScope(
-						player,
-						tracks
-					).apply {
-						Column(
-							modifier = Modifier
-								.background(MaterialTheme.colorScheme.surface)
-								.verticalScroll(scrollState)
-								.padding(top = 16.dp, end = 16.dp, start = 16.dp),
-							horizontalAlignment = Alignment.CenterHorizontally
-						) {
-							Metadata()
-							Spacer(Modifier.height(10.dp))
-							Form {
-								tracks.tracks.onEachIndexed { index, track ->
-									Box {
-										TrackRow(
-											track = track,
-											onClick = {
-												player.play(tracks, index)
-											},
-											onLongClick = {
-												viewModel.selectTrack(track)
+		RefreshBox(
+			modifier = Modifier
+				.padding(innerPadding)
+				.background(MaterialTheme.colorScheme.surface),
+			isRefreshing = tracks is UiState.Loading,
+			onRefresh = { viewModel.refreshTracks() }
+		) { topPadding ->
+			AnimatedContent(
+				tracks,
+				modifier = Modifier.padding(top = topPadding)
+			) {
+				when (it) {
+					is UiState.Loading -> TracksScreenPlaceholder()
+					is UiState.Error -> ErrorBox(it)
+					is UiState.Success -> {
+						val tracks = it.data
+						TracksScreenScope(
+							player,
+							tracks
+						).apply {
+							Column(
+								modifier = Modifier
+									.background(MaterialTheme.colorScheme.surface)
+									.verticalScroll(scrollState)
+									.padding(top = 16.dp, end = 16.dp, start = 16.dp),
+								horizontalAlignment = Alignment.CenterHorizontally
+							) {
+								Metadata()
+								Spacer(Modifier.height(10.dp))
+								Form {
+									tracks.tracks.onEachIndexed { index, track ->
+										Box {
+											TrackRow(
+												track = track,
+												index = index,
+												onClick = {
+													player.play(tracks, index)
+												},
+												onLongClick = {
+													viewModel.selectTrack(track, index)
+												}
+											)
+											Dropdown(
+												expanded = selection == track && selectedIndex == index,
+												onDismissRequest = {
+													viewModel.clearSelection()
+												}
+											) {
+												DropdownItem(
+													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+													text = Res.string.action_share,
+													leadingIcon = Res.drawable.share,
+													onClick = {
+														shareId = track.id
+														viewModel.clearSelection()
+													},
+												)
+												val starred =
+													(starredState as? UiState.Success)?.data
+												DropdownItem(
+													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+													text = if (starred == true)
+														Res.string.action_remove_star
+													else Res.string.action_star,
+													leadingIcon = if (starred == true)
+														Res.drawable.star
+													else Res.drawable.unstar,
+													onClick = {
+														if (starred == true)
+															viewModel.unstarSelectedTrack()
+														else viewModel.starSelectedTrack()
+														viewModel.clearSelection()
+													},
+													enabled = starred != null
+												)
+												DropdownItem(
+													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+													text = Res.string.action_track_info,
+													leadingIcon = Res.drawable.info,
+													onClick = {
+														backStack.add(Screen.TrackInfo(track))
+														viewModel.clearSelection()
+													},
+												)
+												DropdownItem(
+													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+													text = if (tracks is Playlist)
+														Res.string.action_add_to_another_playlist
+													else Res.string.action_add_to_playlist,
+													leadingIcon = Res.drawable.playlist_add,
+													onClick = {
+														viewModel.clearSelection()
+														if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
+															backStack.add(
+																Screen.AddToPlaylist(
+																	listOf(track),
+																	playlistToExclude = tracks.id
+																)
+															)
+														}
+													},
+												)
+												if (tracks is Playlist) {
+													DropdownItem(
+														containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+														text = Res.string.action_remove_from_playlist,
+														leadingIcon = Res.drawable.playlist_remove,
+														onClick = {
+															viewModel.removeFromPlaylist()
+														},
+													)
+												}
 											}
-										)
-										Dropdown(
-											expanded = selection == track,
-											onDismissRequest = {
-												viewModel.clearSelection()
-											}
-										) {
-											DropdownItem(
-												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-												text = Res.string.action_share,
-												leadingIcon = Res.drawable.share,
-												onClick = {
-													shareId = track.id
-													viewModel.clearSelection()
-												},
-											)
-											val starred =
-												(starredState as? UiState.Success)?.data
-											DropdownItem(
-												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-												text = if (starred == true)
-													Res.string.action_remove_star
-												else Res.string.action_star,
-												leadingIcon = if (starred == true)
-													Res.drawable.star
-												else Res.drawable.unstar,
-												onClick = {
-													if (starred == true)
-														viewModel.unstarSelectedTrack()
-													else viewModel.starSelectedTrack()
-													viewModel.clearSelection()
-												},
-												enabled = starred != null
-											)
-											DropdownItem(
-												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-												text = Res.string.action_track_info,
-												leadingIcon = Res.drawable.info,
-												onClick = {
-													backStack.add(Screen.TrackInfo(track))
-													viewModel.clearSelection()
-												},
-											)
 										}
 									}
 								}
+								Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 							}
-							Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 						}
 					}
 				}
+
 			}
 		}
 	}
@@ -312,19 +379,27 @@ private fun TracksScreenScope.Metadata() {
 			style = MaterialTheme.typography.headlineSmall,
 			textAlign = TextAlign.Center
 		)
+		val subtitle = when (tracks) {
+			is Album -> tracks.subtitle ?: stringResource(Res.string.info_unknown_artist)
+			is Playlist -> tracks.subtitle
+		}
+		subtitle?.let { subtitle ->
+			Text(
+				subtitle,
+				color = MaterialTheme.colorScheme.primary,
+				modifier = Modifier.clickable(tracks.artistId != null) {
+					tracks.artistId?.let { id ->
+						backStack.add(Screen.Artist(id))
+					}
+				},
+				style = MaterialTheme.typography.bodyMedium,
+				fontFamily = defaultFont(grade = 100, round = 100f)
+			)
+		}
 		Text(
-			tracks.subtitle ?: stringResource(Res.string.info_unknown_artist),
-			color = MaterialTheme.colorScheme.primary,
-			modifier = Modifier.clickable {
-				tracks.artistId?.let { id ->
-					backStack.add(Screen.Artist(id))
-				}
-			},
-			style = MaterialTheme.typography.bodyMedium,
-			fontFamily = defaultFont(grade = 100, round = 100f)
-		)
-		Text(
-			"${tracks.genre ?: "Unknown genre"} • ${tracks.year ?: "Unknown year"}",
+			if (tracks !is Playlist)
+				"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${tracks.year ?: stringResource(Res.string.info_unknown_year)}"
+			else stringResource(Res.string.subtitle_playlist),
 			color = MaterialTheme.colorScheme.onSurfaceVariant,
 			style = MaterialTheme.typography.bodySmall,
 			fontFamily = defaultFont(grade = 100, round = 100f)
@@ -365,8 +440,9 @@ private fun TracksScreenScope.Metadata() {
 }
 
 @Composable
-private fun TracksScreenScope.TrackRow(
+private fun TrackRow(
 	track: Track,
+	index: Int,
 	onClick: (() -> Unit)? = null,
 	onLongClick: (() -> Unit)? = null
 ) {
@@ -377,7 +453,7 @@ private fun TracksScreenScope.TrackRow(
 		modifier = Modifier.fillMaxWidth()
 	) {
 		Text(
-			"${tracks.tracks.indexOf(track) + 1}",
+			"${index + 1}",
 			modifier = Modifier.width(25.dp),
 			style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
 			fontWeight = FontWeight(400),

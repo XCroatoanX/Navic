@@ -12,6 +12,7 @@
 	<string name="title_delete_playlist">Delete playlist?</string>
 	<string name="title_delete_share">Delete share?</string>
 	<string name="title_create_share">Create share</string>
+	<string name="title_create_playlist">Create playlist</string>
 	<string name="title_albums">Albums</string>
 	<string name="title_songs">Songs</string>
 	<string name="title_artists">Artists</string>
@@ -25,6 +26,7 @@
 	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
 	<string name="subtitle_grid_items_per_row">How many items to fit on each row of grids</string>
 	<string name="subtitle_use_marquee_text">Whether to scroll long text</string>
+	<string name="subtitle_playlist">Playlist</string>
 
 	<string name="option_system_font">Use system font</string>
 	<string name="option_dynamic_colour">Use dynamic colour</string>
@@ -54,6 +56,8 @@
 	<string name="option_sort_by_genre">By Genre</string>
 	<string name="option_scrobble_percentage">Scrobble percentage</string>
 	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
+	<string name="option_playlist_name">Name</string>
+	<string name="option_playlist_songs">Songs</string>
 
 	<plurals name="count_songs">
 		<item quantity="one">%1$d song</item>
@@ -77,12 +81,17 @@
 
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
+	<string name="action_new">New</string>
 	<string name="action_shuffle">Shuffle</string>
 	<string name="action_repeat">Repeat</string>
 	<string name="action_delete">Delete</string>
 	<string name="action_cancel">Cancel</string>
+	<string name="action_refresh">Refresh</string>
 	<string name="action_share">Share</string>
 	<string name="action_track_info">View track info</string>
+	<string name="action_view_album">View album</string>
+	<string name="action_view_playlist">View playlist</string>
+	<string name="action_view_artist">View artist</string>
 	<string name="action_star">Star</string>
 	<string name="action_remove_star">Unstar</string>
 	<string name="action_navigate_back">Back</string>
@@ -91,6 +100,9 @@
 	<string name="action_clear_search">Clear</string>
 	<string name="action_more">More</string>
 	<string name="action_add_to_playlist">Add to Playlist</string>
+	<string name="action_add_to_another_playlist">Add to Another Playlist</string>
+	<string name="action_add_all_to_playlist">Add All to Playlist</string>
+	<string name="action_remove_from_playlist">Remove from Playlist</string>
 	<string name="action_see_all">See all</string>
 	<string name="action_view_on_lastfm">View on last.fm</string>
 	<string name="action_view_on_musicbrainz">View on MusicBrainz</string>
@@ -111,8 +123,11 @@
 	<string name="info_unknown_album">Unknown Album</string>
 	<string name="info_unknown_artist">Unknown Artist</string>
 	<string name="info_unknown_year">Unknown Year</string>
+	<string name="info_unknown_genre">Unknown Genre</string>
 	<string name="info_needs_log_in">You need to log in first. Tap the account button in the top right.</string>
 	<string name="info_not_playing">Not Playing</string>
+	<string name="info_no_playlists">You have no playlists.</string>
+	<string name="info_no_other_playlists">You have no playlists other than this one.</string>
 	<string name="info_track_name">Name</string>
 	<string name="info_track_artist">Artist(s)</string>
 	<string name="info_track_artist_id">Artist ID</string>
