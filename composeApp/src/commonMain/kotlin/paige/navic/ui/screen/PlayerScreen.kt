@@ -2,6 +2,7 @@ package paige.navic.ui.screen
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.snap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,9 +15,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -24,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -41,12 +46,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
@@ -81,6 +91,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.ui.component.common.BlendBackground
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.MarqueeText
 import paige.navic.ui.component.layout.Swiper
@@ -96,6 +107,7 @@ fun PlayerScreen(
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val backStack = LocalNavStack.current
+	val context = LocalPlatformContext.current
 
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
@@ -106,6 +118,14 @@ fun PlayerScreen(
 			auth = true
 		)
 	}
+	val imageRequest = remember(coverUri) {
+		ImageRequest.Builder(context)
+			.data(coverUri)
+			.crossfade(true)
+			.crossfade(500)
+			.build()
+	}
+	val sharedPainter = rememberAsyncImagePainter(imageRequest)
 
 	val enabled = playerState.currentTrack != null
 
@@ -120,6 +140,10 @@ fun PlayerScreen(
 		disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
 		checkedContainerColor = MaterialTheme.colorScheme.primary,
 		checkedContentColor = MaterialTheme.colorScheme.onPrimary
+	)
+	val textShadow = Shadow(
+		color = MaterialTheme.colorScheme.inverseOnSurface,
+		blurRadius = 5f
 	)
 
 	val imagePadding by animateDpAsState(
@@ -178,7 +202,11 @@ fun PlayerScreen(
 			colors = ListItemDefaults.colors(Color.Transparent),
 			headlineContent = {
 				track?.title?.let { title ->
-					MarqueeText(title)
+					MarqueeText(
+						title,
+						style = LocalTextStyle.current
+							.copy(shadow = textShadow),
+					)
 				}
 			},
 			supportingContent = {
@@ -189,6 +217,8 @@ fun PlayerScreen(
 							backStack.add(Screen.Artist(id))
 						}
 					},
+					style = LocalTextStyle.current
+						.copy(shadow = textShadow),
 					text = track?.artist ?: stringResource(Res.string.info_not_playing)
 				)
 			},
@@ -205,6 +235,11 @@ fun PlayerScreen(
 	val durationsRow = @Composable {
 		val duration = playerState.currentTrack?.duration
 		val style = MaterialTheme.typography.bodyMedium
+			.copy(shadow = Shadow(
+				color = MaterialTheme.colorScheme.inverseOnSurface,
+				offset = Offset(0f, 4f),
+				blurRadius = 10f
+			))
 		val color = MaterialTheme.colorScheme.onSurfaceVariant
 		ListItem(
 			colors = ListItemDefaults.colors(Color.Transparent),
@@ -381,33 +416,42 @@ fun PlayerScreen(
 			}
 		}
 	}
-
 	Swiper(
 		onSwipeLeft = {
 			player.next()
 		},
 		onSwipeRight = {
 			player.previous()
+		},
+		background = {
+			BlendBackground(
+				painter = sharedPainter,
+				isPaused = playerState.isPaused
+			)
 		}
 	) {
 		Column(
 			modifier = Modifier
 				.padding(horizontal = 8.dp)
+				.navigationBarsPadding()
+				.statusBarsPadding()
 				.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center
 		) {
 			Box(
 				contentAlignment = Alignment.Center,
 				modifier = Modifier
-					.weight(1f)
 					.fillMaxWidth()
+					.weight(1f)
 			) {
-				AsyncImage(
-					model = coverUri,
+				Image(
+					painter = sharedPainter,
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
 					modifier = Modifier
 						.aspectRatio(1f)
+						.fillMaxSize()
 						.padding(imagePadding)
 						.clip(ContinuousRoundedRectangle(16.dp))
 						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
@@ -421,14 +465,21 @@ fun PlayerScreen(
 					)
 				}
 			}
-			infoRow()
-			progressBar()
-			durationsRow()
-			Spacer(modifier = Modifier.height(24.dp))
-			controlsRow()
-			Spacer(modifier = Modifier.height(24.dp))
-			toolBar()
-			Spacer(modifier = Modifier.height(16.dp))
+			Column(
+				modifier = Modifier.wrapContentHeight(),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.SpaceBetween
+			) {
+				Column {
+					infoRow()
+					progressBar()
+					durationsRow()
+				}
+				Spacer(Modifier.height(24.dp))
+				controlsRow()
+				Spacer(Modifier.height(24.dp))
+				toolBar()
+			}
 		}
 	}
 }
