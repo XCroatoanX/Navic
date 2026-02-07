@@ -79,6 +79,8 @@ fun ArtistsScreen(
 					}
 
 					is UiState.Success -> {
+						val totalArtistCount = it.data.sumOf { section -> section.artist.size }
+
 						val grouped = it.data.flatMap { section ->
 							section.artist.groupBy { it.name.firstOrNull()?.uppercaseChar() ?: '#' }
 								.toList()
@@ -101,8 +103,8 @@ fun ArtistsScreen(
 									Text(
 										pluralStringResource(
 											Res.plurals.count_artists,
-											it.data.count(),
-											it.data.count()
+											totalArtistCount,
+											totalArtistCount
 										),
 										color = MaterialTheme.colorScheme.onSurfaceVariant
 									)

@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,11 +41,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_view_on_lastfm
@@ -175,6 +179,10 @@ fun ArtistScreen(
 						verticalArrangement = Arrangement.spacedBy(12.dp),
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
+						ArtistHeader(
+							artistName = state.artist.name,
+							imageUrl = state.artist.coverArt
+						)
 						state.topSongs.takeIf { state.topSongs.isNotEmpty() }?.let { songs ->
 							Text(
 								stringResource(Res.string.option_sort_frequent),
@@ -243,6 +251,54 @@ fun ArtistScreen(
 					}
 				}
 			}
+		}
+	}
+}
+
+@Composable
+fun ArtistHeader(
+	artistName: String,
+	imageUrl: String?
+) {
+	Box(
+		modifier = Modifier
+			.fillMaxWidth()
+			.height(300.dp)
+			.background(Color.DarkGray)
+	) {
+		AsyncImage(
+			model = imageUrl,
+			contentDescription = null,
+			contentScale = ContentScale.Crop,
+			modifier = Modifier.fillMaxSize()
+		)
+		Box(
+			modifier = Modifier
+				.fillMaxSize()
+				.background(
+					Brush.verticalGradient(
+						colors = listOf(
+							Color.Transparent,
+							Color.Black.copy(alpha = 0.7f),
+							Color.Black
+						),
+						startY = 100f
+					)
+				)
+		)
+
+		Column(
+			modifier = Modifier
+				.align(Alignment.BottomStart)
+				.padding(horizontal = 20.dp, vertical = 24.dp),
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			Text(
+				text = artistName,
+				style = MaterialTheme.typography.displaySmall,
+				fontWeight = FontWeight.Bold,
+				color = Color.White
+			)
 		}
 	}
 }
