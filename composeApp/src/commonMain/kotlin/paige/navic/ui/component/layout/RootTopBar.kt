@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -64,6 +65,7 @@ import paige.navic.util.LoginState
 fun RootTopBar(
 	title: @Composable () -> Unit,
 	scrollBehavior: TopAppBarScrollBehavior,
+	actions: @Composable RowScope.() -> Unit = {},
 	viewModel: LoginViewModel = viewModel { LoginViewModel() },
 ) {
 	val loginState by viewModel.loginState.collectAsState()
@@ -76,6 +78,7 @@ fun RootTopBar(
 			}
 		},
 		actions = {
+			actions()
 			Actions(
 				loginState = loginState,
 				onLogOut = { viewModel.logout() },

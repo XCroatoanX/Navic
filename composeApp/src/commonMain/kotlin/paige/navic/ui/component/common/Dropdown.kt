@@ -44,7 +44,7 @@ fun Dropdown(
 	) {
         Form(
             rounding = 20.dp,
-            spacing = 1.5.dp
+            spacing = 2.5.dp
         ) {
             content()
         }

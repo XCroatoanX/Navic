@@ -5,12 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -36,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
@@ -54,7 +50,6 @@ import navic.composeapp.generated.resources.option_sort_recent
 import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.sort
-import navic.composeapp.generated.resources.switch_on
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
@@ -65,6 +60,7 @@ import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.RefreshBox
+import paige.navic.ui.component.common.SelectionDropdown
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.ArtGrid
 import paige.navic.ui.component.layout.ArtGridItem
@@ -104,7 +100,8 @@ fun AlbumsScreen(
 			if (!nested) {
 				RootTopBar(
 					{ Text(stringResource(Res.string.title_albums)) },
-					scrollBehavior
+					scrollBehavior,
+					actions
 				)
 			} else {
 				NestedTopBar({ Text(stringResource(Res.string.title_albums)) }, actions)
@@ -178,6 +175,13 @@ fun SortButton(
 	viewModel: AlbumsViewModel
 ) {
 	val currentListType by viewModel.listType.collectAsState()
+	val items = remember {
+		ListType.entries
+			.filter { it != ListType.BY_GENRE
+				&& it != ListType.BY_YEAR
+				&& it != ListType.HIGHEST }
+			.sortedBy { it.ordinal }
+	}
 	Box {
 		var expanded by remember { mutableStateOf(false) }
 		if (root) {
@@ -199,40 +203,34 @@ fun SortButton(
 				)
 			}
 		}
-		Dropdown(
+		SelectionDropdown(
+			items = items,
+			label = {
+				it.label()
+			},
 			expanded = expanded,
-			onDismissRequest = { expanded = false }
-		) {
-			mapOf(
-				Res.string.option_sort_random to ListType.RANDOM,
-				Res.string.option_sort_newest to ListType.NEWEST,
-				Res.string.option_sort_frequent to ListType.FREQUENT,
-				Res.string.option_sort_recent to ListType.RECENT,
-				Res.string.option_sort_alphabetical_by_name to ListType.ALPHABETICAL_BY_NAME,
-				Res.string.option_sort_alphabetical_by_artist to ListType.ALPHABETICAL_BY_ARTIST,
-				Res.string.option_sort_starred to ListType.STARRED
-			).forEach { (stringRes, listType) ->
-				DropdownItem(
-					text = stringRes,
-					containerColor = if (currentListType == listType)
-						MaterialTheme.colorScheme.primaryContainer
-					else MaterialTheme.colorScheme.surfaceContainerHigh,
-					leadingIcon = if (currentListType == listType)
-						Res.drawable.switch_on
-					else null,
-					onClick = {
-						expanded = false
-						viewModel.setListType(listType)
-						viewModel.refreshAlbums()
-					},
-					rounding = if (currentListType == listType)
-						100.dp
-					else 4.dp
-				)
+			onDismissRequest = { expanded = false },
+			selection = currentListType,
+			onSelect = {
+				viewModel.setListType(it)
+				viewModel.refreshAlbums()
 			}
-		}
+		)
 	}
 }
+
+@Composable
+private fun ListType.label() =
+	when (this) {
+		ListType.RANDOM -> stringResource(Res.string.option_sort_random)
+		ListType.NEWEST -> stringResource(Res.string.option_sort_newest)
+		ListType.FREQUENT -> stringResource(Res.string.option_sort_frequent)
+		ListType.RECENT -> stringResource(Res.string.option_sort_recent)
+		ListType.ALPHABETICAL_BY_NAME -> stringResource(Res.string.option_sort_alphabetical_by_name)
+		ListType.ALPHABETICAL_BY_ARTIST -> stringResource(Res.string.option_sort_alphabetical_by_artist)
+		ListType.STARRED -> stringResource(Res.string.option_sort_starred)
+		else -> "$this"
+	}
 
 @Composable
 fun AlbumsScreenItem(

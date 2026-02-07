@@ -78,7 +78,7 @@ fun PlayerBar(
 		if (detached) 10.dp else 16.dp, effectsSpec
 	)
 	val shadowRadius by animateDpAsState(
-		if (detached) 3.dp else 8.dp, effectsSpec
+		if (detached) 5.dp else 8.dp, effectsSpec
 	)
 	val coverSize by animateDpAsState(
 		if (detached) 48.dp else 55.dp, spec

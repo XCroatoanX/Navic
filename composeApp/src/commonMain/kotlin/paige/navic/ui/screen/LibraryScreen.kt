@@ -79,6 +79,7 @@ import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.component.layout.RootTopBar
 import paige.navic.ui.component.layout.artGridError
+import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodel.AlbumsViewModel
 import paige.navic.ui.viewmodel.ArtistsViewModel
 import paige.navic.ui.viewmodel.PlaylistsViewModel
@@ -245,7 +246,7 @@ private fun LazyGridScope.overviewButton(
 			contentPadding = PaddingValues(horizontal = 12.dp),
 			elevation = null,
 			shapes = ButtonDefaults.shapes(
-				shape = ContinuousRoundedRectangle(12.dp),
+				shape = ContinuousRoundedRectangle(10.dp),
 				pressedShape = ContinuousRoundedRectangle(7.dp)
 			),
 			colors = ButtonDefaults.buttonColors(
@@ -271,7 +272,8 @@ private fun LazyGridScope.overviewButton(
 				Text(
 					stringResource(label),
 					maxLines = 1,
-					autoSize = TextAutoSize.StepBased(minFontSize = 1.sp, maxFontSize = 16.sp),
+					fontFamily = defaultFont(100, round = 100f),
+					autoSize = TextAutoSize.StepBased(minFontSize = 1.sp, maxFontSize = 14.sp),
 				)
 			}
 		}
