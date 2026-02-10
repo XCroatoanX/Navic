@@ -180,6 +180,7 @@ class Settings(
 	var artGridItemSize by preference(150f)
 	var useMarquee by preference(true)
 	var marqueeDuration by preference(4000)
+	var alphabeticalScroll by preference(false)
 	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
