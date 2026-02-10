@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,6 +37,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
+import paige.navic.ui.component.common.AlphabeticalScroller
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
@@ -88,32 +90,23 @@ fun ArtistsScreen(
 								.toList()
 								.sortedBy { it.first }
 						}
-
-						ArtGrid(
-							modifier = if (!nested)
-								Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-							else Modifier,
-							state = gridState
-						) {
-							stickyHeader { _ ->
-								Row(
-									Modifier
-										.background(MaterialTheme.colorScheme.surface)
-										.padding(bottom = 8.dp),
-									verticalAlignment = Alignment.CenterVertically
-								) {
-									Text(
-										pluralStringResource(
-											Res.plurals.count_artists,
-											totalArtistCount,
-											totalArtistCount
-										),
-										color = MaterialTheme.colorScheme.onSurfaceVariant
-									)
-								}
+						val headerIndices = remember(grouped) {
+							var currentIndex = 1
+							grouped.map { (letter, artists) ->
+								val pos = currentIndex
+								currentIndex += artists.size + 1
+								letter.toString() to pos
 							}
-							grouped.forEach { (letter, artists) ->
-								stickyHeader {
+						}
+
+						Row {
+							ArtGrid(
+								modifier = if (!nested)
+									Modifier.weight(1f).nestedScroll(scrollBehavior.nestedScrollConnection)
+								else Modifier.weight(1f),
+								state = gridState
+							) {
+								stickyHeader { _ ->
 									Row(
 										Modifier
 											.background(MaterialTheme.colorScheme.surface)
@@ -121,13 +114,36 @@ fun ArtistsScreen(
 										verticalAlignment = Alignment.CenterVertically
 									) {
 										Text(
-											text = letter.toString(),
+											pluralStringResource(
+												Res.plurals.count_artists,
+												totalArtistCount,
+												totalArtistCount
+											),
 											color = MaterialTheme.colorScheme.onSurfaceVariant
 										)
 									}
 								}
-								artistsScreenItems(artists, viewModel)
+								grouped.forEach { (letter, artists) ->
+									stickyHeader {
+										Row(
+											Modifier
+												.background(MaterialTheme.colorScheme.surface)
+												.padding(bottom = 8.dp),
+											verticalAlignment = Alignment.CenterVertically
+										) {
+											Text(
+												text = letter.toString(),
+												color = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									}
+									artistsScreenItems(artists, viewModel)
+								}
 							}
+							AlphabeticalScroller(
+								state = gridState,
+								headers = headerIndices
+							)
 						}
 					}
 
