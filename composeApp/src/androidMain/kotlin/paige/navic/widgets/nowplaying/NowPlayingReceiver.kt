@@ -28,19 +28,22 @@ open class NowPlayingReceiver(
 		val artist = intent.getStringExtra("artist") ?: ""
 		val artUrl = intent.getStringExtra("artUrl")
 
-		MainScope().launch {
-			val glanceId = GlanceAppWidgetManager(context)
-				.getGlanceIds(widgetClass)
-				.firstOrNull()
+		val pendingResult = goAsync()
 
-			glanceId?.let { id ->
-				updateAppWidgetState(context, id) { prefs ->
-					prefs[NowPlayingKeys.isPlaying] = isPlaying
-					prefs[NowPlayingKeys.titleKey] = title
-					prefs[NowPlayingKeys.artistKey] = artist
-					prefs[NowPlayingKeys.artUrlKey] = artUrl ?: ""
+		MainScope().launch {
+			try {
+				val glanceIds = GlanceAppWidgetManager(context).getGlanceIds(widgetClass)
+				glanceIds.forEach { id ->
+					updateAppWidgetState(context, id) { prefs ->
+						prefs[NowPlayingKeys.isPlaying] = isPlaying
+						prefs[NowPlayingKeys.titleKey] = title
+						prefs[NowPlayingKeys.artistKey] = artist
+						prefs[NowPlayingKeys.artUrlKey] = artUrl ?: ""
+					}
+					glanceAppWidget.update(context, id)
 				}
-				glanceAppWidget.update(context, id)
+			} finally {
+				runCatching { pendingResult.finish() }
 			}
 		}
 	}
