@@ -33,8 +33,8 @@ abstract class NowPlayingWidget : GlanceAppWidget() {
 			val prefs = currentState<Preferences>()
 
 			val isPlaying = prefs[NowPlayingKeys.isPlaying] ?: false
-			val title = prefs[NowPlayingKeys.titleKey].orEmpty()
-			val artist = prefs[NowPlayingKeys.artistKey].orEmpty()
+			val title = prefs[NowPlayingKeys.titleKey]?.takeIf { it.isNotBlank() } ?: "Not Playing"
+			val artist = prefs[NowPlayingKeys.artistKey]?.takeIf { it.isNotBlank() } ?: "No Artist"
 			val artUrl = prefs[NowPlayingKeys.artUrlKey]
 
 			val bitmap by produceState<Bitmap?>(initialValue = null, artUrl) {
@@ -83,7 +83,7 @@ abstract class NowPlayingWidget : GlanceAppWidget() {
 		if (url == null) return null
 		val request = ImageRequest.Builder(context)
 			.data(url)
-			.size(200)
+			.size(700)
 			.allowHardware(false)
 			.build()
 		return (context.imageLoader.execute(request) as? SuccessResult)?.image?.toBitmap()
