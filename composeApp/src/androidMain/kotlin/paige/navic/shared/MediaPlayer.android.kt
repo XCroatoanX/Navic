@@ -132,6 +132,18 @@ class AndroidMediaPlayerViewModel(
 				override fun onIsPlayingChanged(isPlaying: Boolean) {
 					_uiState.update { it.copy(isPaused = !isPlaying) }
 					if (isPlaying) startProgressLoop()
+
+					val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+						setPackage(application.packageName)
+						putExtra("isPlaying", isPlaying)
+						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
+						putExtra("artist", _uiState.value.currentTrack?.artist ?: "Unknown artist")
+						putExtra("artUrl", SessionManager.api.getCoverArtUrl(
+							id = _uiState.value.currentTrack?.coverArt, auth = true, size = 200
+						))
+					}
+
+					application.sendBroadcast(intent)
 				}
 
 				override fun onPlaybackStateChanged(playbackState: Int) {

@@ -127,11 +127,14 @@ kotlin {
 		}
 		androidMain.dependencies {
 			implementation(libs.androidx.activity.compose)
+			implementation(libs.androidx.datastore.preferences)
 			implementation(libs.ktor.client.okhttp)
 			implementation(libs.androidx.media3.exoplayer)
 			implementation(libs.androidx.media3.session)
 			implementation(libs.androidx.media3.ui)
 			implementation(libs.androidx.animation.graphics)
+			implementation(libs.glance.appwidget)
+			implementation(libs.glance.material3)
 		}
 		iosMain.dependencies {
 			implementation(
