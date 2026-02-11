@@ -24,6 +24,7 @@ import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.unit.ColorProvider
 import paige.navic.R
 import paige.navic.widgets.nowplaying.NowPlayingWidget
@@ -31,6 +32,7 @@ import paige.navic.widgets.nowplaying.NowPlayingWidget
 class TurnTableWidget : NowPlayingWidget() {
 
 	override val sizeMode = SizeMode.Exact
+	override val stateDefinition = PreferencesGlanceStateDefinition
 
 	@Composable
 	override fun Content(
