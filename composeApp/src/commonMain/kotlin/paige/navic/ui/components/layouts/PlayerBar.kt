@@ -1,7 +1,12 @@
 package paige.navic.ui.components.layouts
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -13,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -113,6 +119,9 @@ fun PlayerBar(
 		}
 	}
 
+	val enabled = playerState.currentTrack != null
+		&& !playerState.isLoading
+
 	Swiper(
 		onSwipeLeft = {
 			player.next()
@@ -186,6 +195,16 @@ fun PlayerBar(
 								tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
 							)
 						}
+						AnimatedVisibility(
+							playerState.isLoading,
+							modifier = Modifier.matchParentSize().padding(10.dp),
+							enter = scaleIn(MaterialTheme.motionScheme.defaultSpatialSpec())
+								+ fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec()),
+							exit = scaleOut(MaterialTheme.motionScheme.defaultSpatialSpec())
+								+ fadeOut(MaterialTheme.motionScheme.defaultEffectsSpec())
+						) {
+							CircularProgressIndicator(Modifier.matchParentSize())
+						}
 					}
 				},
 				trailingContent = {
@@ -201,7 +220,7 @@ fun PlayerBar(
 									player.pause()
 								}
 							},
-							enabled = playerState.currentTrack != null
+							enabled = enabled
 						) {
 							val painter = playPauseIconPainter(playerState.isPaused)
 							if (painter != null) {
@@ -225,7 +244,7 @@ fun PlayerBar(
 								ctx.clickSound()
 								player.next()
 							},
-							enabled = playerState.currentTrack != null
+							enabled = enabled
 						) {
 							Icon(
 								imageVector = Icons.Filled.SkipNext,
@@ -261,7 +280,7 @@ fun PlayerBar(
 				Box(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(10.dp)
+						.height(14.dp)
 						.pointerInput(Unit) {
 							if (track != null) {
 								detectDragGestures(

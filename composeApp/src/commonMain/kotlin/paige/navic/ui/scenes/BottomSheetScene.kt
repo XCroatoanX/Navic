@@ -1,4 +1,4 @@
-package paige.navic.data.models
+package paige.navic.ui.scenes
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -37,8 +37,8 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
 import kotlinx.coroutines.launch
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.models.BottomSheetSceneStrategy.Companion.bottomSheet
 import paige.navic.data.session.SessionManager
+import paige.navic.ui.scenes.BottomSheetSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */

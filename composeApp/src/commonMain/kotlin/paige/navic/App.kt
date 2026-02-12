@@ -49,7 +49,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import paige.navic.data.models.BottomSheetSceneStrategy
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.shared.Ctx
@@ -58,6 +57,7 @@ import paige.navic.shared.rememberCtx
 import paige.navic.shared.rememberMediaPlayer
 import paige.navic.ui.components.layouts.BottomBar
 import paige.navic.ui.components.layouts.PlayerBar
+import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.screens.AddToPlaylistScreen
 import paige.navic.ui.screens.AlbumsScreen
 import paige.navic.ui.screens.ArtistScreen
