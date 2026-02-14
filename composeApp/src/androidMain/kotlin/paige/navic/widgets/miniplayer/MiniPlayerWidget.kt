@@ -60,6 +60,7 @@ class MiniPlayerWidget : NowPlayingWidget() {
 					.height(88.dp)
 					.padding(12.dp)
 					.clickable(actionStartActivity(launchIntent(context)))
+					.appWidgetInnerCornerRadius(0.dp)
 					.appWidgetBackground(),
 				verticalAlignment = Alignment.CenterVertically
 			) {
