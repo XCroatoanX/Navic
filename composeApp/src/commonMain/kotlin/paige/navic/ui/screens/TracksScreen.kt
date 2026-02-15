@@ -431,7 +431,7 @@ private fun TracksScreenScope.Metadata() {
 			alignment = Alignment.CenterHorizontally
 		)
 	) {
-		val shape = ContinuousRoundedRectangle(12.dp)
+		val shape = MaterialTheme.shapes.medium
 		FilledTonalButton(
 			modifier = Modifier.weight(1f),
 			onClick = { player.play(tracks, 0) },
@@ -542,7 +542,7 @@ private fun TracksScreenPlaceholder(
 					end = 64.dp
 				)
 				.aspectRatio(1f)
-				.clip(ContinuousRoundedRectangle(16.dp))
+				.clip(MaterialTheme.shapes.large)
 				.background(MaterialTheme.colorScheme.surfaceContainer)
 				.shimmerLoading()
 		)
