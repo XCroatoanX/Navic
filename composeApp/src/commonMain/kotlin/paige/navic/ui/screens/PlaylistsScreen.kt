@@ -69,6 +69,8 @@ fun PlaylistsScreen(
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val playlistsState by viewModel.playlistsState.collectAsState()
+	val isRefreshing by viewModel.isRefreshing.collectAsState()
+
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
@@ -109,16 +111,16 @@ fun PlaylistsScreen(
 			modifier = Modifier
 				.padding(innerPadding)
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = playlistsState is UiState.Loading,
+			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
 		) {
-			AnimatedContent(playlistsState) {
+			AnimatedContent(playlistsState::class) {
 				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-					when (it) {
+					when (val state = playlistsState) {
 						is UiState.Loading -> artGridPlaceholder()
-						is UiState.Error -> artGridError(it)
+						is UiState.Error -> artGridError(state)
 						is UiState.Success -> {
-							items(it.data, { it.id }) { playlist ->
+							items(state.data, { it.id }) { playlist ->
 								PlaylistsScreenItem(
 									modifier = Modifier.animateItem(),
 									playlist = playlist,

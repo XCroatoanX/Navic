@@ -17,6 +17,9 @@ class PlaylistsViewModel(
 	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading)
 	val playlistsState = _playlistsState.asStateFlow()
 
+	private val _isRefreshing = MutableStateFlow(false)
+	val isRefreshing = _isRefreshing.asStateFlow()
+
 	private val _selectedPlaylist = MutableStateFlow<Playlist?>(null)
 	val selectedPlaylist: StateFlow<Playlist?> = _selectedPlaylist.asStateFlow()
 
@@ -38,12 +41,24 @@ class PlaylistsViewModel(
 
 	fun refreshPlaylists() {
 		viewModelScope.launch {
-			_playlistsState.value = UiState.Loading
+			val currentState = _playlistsState.value
+			val hasData = currentState is UiState.Success && currentState.data.isNotEmpty()
+
+			if (hasData) {
+				_isRefreshing.value = true
+			} else {
+				_playlistsState.value = UiState.Loading
+			}
+
 			try {
 				val playlists = repository.getPlaylists()
 				_playlistsState.value = UiState.Success(playlists)
 			} catch (e: Exception) {
-				_playlistsState.value = UiState.Error(e)
+				if (!hasData) {
+					_playlistsState.value = UiState.Error(e)
+				}
+			} finally {
+				_isRefreshing.value = false
 			}
 		}
 	}

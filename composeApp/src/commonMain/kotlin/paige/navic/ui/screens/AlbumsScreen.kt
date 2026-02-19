@@ -89,6 +89,7 @@ fun AlbumsScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	val gridState = rememberLazyGridState()
+	val isRefreshing by viewModel.isRefreshing.collectAsState()
 	val isPaginating by viewModel.isPaginating.collectAsState()
 	val actions: @Composable RowScope.() -> Unit = {
 		SortButton(!nested, viewModel)
@@ -112,7 +113,7 @@ fun AlbumsScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = albumsState is UiState.Loading,
+			isRefreshing = isRefreshing || albumsState is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums() }
 		) {
 			AnimatedContent(albumsState::class) {
