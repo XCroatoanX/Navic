@@ -47,6 +47,7 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import paige.navic.data.models.Screen
@@ -83,37 +84,11 @@ import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.easedVerticalGradient
 
-// rememberNavBackStack on android will automatically
-// make this, but since other platforms don't have
-// reflection this needs to be made in kmp manually
+@OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
 	serializersModule = SerializersModule {
 		polymorphic(NavKey::class) {
-			// tabs
-			subclass(Screen.Library::class, Screen.Library.serializer())
-			subclass(Screen.Albums::class, Screen.Albums.serializer())
-			subclass(Screen.Playlists::class, Screen.Playlists.serializer())
-			subclass(Screen.Artists::class, Screen.Artists.serializer())
-
-			// misc
-			subclass(Screen.Player::class, Screen.Player.serializer())
-			subclass(Screen.Lyrics::class, Screen.Lyrics.serializer())
-			subclass(Screen.Search::class, Screen.Search.serializer())
-			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
-			subclass(Screen.TrackInfo::class, Screen.TrackInfo.serializer())
-			subclass(Screen.Artist::class, Screen.Artist.serializer())
-			subclass(Screen.AddToPlaylist::class, Screen.AddToPlaylist.serializer())
-			subclass(Screen.CreatePlaylist::class, Screen.CreatePlaylist.serializer())
-
-			// settings
-			subclass(Screen.Settings.Root::class, Screen.Settings.Root.serializer())
-			subclass(Screen.Settings.Appearance::class, Screen.Settings.Appearance.serializer())
-			subclass(Screen.Settings.Behaviour::class, Screen.Settings.Behaviour.serializer())
-			subclass(Screen.Settings.BottomAppBar::class, Screen.Settings.BottomAppBar.serializer())
-			subclass(Screen.Settings.NowPlaying::class, Screen.Settings.NowPlaying.serializer())
-			subclass(Screen.Settings.Scrobbling::class, Screen.Settings.Scrobbling.serializer())
-			subclass(Screen.Settings.About::class, Screen.Settings.About.serializer())
-			subclass(Screen.Settings.Acknowledgements::class, Screen.Settings.Acknowledgements.serializer())
+			subclassesOfSealed<Screen>()
 		}
 	}
 }

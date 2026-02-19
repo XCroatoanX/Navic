@@ -108,6 +108,7 @@ kotlin {
 
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
+			implementation(libs.kotlinx.serialization.json)
 		}
 
 		androidMain.dependencies {
