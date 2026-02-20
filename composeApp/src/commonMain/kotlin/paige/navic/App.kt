@@ -79,6 +79,7 @@ import paige.navic.ui.screens.LyricsScreen
 import paige.navic.ui.screens.PlayerScreen
 import paige.navic.ui.screens.PlaylistsScreen
 import paige.navic.ui.screens.SearchScreen
+import paige.navic.ui.screens.SharesScreen
 import paige.navic.ui.screens.TrackInfoScreen
 import paige.navic.ui.screens.TracksScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
@@ -249,6 +250,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Search> {
 			SearchScreen()
+		}
+		entry<Screen.Shares> {
+			SharesScreen()
 		}
 		entry<Screen.Artist>(metadata = detailPane("root")) { key ->
 			ArtistScreen(key.artist)

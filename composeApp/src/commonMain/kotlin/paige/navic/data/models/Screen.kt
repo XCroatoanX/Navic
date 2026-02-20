@@ -34,6 +34,7 @@ sealed interface Screen : NavKey {
 	@Serializable data class Tracks(val partialCollection: TrackCollection) : Screen
 	@Serializable data class TrackInfo(val track: Track) : Screen
 	@Serializable data object Search : Screen
+	@Serializable data object Shares : Screen
 	@Serializable data class Artist(val artist: String) : Screen
 	@Serializable data class AddToPlaylist(val tracks: List<Track>, val playlistToExclude: String? = null) : Screen
 	@Serializable data class CreatePlaylist(val tracks: List<Track> = emptyList()) : Screen
