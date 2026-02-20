@@ -14,12 +14,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -52,19 +49,7 @@ class PlaybackService : MediaSessionService() {
 			)
 			.setBackBuffer(10_000, true)
 			.build()
-		val trackSelector = DefaultTrackSelector(this).apply {
-			parameters = buildUponParameters()
-				.setAudioOffloadPreferences(
-					TrackSelectionParameters.AudioOffloadPreferences.Builder()
-						.setAudioOffloadMode(TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
-						.build()
-				)
-				.build()
-		}
-		val renderersFactory = DefaultRenderersFactory(this)
-			.setEnableAudioFloatOutput(true)
-		val player = ExoPlayer.Builder(this, renderersFactory)
-			.setTrackSelector(trackSelector)
+		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
 			.build()
 			.apply {
