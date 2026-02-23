@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Copy
 import paige.navic.icons.outlined.KeyboardArrowDown
+import paige.navic.icons.outlined.Refresh
 import paige.navic.ui.theme.mapleMono
 import paige.navic.utils.UiState
 
@@ -46,6 +48,7 @@ import paige.navic.utils.UiState
 fun ErrorBox(
 	error: UiState.Error,
 	padding: PaddingValues = PaddingValues(12.dp),
+	onRetry: (() -> Unit)? = null,
 	modifier: Modifier = Modifier
 ) {
 	@Suppress("DEPRECATION")
@@ -67,11 +70,27 @@ fun ErrorBox(
 	}
 	Form(modifier = modifier.padding(padding)) {
 		FormRow(
-			color = MaterialTheme.colorScheme.errorContainer
+			color = MaterialTheme.colorScheme.errorContainer,
+			horizontalArrangement = Arrangement.Center
 		) {
 			Text(
-				stringResource(Res.string.info_error)
+				stringResource(Res.string.info_error),
+				modifier = Modifier.weight(1f)
 			)
+			onRetry?.let { onRetry ->
+				IconButton(
+					onClick = {
+						ctx.clickSound()
+						onRetry()
+					},
+					content = {
+						Icon(Icons.Outlined.Refresh, null)
+					},
+					colors = IconButtonDefaults.iconButtonColors(
+						MaterialTheme.colorScheme.errorContainer.darken(1.25f)
+					)
+				)
+			}
 			IconButton(
 				onClick = {
 					ctx.clickSound()

@@ -163,7 +163,8 @@ fun LyricsScreen(
 			when (uiState) {
 				is UiState.Error -> ErrorBox(
 					error = uiState,
-					modifier = Modifier.wrapContentSize()
+					modifier = Modifier.wrapContentSize(),
+					onRetry = { viewModel.refreshResults() }
 				)
 
 				is UiState.Loading -> LoadingScreen()
