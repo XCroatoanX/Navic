@@ -186,5 +186,6 @@
 	<string name="info_shared_by">Shared by %1$s</string>
 	<string name="info_share_expires_in">Expires in %1$s</string>
 	<string name="info_share_expires_never">Never expires</string>
+	<string name="info_share_expired">Expired</string>
 	<string name="info_no_shares">No shares</string>
 </resources>
