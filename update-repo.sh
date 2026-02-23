@@ -19,7 +19,7 @@ version=$(echo "$clean_release_info" | jq -r '.tag_name // empty')
 echo "Release version: $version"
 echo "Updated at: $updated_at"
 
-ipa_files=$(echo "$clean_release_info" | jq -r '[.attachments[]? | select(.name | endswith(".ipa") or endswith(".tipa")) | {
+ipa_files=$(echo "$clean_release_info" | jq -r '[.assets[]? | select(.name | endswith(".ipa") or endswith(".tipa")) | {
     name: .name,
     size: (.size | tonumber),
     download_url: .browser_download_url

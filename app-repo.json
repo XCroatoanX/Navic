@@ -1,8 +1,8 @@
 {
   "name": "Navic Repository",
   "identifier": "paige.navic.repo",
-  "website": "https://github.com/paigely/Navic",
-  "iconURL": "https://github.com/paigely/Navic/blob/master/.github/icon.png?raw=true",
+  "website": "https://codeberg.org/paige/Navic",
+  "iconURL": "https://codeberg.org/paige/Navic/blob/master/.github/icon.png?raw=true",
   "apps": [
     {
       "name": "Navic",
@@ -11,26 +11,26 @@
       "localizedDescription": "Navidrome client for Android and iOS with Material 3 Expressive design ",
       "subtitle": "Material 3 expressive Navidrome client",
       "tintColor": "ffffff",
-      "iconURL": "https://github.com/paigely/Navic/blob/master/.github/icon.png?raw=true",
+      "iconURL": "https://codeberg.org/paige/Navic/raw/branch/master/.github/icon.png",
       "versions": [
         {
           "version": "v1.0.0-alpha18",
-          "date": "2026-02-20T19:26:18Z",
-          "size": 20186146,
-          "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha18/Navic.ipa"
+          "date": "2026-02-20T19:41:23+01:00",
+          "size": 18225152,
+          "downloadURL": "https://codeberg.org/paige/Navic/releases/download/v1.0.0-alpha18/Navic.ipa"
         }
       ],
       "appPermissions": {},
       "screenshotURLs": [
-        "https://github.com/paigely/Navic/blob/master/.github/albums.png?raw=true",
-        "https://github.com/paigely/Navic/blob/master/.github/library.png?raw=true",
-        "https://github.com/paigely/Navic/blob/master/.github/lyrics.png?raw=true",
-        "https://github.com/paigely/Navic/blob/master/.github/player.png?raw=true"
+        "https://codeberg.org/paige/Navic/raw/branch/master/.github/albums.png",
+        "https://codeberg.org/paige/Navic/raw/branch/master/.github/library.png",
+        "https://codeberg.org/paige/Navic/raw/branch/master/.github/lyrics.png",
+        "https://codeberg.org/paige/Navic/raw/branch/master/.github/player.png"
       ],
       "version": "v1.0.0-alpha18",
-      "versionDate": "2026-02-20T19:26:18Z",
-      "size": 20186146,
-      "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha18/Navic.ipa"
+      "versionDate": "2026-02-20T19:41:23+01:00",
+      "size": 18225152,
+      "downloadURL": "https://codeberg.org/paige/Navic/releases/download/v1.0.0-alpha18/Navic.ipa"
     }
   ]
 }
