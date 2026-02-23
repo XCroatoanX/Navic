@@ -53,6 +53,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
+import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Sort
 import paige.navic.icons.outlined.Star
@@ -278,7 +279,9 @@ fun AlbumsScreenItem(
 						)
 					)
 				},
-				leadingIcon = { Icon(Icons.Outlined.Star, null) },
+				leadingIcon = {
+					Icon(if (starred == true) Icons.Filled.Star else Icons.Outlined.Star, null)
+				},
 				onClick = {
 					viewModel.starAlbum(starred != true)
 					viewModel.selectAlbum(null)

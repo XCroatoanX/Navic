@@ -37,6 +37,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
+import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.AlphabeticalScroller
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
@@ -192,7 +193,9 @@ fun ArtistsScreenItem(
 						)
 					)
 				},
-				leadingIcon = { Icon(Icons.Filled.Star, null) },
+				leadingIcon = {
+					Icon(if (starred == true) Icons.Filled.Star else Icons.Outlined.Star, null)
+				},
 				onClick = {
 					if (starred == true)
 						viewModel.unstarSelectedArtist()
