@@ -1,18 +1,13 @@
 package paige.navic.ui.components.dialogs
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kyant.capsule.ContinuousCapsule
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -38,8 +32,12 @@ import navic.composeapp.generated.resources.title_delete_share
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Delete
+import paige.navic.ui.components.common.FormButton
 import paige.navic.utils.UiState
 
 enum class DeletionEndpoint(
@@ -66,14 +64,14 @@ class DeletionViewModel : ViewModel() {
 					DeletionEndpoint.SHARE -> SessionManager.api.deleteShare(id)
 				}
 				_state.value = UiState.Success(null)
-			} catch(e: Exception) {
+			} catch (e: Exception) {
 				_state.value = UiState.Error(e)
 			}
 		}
 	}
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DeletionDialog(
 	viewModel: DeletionViewModel = viewModel { DeletionViewModel() },
@@ -81,9 +79,8 @@ fun DeletionDialog(
 	id: String?,
 	onIdClear: () -> Unit
 ) {
-
+	val ctx = LocalCtx.current
 	val snackbarState = LocalSnackbarState.current
-	val scrollState = rememberScrollState()
 	val state by viewModel.state.collectAsState()
 
 	LaunchedEffect(state) {
@@ -98,52 +95,42 @@ fun DeletionDialog(
 	}
 
 	id?.let {
-		AlertDialog(
-			title = { Text(stringResource(endpoint.questionText)) },
-			text = {
-				Column(Modifier.verticalScroll(scrollState)) {
-					Text(
-						stringResource(
-							if (state !is UiState.Error)
-								Res.string.info_action_is_permanent
-							else Res.string.info_error
-						)
-					)
-					(state as? UiState.Error)?.error?.let {
-						SelectionContainer {
-							Text("$it")
-						}
-					}
-				}
-			},
+		FormDialog(
 			onDismissRequest = {
 				if (state !is UiState.Loading) {
 					onIdClear()
 				}
 			},
-			confirmButton = {
-				Button(
+			icon = { Icon(Icons.Outlined.Delete, null) },
+			title = { Text(stringResource(endpoint.questionText)) },
+			buttons = {
+				FormButton(
 					onClick = { viewModel.delete(endpoint, id) },
-					enabled = state !is UiState.Loading,
-					colors = ButtonDefaults.buttonColors(
-						containerColor = MaterialTheme.colorScheme.error
-					),
-					shape = ContinuousCapsule
+					color = MaterialTheme.colorScheme.error
 				) {
-					if (state !is UiState.Loading) {
-						Text(stringResource(Res.string.action_delete))
-					} else {
+					if (state is UiState.Loading) {
 						CircularProgressIndicator(Modifier.size(20.dp))
 					}
+					Text(stringResource(Res.string.action_delete))
+				}
+				FormButton(onClick = onIdClear) {
+					Text(stringResource(Res.string.action_cancel))
 				}
 			},
-			dismissButton = {
-				TextButton(
-					enabled = state !is UiState.Loading,
-					onClick = onIdClear,
-				) { Text(stringResource(Res.string.action_cancel)) }
-			},
-			shape = MaterialTheme.shapes.extraExtraLarge
+			content = {
+				(state as? UiState.Error)?.error?.let {
+					SelectionContainer {
+						Text("$it")
+					}
+				}
+				Text(
+					stringResource(
+						if (state !is UiState.Error)
+							Res.string.info_action_is_permanent
+						else Res.string.info_error
+					)
+				)
+			}
 		)
 	}
 }

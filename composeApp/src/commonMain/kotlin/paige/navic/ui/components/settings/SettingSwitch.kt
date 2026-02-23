@@ -20,11 +20,13 @@ import paige.navic.icons.outlined.SwitchOn
 @Composable
 fun SettingSwitch(
 	checked: Boolean,
-	onCheckedChange: (Boolean) -> Unit
+	onCheckedChange: (Boolean) -> Unit,
+	enabled: Boolean = true
 ) {
 	Switch(
 		checked = checked,
 		onCheckedChange = onCheckedChange,
+		enabled = enabled,
 		colors = SwitchDefaults.colors(
 			uncheckedBorderColor = Color.Transparent,
 			uncheckedThumbColor = Color.White

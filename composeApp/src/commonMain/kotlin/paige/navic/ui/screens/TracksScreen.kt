@@ -376,7 +376,9 @@ fun TracksScreen(
 														backStack.add(
 															Screen.AddToPlaylist(
 																listOf(track),
-																playlistToExclude = tracks.id
+																playlistToExclude = if (tracks is Playlist)
+																	tracks.id
+																else null
 															)
 														)
 													}

@@ -20,11 +20,12 @@ fun Form(
 	modifier: Modifier = Modifier,
 	rounding: Dp = 18.dp,
 	spacing: Dp = 3.dp,
+	bottomPadding: Dp = 24.dp,
 	content: @Composable ColumnScope.() -> Unit
 ) {
 	Column(
 		modifier = modifier
-			.padding(bottom = 24.dp)
+			.padding(bottom = bottomPadding)
 			.clip(ContinuousRoundedRectangle(rounding))
 			.background(
 				if (Settings.shared.theme != Settings.Theme.iOS

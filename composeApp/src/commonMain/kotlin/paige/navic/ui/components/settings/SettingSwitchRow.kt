@@ -1,6 +1,7 @@
 package paige.navic.ui.components.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalTextStyle
@@ -18,9 +19,15 @@ fun SettingSwitchRow(
 	title: @Composable () -> Unit,
 	subtitle: @Composable () -> Unit = {},
 	value: Boolean,
-	onSetValue: (Boolean) -> Unit
+	onSetValue: (Boolean) -> Unit,
+	enabled: Boolean = true,
+	contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 18.dp),
+	isDividerShown: Boolean = true
 ) {
-	FormRow(onClick = { onSetValue(!value) }) {
+	FormRow(
+		onClick = { onSetValue(!value) },
+		contentPadding = contentPadding
+	) {
 		Column(Modifier.weight(1f)) {
 			title()
 			CompositionLocalProvider(
@@ -31,12 +38,13 @@ fun SettingSwitchRow(
 				subtitle()
 			}
 		}
-		if (Settings.shared.theme.isMaterialLike()) {
+		if (Settings.shared.theme.isMaterialLike() && isDividerShown) {
 			VerticalDivider(Modifier.height(32.dp).padding(horizontal = 14.dp))
 		}
 		SettingSwitch(
 			checked = value,
-			onCheckedChange = { onSetValue(it) }
+			onCheckedChange = { onSetValue(it) },
+			enabled = enabled
 		)
 	}
 }
