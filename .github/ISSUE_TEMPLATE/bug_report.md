@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
  - Device: [eg. Pixel 8a]
  - OS: [eg. Android 16]
- - Version [eg. v1.0.0-alpha19]
+ - Version [eg. v1.0.0-alpha20]
 
 **Additional context**
 Add any other context about the problem here.
