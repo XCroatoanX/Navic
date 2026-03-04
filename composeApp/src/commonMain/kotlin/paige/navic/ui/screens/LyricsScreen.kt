@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,7 +79,6 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Share
-import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.viewmodels.LyricsViewModel
 import paige.navic.utils.UiState
@@ -138,12 +138,6 @@ fun LyricsScreen(
 	val sharedPainter = rememberTrackPainter(track.id, track.coverArt)
 
 	Box(modifier = Modifier.fillMaxSize()) {
-		if (Settings.shared.animatePlayerBackground) {
-			BlendBackground(
-				painter = sharedPainter,
-				isPaused = playerState.isPaused
-			)
-		}
 		AnimatedContent(
 			state,
 			modifier = Modifier.fillMaxSize(),
@@ -255,7 +249,7 @@ fun LyricsScreen(
 
 								val highlight = if (isSelectionMode) isSelected else isActive
 								val progress = if (isSelectionMode && isSelected) {
-									1.1f
+									1.0f
 								} else if (!isSelectionMode && isActive) {
 									lineProgress
 								} else {
@@ -479,28 +473,39 @@ private fun KaraokeText(
 							(layout.getLineRight(it) - layout.getLineLeft(it)).toDouble()
 						}.toFloat()
 
-						val currentPixelTarget = totalWidth * smoothProgress
-
 						val feather = 30f
+						val adjustedTotalWidth = totalWidth + (feather * 2)
+						val currentPixelTarget = (adjustedTotalWidth * smoothProgress) - feather
+
 						var accumulatedWidth = 0f
 
 						for (i in 0 until layout.lineCount) {
 							val lineLeft = layout.getLineLeft(i)
 							val lineRight = layout.getLineRight(i)
 							val lineWidth = lineRight - lineLeft
+
+							if (lineWidth <= 0f) continue
+
 							val lineTop = layout.getLineTop(i)
 							val lineBottom = layout.getLineBottom(i)
 
+							val lineStartOffset = layout.getLineStart(i)
+							val direction = layout.getBidiRunDirection(lineStartOffset)
+							val isRtl = direction == ResolvedTextDirection.Rtl
+
 							val startOffFadeIn = currentPixelTarget - accumulatedWidth - feather
 							val endOfFadeIn = currentPixelTarget - accumulatedWidth + feather
+
+							val startX = if (isRtl) lineRight else lineLeft
+							val endX = if (isRtl) lineLeft else lineRight
 
 							val brush = Brush.linearGradient(
 								0.0f to Color.White,
 								(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to Color.White,
 								(endOfFadeIn / lineWidth).coerceIn(0f, 1f) to Color.Transparent,
 								1.0f to Color.Transparent,
-								start = Offset(lineLeft, 0f),
-								end = Offset(lineRight, 0f)
+								start = Offset(startX, 0f),
+								end = Offset(endX, 0f)
 							)
 
 							drawRect(

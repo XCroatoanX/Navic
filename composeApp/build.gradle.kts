@@ -128,6 +128,7 @@ kotlin {
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
 			implementation(libs.kotlinx.serialization.json)
+			implementation(libs.androidx.datastore.preferences)
 		}
 
 		androidMain.dependencies {
@@ -239,7 +240,7 @@ compose.desktop {
 	application {
 		mainClass = "paige.navic.MainKt"
 		nativeDistributions {
-			targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.AppImage)
+			targetFormats(TargetFormat.Msi, TargetFormat.Dmg)
 			packageName = "paige.Navic"
 		}
 	}
