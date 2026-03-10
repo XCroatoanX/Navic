@@ -24,6 +24,9 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.theme_apple_music
 import navic.composeapp.generated.resources.theme_dynamic
 import navic.composeapp.generated.resources.theme_ios
+import navic.composeapp.generated.resources.theme_mode_dark
+import navic.composeapp.generated.resources.theme_mode_light
+import navic.composeapp.generated.resources.theme_mode_system
 import navic.composeapp.generated.resources.theme_seeded
 import navic.composeapp.generated.resources.theme_spotify
 import navic.composeapp.generated.resources.theme_subtitle_apple_music
@@ -226,6 +229,7 @@ class Settings(
 
 	// theme related settings
 	var theme by preference(Theme.Dynamic)
+	var themeMode by preference(ThemeMode.System)
 	var accentColourH by preference(0f)
 	var accentColourS by preference(0f)
 	var accentColourV by preference(1f)
@@ -253,6 +257,12 @@ class Settings(
 		TwoByTwo(2, "2x2"),
 		ThreeByThree(3, "3x3"),
 		FourByFour(4, "4x4")
+	}
+
+	enum class ThemeMode(val title: StringResource) {
+		System(Res.string.theme_mode_system),
+		Dark(Res.string.theme_mode_dark),
+		Light(Res.string.theme_mode_light)
 	}
 
 	/**
@@ -297,7 +307,14 @@ class Settings(
 		@Composable
 		fun colorScheme(): ColorScheme {
 			val ctx = LocalCtx.current
-			val isDark = isSystemInDarkTheme()
+			val inDarkTheme = isSystemInDarkTheme()
+			val isDark = remember(shared.themeMode) {
+				when (shared.themeMode) {
+					ThemeMode.System -> inDarkTheme
+					ThemeMode.Dark -> true
+					ThemeMode.Light -> false
+				}
+			}
 			return when (this) {
 				Dynamic -> ctx.colorScheme ?: remember(isDark) {
 					if (isDark)
@@ -310,7 +327,7 @@ class Settings(
 						shared.accentColourS,
 						shared.accentColourV
 					).toColor(),
-					isDark = isSystemInDarkTheme(),
+					isDark = isDark,
 					specVersion = ColorSpec.SpecVersion.SPEC_2025,
 				)
 				iOS -> if (isDark)
