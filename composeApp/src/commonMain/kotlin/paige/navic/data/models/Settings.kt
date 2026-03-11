@@ -247,8 +247,6 @@ class Settings(
 	enum class FontOption {
 		System,
 		GoogleSans,
-		NotoSans,
-		Inter,
 		Custom
 	}
 
