@@ -37,7 +37,7 @@ data class LyricsResult(
 enum class LyricsProvider(
 	val displayName: String
 ) {
-	LYRICS_PLUS("Lyrics Plus"),
+	LYRICS_PLUS("YouLy+"),
 	SUBSONIC("Subsonic"),
 	LRCLIB("Lrclib")
 }

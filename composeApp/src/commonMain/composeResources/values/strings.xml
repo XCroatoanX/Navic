@@ -36,7 +36,7 @@
 	<string name="subtitle_scrobbling">Scrobble the music you listen to</string>
 	<string name="subtitle_about">Version, licenses</string>
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
-	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
+	<string name="subtitle_lyrics_beat_by_beat">Use a simulated beat-by-beat gradient when real timing isn't available.</string>
 	<string name="subtitle_grid_items_per_row">The size of grids across the app</string>
 	<string name="subtitle_use_marquee_text">Whether to scroll long text</string>
 	<string name="subtitle_playlist">Playlist</string>
