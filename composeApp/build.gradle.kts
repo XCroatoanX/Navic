@@ -18,6 +18,8 @@ plugins {
 	alias(libs.plugins.composeCompiler)
 	alias(libs.plugins.aboutLibraries)
 	alias(libs.plugins.valkyrie)
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.androidx.room)
 }
 
 configurations.all {
@@ -149,6 +151,9 @@ kotlin {
 			implementation(libs.androidx.datastore.preferences)
 
 			implementation(libs.subsonicKotlin)
+
+			implementation(libs.androidx.room.runtime)
+			implementation(libs.androidx.sqlite.bundled)
 		}
 
 		androidMain.dependencies {
@@ -170,6 +175,17 @@ kotlin {
 		}
 	}
 
+}
+
+dependencies {
+	add("kspAndroid", libs.androidx.room.compiler)
+
+	val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
+	if (isMacOs) {
+		add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+		add("kspIosX64", libs.androidx.room.compiler)
+		add("kspIosArm64", libs.androidx.room.compiler)
+	}
 }
 
 android {
@@ -264,6 +280,10 @@ compose.desktop {
 			packageName = "paige.Navic"
 		}
 	}
+}
+
+room {
+	schemaDirectory("$projectDir/schemas")
 }
 
 abstract class SyncComposeStringsTask : DefaultTask() {

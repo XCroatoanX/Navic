@@ -27,6 +27,10 @@ kmpalette = "3.1.0"
 aboutLibraries = "13.2.1"
 glance = "1.2.0-rc01"
 
+room = "2.8.4"
+sqlite = "2.6.2"
+ksp = "2.2.21-2.0.4"
+
 [libraries]
 cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
 cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose" }
@@ -76,6 +80,10 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 
 subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-alpha04" }
 
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
 [bundles]
 cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]
 coil = ["coil-compose", "coil-network-ktor3"]
@@ -98,3 +106,5 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 valkyrie = { id = "io.github.composegears.valkyrie", version = "0.4.0" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }
