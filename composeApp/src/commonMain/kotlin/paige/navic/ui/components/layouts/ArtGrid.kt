@@ -1,5 +1,6 @@
 package paige.navic.ui.components.layouts
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.indication
@@ -34,18 +35,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.AsyncImage
-import coil3.request.CachePolicy
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalCtx
-import paige.navic.LocalImageBuilder
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Settings
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
 import paige.navic.utils.onRightClick
+import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.shimmerLoading
 
 @Composable
@@ -90,17 +87,8 @@ fun ArtGridItem(
 	tab: String
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
-	val imageBuilder = LocalImageBuilder.current
 	val artGridRounding = Settings.shared.artGridRounding
-	val model = remember(coverArt) {
-		imageBuilder
-			.data(SessionManager.api.getCoverArtUrl(coverArt))
-			.memoryCacheKey(coverArt)
-			.diskCacheKey(coverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
+	val painter = rememberTrackPainter(coverArt)
 	with(LocalSharedTransitionScope.current) {
 		Column(
 			modifier = Modifier
@@ -114,8 +102,8 @@ fun ArtGridItem(
 				.onRightClick { onLongClick?.invoke() }
 				.then(modifier)
 		) {
-			AsyncImage(
-				model = model,
+			Image(
+				painter = painter,
 				contentDescription = title,
 				contentScale = ContentScale.Crop,
 				modifier = Modifier

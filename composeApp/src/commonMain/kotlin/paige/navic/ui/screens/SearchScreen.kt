@@ -2,6 +2,7 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -57,11 +57,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.api.model.Artist
@@ -82,8 +77,6 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
@@ -99,6 +92,7 @@ import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.ui.viewmodels.SearchViewModel
 import paige.navic.utils.UiState
+import paige.navic.utils.rememberTrackPainter
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),
@@ -118,7 +112,6 @@ fun SearchScreen(
 	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
 
 	val ctx = LocalCtx.current
-	val platformContext = LocalPlatformContext.current
 	val player = LocalMediaPlayer.current
 
 	val artistsViewModel = viewModel { ArtistsViewModel() }
@@ -198,16 +191,7 @@ fun SearchScreen(
 									tracks.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
-									val model = remember(track.coverArtId) {
-										ImageRequest.Builder(platformContext)
-											.data(SessionManager.api.getCoverArtUrl(track.coverArtId))
-											.memoryCacheKey(track.coverArtId)
-											.diskCacheKey(track.coverArtId)
-											.diskCachePolicy(CachePolicy.ENABLED)
-											.memoryCachePolicy(CachePolicy.ENABLED)
-											.crossfade(500)
-											.build()
-									}
+									val painter = rememberTrackPainter(track.coverArtId)
 									ListItem(
 										modifier = Modifier.clickable {
 											ctx.clickSound()
@@ -222,8 +206,8 @@ fun SearchScreen(
 											)
 										},
 										leadingContent = {
-											AsyncImage(
-												model = model,
+											Image(
+												painter = painter,
 												contentDescription = null,
 												modifier = Modifier
 													.padding(start = 6.5.dp)

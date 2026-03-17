@@ -9,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -68,10 +69,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.zt64.subsonic.api.model.Playlist
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
 import dev.zt64.subsonic.api.model.Song
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
@@ -92,8 +89,6 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -134,7 +129,7 @@ fun PlayerScreen() {
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 
-	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
+	val sharedPainter = rememberTrackPainter(track?.coverArtId)
 
 	val isBuffering = playerState.isLoading
 	val enabled = playerState.currentTrack != null
@@ -561,16 +556,7 @@ private fun PlayerArtwork(
 ) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()
-	val platformContext = LocalPlatformContext.current
-	val model = remember(track.coverArtId) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(track.coverArtId))
-			.memoryCacheKey(track.coverArtId)
-			.diskCacheKey(track.coverArtId)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
+	val painter = rememberTrackPainter(track.coverArtId)
 	val padding by animateDpAsState(
 		targetValue = if (playerState.isPaused || playerState.currentTrack?.id !== track.id)
 			48.dp
@@ -580,8 +566,8 @@ private fun PlayerArtwork(
 		contentAlignment = Alignment.Center,
 		modifier = modifier
 	) {
-		AsyncImage(
-			model = model,
+		Image(
+			painter = painter,
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier

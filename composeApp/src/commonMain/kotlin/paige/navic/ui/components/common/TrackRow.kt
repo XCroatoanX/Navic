@@ -1,5 +1,6 @@
 package paige.navic.ui.components.common
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -7,26 +8,18 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_album
-import navic.composeapp.generated.resources.info_unknown_artist
 import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
+import paige.navic.utils.rememberTrackPainter
 
 @Composable
 fun TrackRow(
@@ -35,17 +28,7 @@ fun TrackRow(
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
-	val platformContext = LocalPlatformContext.current
-	val model = remember(track.coverArtId) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(track.coverArtId))
-			.memoryCacheKey(track.coverArtId)
-			.diskCacheKey(track.coverArtId)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.crossfade(500)
-			.build()
-	}
+	val painter = rememberTrackPainter(track.coverArtId)
 	ListItem(
 		modifier = modifier.clickable {
 			ctx.clickSound()
@@ -69,8 +52,8 @@ fun TrackRow(
 			)
 		},
 		leadingContent = {
-			AsyncImage(
-				model = model,
+			Image(
+				painter = painter,
 				contentDescription = null,
 				modifier = Modifier
 					.padding(start = 6.5.dp)

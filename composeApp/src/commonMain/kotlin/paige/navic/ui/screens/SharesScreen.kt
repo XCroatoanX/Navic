@@ -1,6 +1,7 @@
 package paige.navic.ui.screens
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,10 +45,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.Share
 import kotlinx.coroutines.delay
@@ -68,8 +65,6 @@ import paige.navic.LocalCtx
 import paige.navic.LocalShareManager
 import paige.navic.LocalSnackbarState
 import paige.navic.data.models.Settings
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
@@ -81,6 +76,7 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.SharesViewModel
 import paige.navic.utils.UiState
+import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.toHoursMinutesSeconds
 import paige.navic.utils.withoutTop
 import kotlin.time.Clock
@@ -283,19 +279,10 @@ private fun ShareCover(
 	modifier: Modifier = Modifier,
 	coverArt: String?
 ) {
-	val platformContext = LocalPlatformContext.current
 	val artGridRounding = Settings.shared.artGridRounding
-	val model = remember(coverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(coverArt))
-			.memoryCacheKey(coverArt)
-			.diskCacheKey(coverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
-	AsyncImage(
-		model = model,
+	val painter = rememberTrackPainter(coverArt)
+	Image(
+		painter = painter,
 		contentDescription = null,
 		contentScale = ContentScale.Crop,
 		modifier = Modifier

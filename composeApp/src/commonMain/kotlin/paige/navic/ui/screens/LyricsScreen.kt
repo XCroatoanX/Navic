@@ -138,7 +138,7 @@ fun LyricsScreen(
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
-	val sharedPainter = rememberTrackPainter(track.id, track.coverArtId)
+	val sharedPainter = rememberTrackPainter(track.coverArtId)
 
 	Box(modifier = Modifier.fillMaxSize()) {
 		AnimatedContent(

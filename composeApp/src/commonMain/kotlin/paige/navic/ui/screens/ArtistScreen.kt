@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -63,11 +64,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_view_on_lastfm
@@ -81,8 +77,6 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -100,6 +94,7 @@ import paige.navic.ui.viewmodels.ArtistState
 import paige.navic.ui.viewmodels.ArtistViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
+import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -285,17 +280,7 @@ private fun ArtistScreenHeader(
 	sharedTransitionScope: SharedTransitionScope
 ) {
 	val layoutDirection = LocalLayoutDirection.current
-	val platformContext = LocalPlatformContext.current
-	val model = remember(coverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(coverArt))
-			.memoryCacheKey(coverArt)
-			.diskCacheKey(coverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.crossfade(500)
-			.build()
-	}
+	val painter = rememberTrackPainter(coverArt)
 	with(sharedTransitionScope) {
 		BoxWithConstraints(
 			modifier = Modifier.fillMaxWidth()
@@ -306,8 +291,8 @@ private fun ArtistScreenHeader(
 					.height((400.dp / (maxWidth / 300.dp)) + innerPadding.calculateTopPadding())
 					.background(MaterialTheme.colorScheme.surfaceContainer)
 			) {
-				AsyncImage(
-					model = model,
+				Image(
+					painter = painter,
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
 					modifier = Modifier.fillMaxSize()

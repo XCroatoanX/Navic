@@ -2,6 +2,7 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,10 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumInfo
@@ -109,6 +106,7 @@ import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodels.TracksViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
+import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.shimmerLoading
 import paige.navic.utils.toHoursMinutesSeconds
 import paige.navic.utils.withoutTop
@@ -368,24 +366,18 @@ private fun Metadata(
 	listState: LazyListState,
 	sharedTransitionScope: SharedTransitionScope
 ) {
-	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val artGridRounding = Settings.shared.artGridRounding
-	val model = remember(partialTracks.coverArtId) {
+	val coverArtUri = remember(partialTracks.coverArtId) {
 		partialTracks.coverArtId?.let { id ->
-			ImageRequest.Builder(platformContext)
-				.data(SessionManager.api.getCoverArtUrl(id, auth = true))
-				.memoryCacheKey(id)
-				.diskCacheKey(id)
-				.diskCachePolicy(CachePolicy.ENABLED)
-				.memoryCachePolicy(CachePolicy.ENABLED)
-				.build()
+			SessionManager.api.getCoverArtUrl(id, auth = true)
 		}
 	}
+	val painter = rememberTrackPainter(partialTracks.coverArtId)
 	with(LocalSharedTransitionScope.current) {
-		AsyncImage(
-			model = model,
+		Image(
+			painter = painter,
 			contentDescription = partialTracks.name,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier
@@ -404,10 +396,8 @@ private fun Metadata(
 					ContinuousRoundedRectangle(artGridRounding.dp)
 				)
 				.background(MaterialTheme.colorScheme.surfaceContainer)
-				.clickable {
-					(model?.data as? String)?.let { uri ->
-						uriHandler.openUri(uri)
-					}
+				.clickable(enabled = coverArtUri != null) {
+					coverArtUri?.let { uriHandler.openUri(it) }
 				}
 		)
 		Spacer(Modifier.height(10.dp))
@@ -540,7 +530,7 @@ private fun TrackRow(
 			Column {
 				MarqueeText(track.title)
 				Text(
-					track.artistName.orEmpty(),
+					track.artistName,
 					style = MaterialTheme.typography.bodySmall,
 					maxLines = 1
 				)

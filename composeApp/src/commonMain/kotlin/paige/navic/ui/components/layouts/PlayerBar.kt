@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,7 +79,7 @@ fun PlayerBar(
 	val coverUri = remember(track?.coverArtId) {
 		track?.coverArtId
 	}
-	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
+	val sharedPainter = rememberTrackPainter(track?.coverArtId)
 
 	val detached = Settings.shared.detachedBar
 
@@ -282,9 +281,7 @@ fun PlayerBar(
 				},
 				supportingContent = {
 					if (track != null) {
-						track.artistName?.let { artist ->
-							MarqueeText(artist)
-						}
+						MarqueeText(track.artistName)
 					} else {
 						MarqueeText(stringResource(Res.string.info_not_playing))
 					}

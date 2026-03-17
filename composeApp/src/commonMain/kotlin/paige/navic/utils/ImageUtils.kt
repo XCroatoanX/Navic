@@ -11,15 +11,15 @@ import coil3.request.crossfade
 import paige.navic.data.session.SessionManager
 
 @Composable
-fun rememberTrackPainter(trackId: String?, coverArt: String?): Painter {
+fun rememberTrackPainter(coverArt: String?): Painter {
 	val context = LocalPlatformContext.current
 
 	val imageRequest = remember(coverArt) {
 		ImageRequest.Builder(context)
 			.data(coverArt?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
 			.crossfade(500)
-			.memoryCacheKey(trackId)
-			.diskCacheKey(trackId)
+			.memoryCacheKey(coverArt)
+			.diskCacheKey(coverArt)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.build()
