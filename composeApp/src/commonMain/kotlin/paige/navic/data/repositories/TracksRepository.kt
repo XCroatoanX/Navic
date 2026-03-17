@@ -10,7 +10,7 @@ import paige.navic.data.session.SessionManager
 class TracksRepository {
 	suspend fun fetchWithAllTracks(collection: SongCollection): SongCollection {
 		return when (collection) {
-			is Album -> SessionManager.api.getAlbum(collection.id)!!
+			is Album -> SessionManager.api.getAlbum(collection.id)
 			is Playlist -> SessionManager.api.getPlaylist(collection.id)
 		}
 	}

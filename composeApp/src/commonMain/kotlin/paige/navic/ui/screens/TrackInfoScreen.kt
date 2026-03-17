@@ -54,7 +54,7 @@ fun TrackInfoScreen(track: Song) {
 					Res.string.info_track_artist_id to track.artistId,
 					Res.string.info_track_bitrate to track.bitRate,
 					Res.string.info_track_bit_depth to track.bitDepth,
-					Res.string.info_track_file_size to track.fileSize?.toFileSize(),
+					Res.string.info_track_file_size to track.fileSize.toFileSize(),
 					Res.string.info_track_format to track.mimeType,
 					Res.string.info_track_sampling_rate to track.sampleRate,
 					Res.string.info_track_channel_count to track.audioChannelCount,
