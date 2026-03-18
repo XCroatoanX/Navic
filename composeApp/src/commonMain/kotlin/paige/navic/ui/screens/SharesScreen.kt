@@ -64,8 +64,6 @@ import paige.navic.LocalCtx
 import paige.navic.LocalShareManager
 import paige.navic.LocalSnackbarState
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
@@ -77,6 +75,7 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.SharesViewModel
 import paige.navic.utils.UiState
+import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.toHoursMinutesSeconds
 import paige.navic.utils.withoutTop
 import kotlin.time.Clock

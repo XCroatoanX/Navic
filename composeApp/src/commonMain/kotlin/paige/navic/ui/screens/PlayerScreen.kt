@@ -88,11 +88,9 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
