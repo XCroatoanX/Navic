@@ -21,10 +21,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
 import com.materialkolor.rememberDynamicColorScheme
 import dev.zt64.compose.pipette.HsvColor
 import dev.zt64.subsonic.api.model.AlbumListType
@@ -36,10 +32,9 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodels.GenreWithAlbums
+import paige.navic.utils.rememberTrackPainter
 import kotlin.math.abs
 
 @Composable
@@ -49,7 +44,6 @@ fun GenreCard(
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val platformContext = LocalPlatformContext.current
 	val inDarkTheme = isSystemInDarkTheme()
 	val isDark = remember(Settings.shared.themeMode) {
 		when (Settings.shared.themeMode) {
@@ -71,24 +65,8 @@ fun GenreCard(
 	)
 	val firstAlbumCoverArt = genre.albums.firstOrNull()?.coverArtId
 	val secondAlbumCoverArt = genre.albums.getOrNull(1)?.coverArtId
-	val firstModel = remember(firstAlbumCoverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(firstAlbumCoverArt))
-			.memoryCacheKey(firstAlbumCoverArt)
-			.diskCacheKey(firstAlbumCoverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
-	val secondModel = remember(secondAlbumCoverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(secondAlbumCoverArt))
-			.memoryCacheKey(secondAlbumCoverArt)
-			.diskCacheKey(secondAlbumCoverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
+	val firstPainter = rememberTrackPainter(firstAlbumCoverArt)
+	val secondPainter = rememberTrackPainter(secondAlbumCoverArt)
 	Surface(
 		modifier = modifier,
 		color = colorScheme.primary,
@@ -106,8 +84,8 @@ fun GenreCard(
 		Box {
 			Box(Modifier.align(Alignment.CenterEnd)) {
 				if (firstAlbumCoverArt != null) {
-					AsyncImage(
-						model = firstModel,
+					Image(
+						painter = firstPainter,
 						contentDescription = null,
 						modifier = Modifier
 							.padding(top = 10.dp)
@@ -119,8 +97,8 @@ fun GenreCard(
 						contentScale = ContentScale.Crop
 					)
 					if (secondAlbumCoverArt != null) {
-						AsyncImage(
-							model = secondModel,
+						Image(
+							painter = secondPainter,
 							contentDescription = null,
 							modifier = Modifier
 								.padding(top = 13.dp)

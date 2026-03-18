@@ -1,7 +1,6 @@
 package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.Artist
-import dev.zt64.subsonic.api.model.Artists
 import paige.navic.data.session.SessionManager
 
 class ArtistsRepository {
