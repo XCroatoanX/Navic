@@ -1,4 +1,4 @@
-package paige.navic.ui.screens
+package paige.navic.ui.screens.tracks
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

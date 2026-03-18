@@ -34,12 +34,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.option_hide_bars_on_scroll
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_progress_in_bar_is_seekable
 import navic.composeapp.generated.resources.option_short_navigation_bar
+import navic.composeapp.generated.resources.option_show_bars_on_all_screens
 import navic.composeapp.generated.resources.option_show_progress_in_bar
 import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_use_detached_bar
+import navic.composeapp.generated.resources.subtitle_show_bars_on_all_screens
 import navic.composeapp.generated.resources.suibtitle_progress_in_bar_is_seekable
 import navic.composeapp.generated.resources.title_bottom_app_bar
 import org.jetbrains.compose.resources.stringResource
@@ -113,6 +116,19 @@ fun BottomBarScreen() {
 							onSetValue = { Settings.shared.progressInBarIsSeekable = it }
 						)
 					}
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_hide_bars_on_scroll)) },
+						value = Settings.shared.hideBarsOnScroll,
+						onSetValue = { Settings.shared.hideBarsOnScroll = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_show_bars_on_all_screens)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_show_bars_on_all_screens)) },
+						value = Settings.shared.showBarsOnAllScreens,
+						onSetValue = { Settings.shared.showBarsOnAllScreens = it }
+					)
 
 					FormRow(
 						onClick = { showNavtabsDialog = true }

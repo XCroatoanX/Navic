@@ -286,21 +286,29 @@ class AndroidMediaPlayerViewModel(
 
 	override fun addToQueueSingle(track: Song) {
 		controller?.addMediaItem(track.toMediaItem())
-		_uiState.update { it.copy(
-			queue = it.queue + track,
-			currentIndex = it.queue.indexOf(it.currentTrack),
-			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
-		) }
+		_uiState.update { state ->
+			val newQueue = state.queue + track
+			val newIndex = newQueue.indexOf(state.currentTrack)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else state.currentTrack
+			)
+		}
 	}
 
 	override fun addToQueue(tracks: SongCollection) {
 		val items = tracks.songs.map { it.toMediaItem() }
 		controller?.addMediaItems(items)
-		_uiState.update { it.copy(
-			queue = it.queue + tracks.songs,
-			currentIndex = it.queue.indexOf(it.currentTrack),
-			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
-		) }
+		_uiState.update { state ->
+			val newQueue = state.queue + tracks.songs
+			val newIndex = newQueue.indexOf(state.currentTrack)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else state.currentTrack
+			)
+		}
 	}
 
 	override fun removeFromQueue(index: Int) {
@@ -332,7 +340,7 @@ class AndroidMediaPlayerViewModel(
 
 	override fun clearQueue() {
 		controller?.clearMediaItems()
-		_uiState.update { it.copy(queue = emptyList(), currentTrack = null, currentIndex = -1) }
+		_uiState.update { it.copy(queue = emptyList(), currentTrack = null, currentIndex = -1, progress = 0f) }
 	}
 
 	override fun playAt(index: Int) {
@@ -355,11 +363,14 @@ class AndroidMediaPlayerViewModel(
 			player.play()
 		}
 
-		_uiState.update { it.copy(
-			queue = shuffledTracks,
-			currentIndex = it.queue.indexOf(it.currentTrack),
-			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
-		) }
+		_uiState.update { state ->
+			val newIndex = shuffledTracks.indexOf(state.currentTrack)
+			state.copy(
+				queue = shuffledTracks,
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else state.currentTrack
+			)
+		}
 	}
 
 	override fun pause() { controller?.pause() }

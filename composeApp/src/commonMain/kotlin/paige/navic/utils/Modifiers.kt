@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,7 +32,7 @@ fun Modifier.fadeFromTop(): Modifier {
 	val progress by animateFloatAsState(
 		targetValue = if (visible) 0f else 1f,
 		animationSpec = tween(
-			durationMillis = 900,
+			durationMillis = 700,
 			delayMillis = 50,
 			easing = EmphasizedDecelerateEasing
 		)

@@ -25,6 +25,7 @@ fun RootBottomBar(
 	hidePlayerBar: Boolean = false,
 	bottomBarWindowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
+	val scrolled = scrolled && Settings.shared.hideBarsOnScroll
 	val progress by animateFloatAsState(
 		targetValue = if (scrolled) 0f else 1f,
 		animationSpec = spring(

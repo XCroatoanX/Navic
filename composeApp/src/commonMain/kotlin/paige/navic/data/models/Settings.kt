@@ -223,6 +223,8 @@ class Settings(
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var playlistSortMode by preference(PlaylistSortMode.DateAdded)
 	var playlistsReversed by preference(false)
+	var hideBarsOnScroll by preference(true)
+	var showBarsOnAllScreens by preference(false)
 
 	/**
 	 * If we have informed the user (on Android) about

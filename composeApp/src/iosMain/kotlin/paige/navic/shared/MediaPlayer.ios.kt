@@ -151,19 +151,27 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun addToQueueSingle(track: Song) {
-		_uiState.update { it.copy(
-			queue = it.queue + track,
-			currentIndex = it.queue.indexOf(it.currentTrack),
-			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
-		) }
+		_uiState.update { state ->
+			val newQueue = state.queue + track
+			val newIndex = newQueue.indexOf(state.currentTrack)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else state.currentTrack
+			)
+		}
 	}
 
 	override fun addToQueue(tracks: SongCollection) {
-		_uiState.update { it.copy(
-			queue = it.queue + tracks.songs,
-			currentIndex = it.queue.indexOf(it.currentTrack),
-			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
-		) }
+		_uiState.update { state ->
+			val newQueue = state.queue + tracks.songs
+			val newIndex = newQueue.indexOf(state.currentTrack)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else state.currentTrack
+			)
+		}
 	}
 
 	override fun removeFromQueue(index: Int) {
@@ -244,12 +252,12 @@ class IOSMediaPlayerViewModel(
 
 	override fun shufflePlay(tracks: SongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
-		_uiState.update {
-			it.copy(
+		_uiState.update { state ->
+			val newIndex = shuffledTracks.indexOf(state.currentTrack)
+			state.copy(
 				queue = shuffledTracks,
-				isShuffleEnabled = true,
-				currentIndex = it.queue.indexOf(it.currentTrack),
-				currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else state.currentTrack
 			)
 		}
 		playAt(0)

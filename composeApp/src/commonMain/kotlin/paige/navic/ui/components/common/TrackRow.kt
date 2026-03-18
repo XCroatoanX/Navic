@@ -2,7 +2,6 @@ package paige.navic.ui.components.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +55,6 @@ fun TrackRow(
 				painter = painter,
 				contentDescription = null,
 				modifier = Modifier
-					.padding(start = 6.5.dp)
 					.size(50.dp)
 					.clip(MaterialTheme.shapes.small),
 				contentScale = ContentScale.Crop

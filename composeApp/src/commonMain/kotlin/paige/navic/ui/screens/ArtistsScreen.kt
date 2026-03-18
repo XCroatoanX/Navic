@@ -37,6 +37,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.models.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
@@ -71,7 +72,11 @@ fun ArtistsScreen(
 				NestedTopBar({ Text(stringResource(Res.string.title_artists)) })
 			}
 		},
-		bottomBar = { RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward) }
+		bottomBar = {
+			if (!nested || Settings.shared.showBarsOnAllScreens) {
+				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+			}
+		}
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier

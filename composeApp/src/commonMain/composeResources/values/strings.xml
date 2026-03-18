@@ -28,6 +28,8 @@
 	<string name="title_choose_font">Choose app font</string>
 	<string name="title_fonts_inbuilt">In-built</string>
 	<string name="title_fonts_external">External</string>
+	<string name="title_more_by_artist">More by %1$s</string>
+	<string name="title_genres">Genres</string>
 
 	<string name="subtitle_appearance">Change the theme and colours of the app</string>
 	<string name="subtitle_behaviour">Change how things work</string>
@@ -46,6 +48,7 @@
 	<string name="subtitle_choose_theme">Choose from a selection of themes</string>
 	<string name="subtitle_choose_font">Choose a font to use across the app</string>
 	<string name="suibtitle_progress_in_bar_is_seekable">Whether or not the progress bar can be dragged in the player bar</string>
+	<string name="subtitle_show_bars_on_all_screens">If the bottom bar should be shown on non-root screens, like artist and album view</string>
 
 	<string name="option_system_font">Use system font</string>
 	<string name="option_player_animate_background">Animate player background</string>
@@ -94,6 +97,8 @@
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
 	<string name="option_position_bottom">Bottom</string>
+	<string name="option_hide_bars_on_scroll">Collapse bars on scroll</string>
+	<string name="option_show_bars_on_all_screens">Show bars on all screens</string>
 
 	<string name="theme_dynamic">Dynamic</string>
 	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>

@@ -1,11 +1,11 @@
 package paige.navic.ui.viewmodels
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumInfo
+import dev.zt64.subsonic.api.model.Artist
 import dev.zt64.subsonic.api.model.Song
 import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,12 +35,16 @@ class TracksViewModel(
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
+	private val _artistState = MutableStateFlow<UiState<Artist>>(UiState.Loading)
+	val artistState = _artistState.asStateFlow()
+
 	val listState = LazyListState()
 
 	init {
 		viewModelScope.launch {
 			SessionManager.isLoggedIn.collect {
 				refreshTracks()
+				refreshArtist()
 			}
 		}
 	}
@@ -63,6 +67,20 @@ class TracksViewModel(
 			} catch (e: Exception) {
 				e.printStackTrace()
 				_albumInfoState.value = UiState.Error(e)
+			}
+		}
+	}
+
+	fun refreshArtist() {
+		(partialCollection as? Album)?.let { album ->
+			viewModelScope.launch {
+				_artistState.value = UiState.Loading
+				try {
+					_artistState.value = UiState.Success(SessionManager.api.getArtist(album.artistId))
+				} catch (e: Exception) {
+					e.printStackTrace()
+					_artistState.value = UiState.Error(e)
+				}
 			}
 		}
 	}

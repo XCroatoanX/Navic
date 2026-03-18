@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
@@ -182,7 +183,7 @@ fun SearchScreen(
 										stringResource(Res.string.title_songs),
 										style = MaterialTheme.typography.headlineSmall,
 										modifier = Modifier.padding(
-											horizontal = 20.dp,
+											horizontal = 16.dp,
 											vertical = 8.dp
 										)
 									)
@@ -210,7 +211,6 @@ fun SearchScreen(
 												painter = painter,
 												contentDescription = null,
 												modifier = Modifier
-													.padding(start = 6.5.dp)
 													.size(50.dp)
 													.clip(MaterialTheme.shapes.small),
 												contentScale = ContentScale.Crop
@@ -307,7 +307,7 @@ private fun SearchChips(
 ) {
 	val ctx = LocalCtx.current
 	Row(
-		modifier = Modifier.padding(horizontal = 16.dp),
+		modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
 		horizontalArrangement = Arrangement.spacedBy(8.dp)
 	) {
 		SearchCategory.entries.forEach { category ->
