@@ -31,7 +31,8 @@ import navic.composeapp.generated.resources.title_fonts_external
 import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.FontOption
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -80,9 +81,9 @@ private fun LazyListScope.inbuiltFonts() {
 			index = 0,
 			count = 2,
 			onClick = {
-				Settings.shared.font = Settings.FontOption.System
+				Settings.shared.font = FontOption.System
 			},
-			selected = Settings.shared.font == Settings.FontOption.System
+			selected = Settings.shared.font == FontOption.System
 		)
 	}
 	item {
@@ -92,9 +93,9 @@ private fun LazyListScope.inbuiltFonts() {
 			index = 1,
 			count = 2,
 			onClick = {
-				Settings.shared.font = Settings.FontOption.GoogleSans
+				Settings.shared.font = FontOption.GoogleSans
 			},
-			selected = Settings.shared.font == Settings.FontOption.GoogleSans
+			selected = Settings.shared.font == FontOption.GoogleSans
 		)
 		Spacer(Modifier.height(10.dp))
 	}

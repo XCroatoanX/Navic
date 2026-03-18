@@ -44,30 +44,29 @@ import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_grid_items_per_row
-import navic.composeapp.generated.resources.option_marquee_duration
 import navic.composeapp.generated.resources.option_use_marquee_text
 import navic.composeapp.generated.resources.subtitle_choose_font
 import navic.composeapp.generated.resources.subtitle_choose_theme
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
-import navic.composeapp.generated.resources.subtitle_use_marquee_text
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_choose_font
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.MarqueeSpeed
+import paige.navic.data.models.settings.enums.Theme
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.ArtworkShapeDialog
 import paige.navic.ui.components.dialogs.GridSizeDialog
 import paige.navic.ui.components.dialogs.GridSizePreview
-import paige.navic.ui.components.dialogs.MarqueeSpeedDialog
 import paige.navic.ui.components.dialogs.Shapes
 import paige.navic.ui.components.dialogs.ThemeDialog
 import paige.navic.ui.components.layouts.NestedTopBar
-import paige.navic.ui.components.settings.SettingCollapsibleRow
+import paige.navic.ui.components.settings.SettingSelectionRow
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.utils.fadeFromTop
 
@@ -133,7 +132,7 @@ fun SettingsAppearanceScreen() {
 						)
 					}
 
-					if (Settings.shared.theme == Settings.Theme.Seeded) {
+					if (Settings.shared.theme == Theme.Seeded) {
 						var expanded by remember { mutableStateOf(false) }
 						FormRow {
 							Text(stringResource(Res.string.option_accent_colour))
@@ -259,28 +258,12 @@ fun SettingsAppearanceScreen() {
 				}
 
 				Form {
-					var marqueeSpeedPresented by remember { mutableStateOf(false) }
-
-					SettingCollapsibleRow(
+					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_use_marquee_text)) },
-						value = Settings.shared.useMarquee,
-						onSetValue = { Settings.shared.useMarquee = it }
-					) {
-						Row(
-							modifier = Modifier.fillMaxWidth().clickable {
-								marqueeSpeedPresented = true
-							},
-							horizontalArrangement = Arrangement.SpaceBetween
-						) {
-							Text(stringResource(Res.string.option_marquee_duration))
-							Text(Settings.shared.marqueeSpeed.name)
-						}
-					}
-
-					MarqueeSpeedDialog(
-						presented = marqueeSpeedPresented,
-						onDismissRequest = { marqueeSpeedPresented = false }
+						items = MarqueeSpeed.entries,
+						label = { it.name },
+						selection = Settings.shared.marqueeSpeed,
+						onSelect = { Settings.shared.marqueeSpeed = it }
 					)
 
 					SettingSwitchRow(

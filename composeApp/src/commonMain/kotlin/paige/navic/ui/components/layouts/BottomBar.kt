@@ -38,7 +38,8 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.NavbarTab
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Album
 import paige.navic.icons.filled.Artist
@@ -114,7 +115,7 @@ fun BottomBar(
 	val containerColor by animateColorAsState(containerColor)
 
 	AnimatedContent(
-		!Settings.shared.useShortNavbar
+		Settings.shared.navigationBarStyle != NavigationBarStyle.Short
 			&& ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
 	) {
 		val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)

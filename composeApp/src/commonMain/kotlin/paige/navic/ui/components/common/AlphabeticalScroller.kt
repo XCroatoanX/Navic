@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import kotlin.math.abs
 
 @Composable

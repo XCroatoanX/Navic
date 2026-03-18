@@ -34,7 +34,7 @@ import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
-import navic.composeapp.generated.resources.option_navbar_tab_positions
+import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.NavbarConfig
@@ -122,7 +122,7 @@ fun NavtabsDialog(
 			val config = (state as UiState.Success).data
 			AlertDialog(
 				title = {
-					Text(stringResource(Res.string.option_navbar_tab_positions))
+					Text(stringResource(Res.string.option_navigation_bar_tabs))
 				},
 				text = {
 					LazyColumn(

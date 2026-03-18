@@ -74,7 +74,8 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.data.session.SessionManager
 import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
@@ -141,7 +142,7 @@ internal class BottomSheetScene<T : Any>(
 						modifier = Modifier
 							.fillMaxWidth()
 							.then(if (Settings.shared.nowPlayingToolbarPosition
-								== Settings.ToolbarPosition.Top || screenType !== "player") {
+								== ToolbarPosition.Top || screenType !== "player") {
 								Modifier.padding(
 									top = WindowInsets.statusBars
 										.asPaddingValues().calculateTopPadding() + 18.dp,

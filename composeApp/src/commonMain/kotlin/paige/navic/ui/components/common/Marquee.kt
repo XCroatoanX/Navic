@@ -26,7 +26,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.MarqueeSpeed
 
 @Composable
 fun MarqueeText(
@@ -34,7 +35,7 @@ fun MarqueeText(
 	style: TextStyle = LocalTextStyle.current,
 	modifier: Modifier = Modifier
 ) {
-	if (Settings.shared.useMarquee) {
+	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
 		Marquee(modifier) {
 			Text(text, maxLines = 1, style = style)
 		}

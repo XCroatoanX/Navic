@@ -39,6 +39,9 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalCtx
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
 import paige.navic.utils.onRightClick

@@ -27,7 +27,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 
 val Shapes = arrayOf(
 	"Square" to 0f,

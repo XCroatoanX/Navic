@@ -13,7 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.Theme
 
 @Composable
 fun Form(
@@ -28,9 +29,9 @@ fun Form(
 			.padding(bottom = bottomPadding)
 			.clip(ContinuousRoundedRectangle(rounding))
 			.background(
-				if (Settings.shared.theme != Settings.Theme.iOS
-					&& Settings.shared.theme != Settings.Theme.Spotify
-					&& Settings.shared.theme != Settings.Theme.AppleMusic
+				if (Settings.shared.theme != Theme.iOS
+					&& Settings.shared.theme != Theme.Spotify
+					&& Settings.shared.theme != Theme.AppleMusic
 				) Color.Unspecified else MaterialTheme.colorScheme.surfaceContainerHighest
 			),
 		verticalArrangement = Arrangement.spacedBy(

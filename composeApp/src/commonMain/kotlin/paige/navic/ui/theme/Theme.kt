@@ -3,13 +3,12 @@ package paige.navic.ui.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import com.kyant.capsule.ContinuousRoundedRectangle
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

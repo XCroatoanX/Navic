@@ -89,6 +89,10 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ToolbarPosition
+import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -499,7 +503,7 @@ fun PlayerScreen() {
 				.fadeFromTop()
 		) {
 			val isLandscape = maxWidth > maxHeight
-			val padding = if (Settings.shared.nowPlayingToolbarPosition == Settings.ToolbarPosition.Top)
+			val padding = if (Settings.shared.nowPlayingToolbarPosition == ToolbarPosition.Top)
 				PaddingValues(top = if (isLandscape) 50.dp else 90.dp)
 			else PaddingValues(
 				top = if (isLandscape) 0.dp else 50.dp,

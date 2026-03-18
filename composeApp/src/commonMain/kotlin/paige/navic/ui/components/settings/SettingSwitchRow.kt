@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.FormRow
 
 @Composable

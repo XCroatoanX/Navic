@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.utils.onRightClick
 
 @Composable

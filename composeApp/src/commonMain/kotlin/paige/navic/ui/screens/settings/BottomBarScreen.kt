@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,26 +35,34 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.option_hide_bars_on_scroll
-import navic.composeapp.generated.resources.option_navbar_tab_positions
-import navic.composeapp.generated.resources.option_progress_in_bar_is_seekable
-import navic.composeapp.generated.resources.option_short_navigation_bar
-import navic.composeapp.generated.resources.option_show_bars_on_all_screens
-import navic.composeapp.generated.resources.option_show_progress_in_bar
+import navic.composeapp.generated.resources.option_bottom_bar_collapse_mode
+import navic.composeapp.generated.resources.option_bottom_bar_visibility_mode
+import navic.composeapp.generated.resources.option_navigation_bar_style
+import navic.composeapp.generated.resources.option_navigation_bar_tabs
+import navic.composeapp.generated.resources.option_player_bar_progress_style
+import navic.composeapp.generated.resources.option_player_bar_style
 import navic.composeapp.generated.resources.option_swipe_to_skip
-import navic.composeapp.generated.resources.option_use_detached_bar
-import navic.composeapp.generated.resources.subtitle_show_bars_on_all_screens
-import navic.composeapp.generated.resources.suibtitle_progress_in_bar_is_seekable
 import navic.composeapp.generated.resources.title_bottom_app_bar
+import navic.composeapp.generated.resources.title_navigation_bar
+import navic.composeapp.generated.resources.title_player_bar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
-import paige.navic.data.models.Settings.ThemeMode
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarCollapseMode
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.data.models.settings.enums.NavigationBarStyle
+import paige.navic.data.models.settings.enums.PlayerBarProgressStyle
+import paige.navic.data.models.settings.enums.PlayerBarStyle
+import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.dialogs.NavtabsDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
+import paige.navic.ui.components.settings.SettingSelectionRow
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.fadeFromTop
@@ -68,9 +77,6 @@ fun BottomBarScreen() {
 			{ Text(stringResource(Res.string.title_bottom_app_bar)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 		) },
-		bottomBar = {
-			BottomBarPreview()
-		},
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(
@@ -85,56 +91,63 @@ fun BottomBarScreen() {
 			) {
 				Form {
 					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_short_navigation_bar)) },
-						value = Settings.shared.useShortNavbar,
-						onSetValue = { Settings.shared.useShortNavbar = it }
-					)
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_use_detached_bar)) },
-						value = Settings.shared.detachedBar,
-						onSetValue = { Settings.shared.detachedBar = it }
-					)
-
-					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
 						value = Settings.shared.swipeToSkip,
 						onSetValue = { Settings.shared.swipeToSkip = it }
 					)
 
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_show_progress_in_bar)) },
-						value = Settings.shared.showProgressInBar,
-						onSetValue = { Settings.shared.showProgressInBar = it }
+					SettingSelectionRow(
+						items = BottomBarCollapseMode.entries,
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.bottomBarCollapseMode,
+						onSelect = { Settings.shared.bottomBarCollapseMode = it },
+						title = { Text(stringResource(Res.string.option_bottom_bar_collapse_mode)) },
 					)
 
-					if (Settings.shared.showProgressInBar) {
-						SettingSwitchRow(
-							title = { Text(stringResource(Res.string.option_progress_in_bar_is_seekable)) },
-							subtitle = { Text(stringResource(Res.string.suibtitle_progress_in_bar_is_seekable)) },
-							value = Settings.shared.progressInBarIsSeekable,
-							onSetValue = { Settings.shared.progressInBarIsSeekable = it }
-						)
-					}
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_hide_bars_on_scroll)) },
-						value = Settings.shared.hideBarsOnScroll,
-						onSetValue = { Settings.shared.hideBarsOnScroll = it }
+					SettingSelectionRow(
+						items = BottomBarVisibilityMode.entries,
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.bottomBarVisibilityMode,
+						onSelect = { Settings.shared.bottomBarVisibilityMode = it },
+						title = { Text(stringResource(Res.string.option_bottom_bar_visibility_mode)) },
 					)
+				}
 
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_show_bars_on_all_screens)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_show_bars_on_all_screens)) },
-						value = Settings.shared.showBarsOnAllScreens,
-						onSetValue = { Settings.shared.showBarsOnAllScreens = it }
+				FormTitle(stringResource(Res.string.title_navigation_bar))
+				Form {
+					SettingSelectionRow(
+						items = NavigationBarStyle.entries,
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.navigationBarStyle,
+						onSelect = { Settings.shared.navigationBarStyle = it },
+						title = { Text(stringResource(Res.string.option_navigation_bar_style)) },
 					)
 
 					FormRow(
 						onClick = { showNavtabsDialog = true }
 					) {
-						Text(stringResource(Res.string.option_navbar_tab_positions))
+						Text(stringResource(Res.string.option_navigation_bar_tabs))
+						Icon(Icons.Outlined.ChevronForward, null)
 					}
+				}
+
+				FormTitle(stringResource(Res.string.title_player_bar))
+				Form {
+					SettingSelectionRow(
+						items = PlayerBarStyle.entries,
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.playerBarStyle,
+						onSelect = { Settings.shared.playerBarStyle = it },
+						title = { Text(stringResource(Res.string.option_player_bar_style)) },
+					)
+
+					SettingSelectionRow(
+						items = PlayerBarProgressStyle.entries,
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.playerBarProgressStyle,
+						onSelect = { Settings.shared.playerBarProgressStyle = it },
+						title = { Text(stringResource(Res.string.option_player_bar_progress_style)) },
+					)
 				}
 			}
 		}
@@ -158,10 +171,10 @@ private fun BottomBarPreview() {
 	}
 	val spec = MaterialTheme.motionScheme.defaultSpatialSpec<Dp>()
 	val padding by animateDpAsState(
-		if (Settings.shared.detachedBar) 12.dp else 32.dp, spec
+		if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) 12.dp else 32.dp, spec
 	)
 	val rounding by animateDpAsState(
-		if (Settings.shared.detachedBar) 28.dp else 12.dp, spec
+		if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) 28.dp else 12.dp, spec
 	)
 	Column(Modifier.padding(16.dp).navigationBarsPadding()) {
 		Text(

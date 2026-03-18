@@ -56,7 +56,9 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.PlayerBarProgressStyle
+import paige.navic.data.models.settings.enums.PlayerBarStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -83,7 +85,7 @@ fun PlayerBar(
 	}
 	val sharedPainter = rememberTrackPainter(track?.coverArtId)
 
-	val detached = Settings.shared.detachedBar
+	val detached = Settings.shared.playerBarStyle == PlayerBarStyle.Detached
 
 	val spec = MaterialTheme.motionScheme.defaultSpatialSpec<Dp>()
 	val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Dp>()
@@ -305,7 +307,8 @@ fun PlayerBar(
 					}
 				}
 			)
-			if (Settings.shared.showProgressInBar) {
+			if (Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Visible
+				|| Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable) {
 				var dragging by remember { mutableStateOf(false) }
 				val alpha by animateFloatAsState(
 					if (dragging) 1f else .7f
@@ -338,7 +341,7 @@ fun PlayerBar(
 							.fillMaxWidth()
 							.height(14.dp)
 							.then(
-								if (track != null && Settings.shared.progressInBarIsSeekable)
+								if (track != null && Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable)
 									Modifier.pointerInput(Unit) {
 										detectDragGestures(
 											onDragStart = {

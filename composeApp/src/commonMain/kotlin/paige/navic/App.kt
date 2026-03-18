@@ -57,7 +57,7 @@ import navic.composeapp.generated.resources.action_update_app
 import navic.composeapp.generated.resources.info_update_app
 import org.jetbrains.compose.resources.getString
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.ShareManager

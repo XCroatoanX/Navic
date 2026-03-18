@@ -14,12 +14,15 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_app_version
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_acknowledgements
+import navic.composeapp.generated.resources.title_chat
+import navic.composeapp.generated.resources.title_source
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -35,6 +38,7 @@ import paige.navic.utils.fadeFromTop
 fun SettingsAboutScreen() {
 	@Suppress("DEPRECATION")
 	val clipboard = LocalClipboardManager.current
+	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
 	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
@@ -66,6 +70,18 @@ fun SettingsAboutScreen() {
 				}
 			}
 			Form {
+				FormRow(onClick = {
+					uriHandler.openUri("https://github.com/paigely/Navic")
+				}) {
+					Text(stringResource(Res.string.title_source))
+					Icon(Icons.Outlined.ChevronForward, null)
+				}
+				FormRow(onClick = {
+					uriHandler.openUri("https://discord.gg/TBcnNX66PH")
+				}) {
+					Text(stringResource(Res.string.title_chat))
+					Icon(Icons.Outlined.ChevronForward, null)
+				}
 				FormRow(onClick = {
 					backStack.add(Screen.Settings.Acknowledgements)
 				}) {

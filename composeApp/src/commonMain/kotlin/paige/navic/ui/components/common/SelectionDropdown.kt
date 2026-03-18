@@ -43,7 +43,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.theme.defaultFont

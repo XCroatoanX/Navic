@@ -1,7 +1,7 @@
 package paige.navic.utils
 
 import dev.zt64.subsonic.api.model.Playlist
-import paige.navic.data.models.PlaylistSortMode
+import paige.navic.data.models.settings.enums.PlaylistSortMode
 
 fun List<Playlist>.sortedByMode(mode: PlaylistSortMode, reversed: Boolean): List<Playlist> {
 	val playlists = when (mode) {

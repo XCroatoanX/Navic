@@ -5,7 +5,7 @@
 	<string name="title_playlists">Playlists</string>
 	<string name="title_settings">Settings</string>
 	<string name="title_search">Search</string>
-	<string name="title_appearance">Look &amp; feel</string>
+	<string name="title_appearance">Appearance</string>
 	<string name="title_behaviour">Behaviour</string>
 	<string name="title_now_playing">Now Playing</string>
 	<string name="title_bottom_app_bar">Bottom App Bar</string>
@@ -30,43 +30,34 @@
 	<string name="title_fonts_external">External</string>
 	<string name="title_more_by_artist">More by %1$s</string>
 	<string name="title_genres">Genres</string>
+	<string name="title_navigation_bar">Navigation Bar</string>
+	<string name="title_player_bar">Player Bar</string>
 
-	<string name="subtitle_appearance">Change the theme and colours of the app</string>
+	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_behaviour">Change how things work</string>
 	<string name="subtitle_now_playing">Customize the main player</string>
 	<string name="subtitle_bottom_app_bar">Customize the bottom player and navigation bar</string>
 	<string name="subtitle_scrobbling">Scrobble the music you listen to</string>
-	<string name="subtitle_about">Version, licenses</string>
+	<string name="subtitle_about">App info, version, licenses</string>
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
 	<string name="subtitle_lyrics_beat_by_beat">Use a simulated beat-by-beat gradient when real timing isn't available.</string>
 	<string name="subtitle_grid_items_per_row">The size of grids across the app</string>
-	<string name="subtitle_use_marquee_text">Whether to scroll long text</string>
 	<string name="subtitle_playlist">Playlist</string>
-	<string name="subtitle_source">View the source code</string>
-	<string name="subtitle_chat">Join the Discord</string>
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 	<string name="subtitle_choose_theme">Choose from a selection of themes</string>
 	<string name="subtitle_choose_font">Choose a font to use across the app</string>
-	<string name="suibtitle_progress_in_bar_is_seekable">Whether or not the progress bar can be dragged in the player bar</string>
-	<string name="subtitle_show_bars_on_all_screens">If the bottom bar should be shown on non-root screens, like artist and album view</string>
 
 	<string name="option_system_font">Use system font</string>
 	<string name="option_player_animate_background">Animate player background</string>
 	<string name="option_accent_colour">Accent colour</string>
-	<string name="option_short_navigation_bar">Shorter navigation bar</string>
 	<string name="option_use_wavy_slider">Wavy progress bar</string>
-	<string name="option_show_progress_in_bar">Show progress in bar</string>
-	<string name="option_progress_in_bar_is_seekable">Progress in bar is seekable</string>
-	<string name="option_use_detached_bar">Detached bottom bar</string>
 	<string name="option_swipe_to_skip">Swipe to skip tracks</string>
 	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
-	<string name="option_use_marquee_text">Auto-scroll long text</string>
-	<string name="option_marquee_duration">Auto-scroll speed</string>
+	<string name="option_use_marquee_text">Text auto-scroll speed</string>
 	<string name="option_alphabetical_scroll">Alphabetical scrolling</string>
 	<string name="option_grid_items_per_row">Grid size</string>
-	<string name="option_navbar_tab_positions">Configure navigation bar options</string>
-	<string name="option_lyrics_priority">Lyrics Provider Priority</string>
+	<string name="option_lyrics_priority">Configure lyrics providers</string>
 	<string name="option_share_expires">Expires</string>
 	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
@@ -94,11 +85,31 @@
 	<string name="option_playlist_songs">Songs</string>
 	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
 	<string name="option_choose_theme">Choose theme</string>
+
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
 	<string name="option_position_bottom">Bottom</string>
-	<string name="option_hide_bars_on_scroll">Collapse bars on scroll</string>
-	<string name="option_show_bars_on_all_screens">Show bars on all screens</string>
+
+	<string name="option_bottom_bar_collapse_mode">Collapse mode</string>
+	<string name="option_bottom_bar_collapse_mode_never">Never</string>
+	<string name="option_bottom_bar_collapse_mode_on_scroll">On scroll</string>
+
+	<string name="option_bottom_bar_visibility_mode">Visibility mode</string>
+	<string name="option_bottom_bar_visibility_mode_default">Default</string>
+	<string name="option_bottom_bar_visibility_mode_all_screens">All screens</string>
+
+	<string name="option_navigation_bar_style">Navigation bar style</string>
+	<string name="option_navigation_bar_style_normal">Normal</string>
+	<string name="option_navigation_bar_style_short">Short</string>
+	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
+
+	<string name="option_player_bar_style">Player bar style</string>
+	<string name="option_player_bar_style_unified">Unified</string>
+	<string name="option_player_bar_style_detached">Detached</string>
+	<string name="option_player_bar_progress_style">Player bar progress style</string>
+	<string name="option_player_bar_progress_style_hidden">Hidden</string>
+	<string name="option_player_bar_progress_style_visible">Visible</string>
+	<string name="option_player_bar_progress_style_seekable">Seekable</string>
 
 	<string name="theme_dynamic">Dynamic</string>
 	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>

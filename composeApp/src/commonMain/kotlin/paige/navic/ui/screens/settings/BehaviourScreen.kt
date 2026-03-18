@@ -31,7 +31,7 @@ import navic.composeapp.generated.resources.subtitle_lyrics_beat_by_beat
 import navic.composeapp.generated.resources.title_behaviour
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar

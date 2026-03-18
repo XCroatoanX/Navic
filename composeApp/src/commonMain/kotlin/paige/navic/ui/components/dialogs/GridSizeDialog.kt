@@ -27,7 +27,8 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.GridSize
 
 @Composable
 fun GridSizeDialog(
@@ -49,7 +50,7 @@ fun GridSizeDialog(
 					.heightIn(max = 300.dp),
 				verticalArrangement = Arrangement.spacedBy(16.dp)
 			) {
-				Settings.GridSize.entries.forEach { size ->
+				GridSize.entries.forEach { size ->
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()

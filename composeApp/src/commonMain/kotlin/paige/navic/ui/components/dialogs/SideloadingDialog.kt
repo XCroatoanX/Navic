@@ -18,7 +18,7 @@ import navic.composeapp.generated.resources.sideloading_warning_subtitle
 import navic.composeapp.generated.resources.sideloading_warning_title
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 
 @Composable
 fun SideloadingDialog() {

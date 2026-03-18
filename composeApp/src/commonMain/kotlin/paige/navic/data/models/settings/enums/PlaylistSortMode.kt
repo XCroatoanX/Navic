@@ -1,4 +1,4 @@
-package paige.navic.data.models
+package paige.navic.data.models.settings.enums
 
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_playlist_by_name

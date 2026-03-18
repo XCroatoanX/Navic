@@ -51,7 +51,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star

@@ -14,7 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarCollapseMode
+import paige.navic.data.models.settings.enums.PlayerBarStyle
 import paige.navic.utils.easedVerticalGradient
 
 @Composable
@@ -25,7 +27,7 @@ fun RootBottomBar(
 	hidePlayerBar: Boolean = false,
 	bottomBarWindowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
-	val scrolled = scrolled && Settings.shared.hideBarsOnScroll
+	val scrolled = scrolled && Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.OnScroll
 	val progress by animateFloatAsState(
 		targetValue = if (scrolled) 0f else 1f,
 		animationSpec = spring(
@@ -38,7 +40,7 @@ fun RootBottomBar(
 		animationSpec = tween(durationMillis = 600)
 	)
 	Column(
-		modifier = modifier.then(if (Settings.shared.detachedBar)
+		modifier = modifier.then(if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached)
 			Modifier.background(
 				Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
 			)
@@ -48,19 +50,19 @@ fun RootBottomBar(
 			modifier = Modifier.graphicsLayer {
 				alpha = progress.coerceIn(0f..1f)
 				translationY = ((1f - progress) * (size.height * 2)).coerceAtLeast(
-					if (Settings.shared.detachedBar) -2048f else 0f
+					if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) -2048f else 0f
 				)
 			}
 		)
 		BottomBar(
-			containerColor = if (Settings.shared.detachedBar)
+			containerColor = if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached)
 				NavigationBarDefaults.containerColor.copy(alpha = 0f)
 			else NavigationBarDefaults.containerColor,
 			windowInsets = bottomBarWindowInsets,
 			modifier = Modifier.graphicsLayer {
 				alpha = progress.coerceIn(0f..1f)
 				translationY =((1f - progress) * size.height).coerceAtLeast(
-					if (Settings.shared.detachedBar) -2048f else 0f
+					if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) -2048f else 0f
 				)
 			}
 		)

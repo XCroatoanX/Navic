@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,26 +29,20 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
 import navic.composeapp.generated.resources.subtitle_bottom_app_bar
-import navic.composeapp.generated.resources.subtitle_chat
 import navic.composeapp.generated.resources.subtitle_now_playing
 import navic.composeapp.generated.resources.subtitle_scrobbling
-import navic.composeapp.generated.resources.subtitle_source
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_bottom_app_bar
-import navic.composeapp.generated.resources.title_chat
 import navic.composeapp.generated.resources.title_now_playing
 import navic.composeapp.generated.resources.title_scrobbling
 import navic.composeapp.generated.resources.title_settings
-import navic.composeapp.generated.resources.title_source
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
-import paige.navic.icons.brand.Discord
-import paige.navic.icons.brand.Github
 import paige.navic.icons.filled.Airwave
 import paige.navic.icons.filled.BottomNavigation
 import paige.navic.icons.filled.Palette
@@ -119,24 +112,8 @@ fun SettingsScreen() {
 					icon = Icons.Outlined.Info,
 					title = Res.string.title_about,
 					subtitle = Res.string.subtitle_about,
-					foregroundColor = Color(0xFF2C2C2C),
-					backgroundColor = Color(0xFFC7C7C7)
-				)
-				PageRow(
-					link = "https://github.com/paigely/Navic",
-					icon = Icons.Brand.Github,
-					title = Res.string.title_source,
-					subtitle = Res.string.subtitle_source,
-					foregroundColor = Color(0xFF2C2C2C),
-					backgroundColor = Color(0xFFC7C7C7)
-				)
-				PageRow(
-					link = "https://discord.gg/TBcnNX66PH",
-					icon = Icons.Brand.Discord,
-					title = Res.string.title_chat,
-					subtitle = Res.string.subtitle_chat,
-					foregroundColor = Color(0xFF2C2C2C),
-					backgroundColor = Color(0xFFC7C7C7)
+					foregroundColor = Color(0xFF3F474D),
+					backgroundColor = Color(0xFFDEE3EB)
 				)
 			}
 		}
@@ -146,7 +123,6 @@ fun SettingsScreen() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PageRow(
-	link: String? = null,
 	destination: NavKey? = null,
 	icon: ImageVector,
 	iconSize: Dp = 22.dp,
@@ -155,13 +131,9 @@ private fun PageRow(
 	foregroundColor: Color,
 	backgroundColor: Color
 ) {
-	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	FormRow(
 		onClick = {
-			link?.let { link ->
-				uriHandler.openUri(link)
-			}
 			destination?.let { destination ->
 				backStack.lastOrNull()?.let {
 					if (it is Screen.Settings) {

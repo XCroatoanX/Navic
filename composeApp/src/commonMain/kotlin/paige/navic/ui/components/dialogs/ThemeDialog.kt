@@ -28,7 +28,9 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.Theme
+import paige.navic.data.models.settings.enums.ThemeMode
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -51,7 +53,7 @@ fun ThemeDialog(
 					.verticalScroll(rememberScrollState()),
 				verticalArrangement = Arrangement.spacedBy(16.dp)
 			) {
-				Settings.Theme.entries.forEach { theme ->
+				Theme.entries.forEach { theme ->
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
@@ -99,7 +101,7 @@ fun ThemeDialog(
 @Composable
 private fun ThemeModeChooser() {
 	val ctx = LocalCtx.current
-	val themes = Settings.ThemeMode.entries
+	val themes = ThemeMode.entries
 	Row(
 		modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
 		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)

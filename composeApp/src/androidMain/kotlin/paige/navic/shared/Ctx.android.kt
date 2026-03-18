@@ -17,8 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import paige.navic.data.models.Settings
-import paige.navic.data.models.Settings.ThemeMode
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ThemeMode
 
 @OptIn(
 	ExperimentalMaterial3WindowSizeClassApi::class,

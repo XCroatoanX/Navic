@@ -77,7 +77,7 @@ import navic.composeapp.generated.resources.info_no_lyrics
 import navic.composeapp.generated.resources.notice_loading_lyrics
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.data.repositories.LyricWord
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check

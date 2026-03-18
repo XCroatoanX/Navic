@@ -10,7 +10,8 @@ import androidx.compose.ui.text.font.FontVariation
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.google_sans
 import org.jetbrains.compose.resources.Font
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.FontOption
 
 private val defaultTypography = Typography()
 
@@ -41,9 +42,9 @@ fun defaultFont(
 	val googleSans = googleSans(grade, width, round)
 	return remember(Settings.shared.font, Settings.shared.fontPath) {
 		when (Settings.shared.font) {
-			Settings.FontOption.System -> FontFamily.Default
-			Settings.FontOption.GoogleSans -> googleSans
-			Settings.FontOption.Custom -> FontFamily.Default
+			FontOption.System -> FontFamily.Default
+			FontOption.GoogleSans -> googleSans
+			FontOption.Custom -> FontFamily.Default
 		}
 	}
 }

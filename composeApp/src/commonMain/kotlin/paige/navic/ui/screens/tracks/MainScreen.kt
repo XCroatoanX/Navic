@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.SongCollection
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.models.Settings
+import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.RootBottomBar
