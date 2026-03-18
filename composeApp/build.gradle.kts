@@ -354,3 +354,7 @@ tasks.register<SyncComposeStringsTask>("syncComposeStrings") {
 	description = "Add missing strings to locale strings.xml"
 	baseDir = project.projectDir
 }
+
+tasks.withType<com.google.devtools.ksp.gradle.KspAATask>().configureEach {
+	dependsOn("generateValkyrieImageVectorCommonMain")
+}
