@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.database.AlbumEntity
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
@@ -17,7 +18,7 @@ open class AlbumsViewModel(
 	initialListType: AlbumListType?,
 	private val repository: AlbumsRepository = AlbumsRepository()
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<List<Album>>>(UiState.Loading)
+	private val _albumsState = MutableStateFlow<UiState<List<AlbumEntity>>>(UiState.Loading)
 	val albumsState = _albumsState.asStateFlow()
 
 	private val _isRefreshing = MutableStateFlow(false)
@@ -26,7 +27,7 @@ open class AlbumsViewModel(
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
-	private val _selectedAlbum = MutableStateFlow<Album?>(null)
+	private val _selectedAlbum = MutableStateFlow<AlbumEntity?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
 
 	private val _offset = MutableStateFlow(0)
@@ -40,30 +41,29 @@ open class AlbumsViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
-				refreshAlbums()
+			repository.getAlbumsFlow().collect { dbAlbums ->
+				if (dbAlbums.isNotEmpty()) {
+					_albumsState.value = UiState.Success(dbAlbums)
+				}
 			}
+		}
+
+		viewModelScope.launch {
+			SessionManager.isLoggedIn.collect { if (it) refreshAlbums() }
 		}
 	}
 
 	fun refreshAlbums() {
 		viewModelScope.launch {
 			_offset.value = 0
+			val hasData = (_albumsState.value as? UiState.Success)?.data?.isNotEmpty() == true
 
-			val currentState = _albumsState.value
-			val hasExistingData = currentState is UiState.Success && currentState.data.isNotEmpty()
-
-			if (hasExistingData) {
-				_isRefreshing.value = true
-			} else {
-				_albumsState.value = UiState.Loading
-			}
+			if (hasData) _isRefreshing.value = true else _albumsState.value = UiState.Loading
 
 			try {
-				val albums = repository.getAlbums(listType = _listType.value, offset = _offset.value)
-				_albumsState.value = UiState.Success(albums)
+				repository.syncAlbums(_listType.value, _offset.value)
 			} catch (e: Exception) {
-				if (!hasExistingData) {
+				if (!hasData) {
 					_albumsState.value = UiState.Error(e)
 				}
 			} finally {
@@ -76,45 +76,40 @@ open class AlbumsViewModel(
 		if (_albumsState.value !is UiState.Success || _isPaginating.value) return
 
 		viewModelScope.launch {
-			val newOffset = _offset.value + 30
-			_isPaginating.value = true
+			val nextOffset = _offset.value + 30
 			try {
-				val newAlbums = repository.getAlbums(listType = _listType.value, offset = newOffset)
-				_albumsState.value = (_albumsState.value as UiState.Success).let {
-					it.copy(data = it.data + newAlbums)
-				}
-				_offset.value = newOffset
-			} finally {
-				_isPaginating.value = false
+				repository.syncAlbums(_listType.value, nextOffset)
+				_offset.value = nextOffset
+			} catch (_: Exception) {
 			}
 		}
 	}
 
-	fun selectAlbum(album: Album?) {
-		viewModelScope.launch {
-			_selectedAlbum.value = album
-			if (album == null) return@launch
-			_starredState.value = UiState.Loading
-			try {
-				val isStarred = repository.isAlbumStarred(album)
-				_starredState.value = UiState.Success(isStarred)
-			} catch(e: Exception) {
-				_starredState.value = UiState.Error(e)
-			}
-		}
+	fun selectAlbum(album: AlbumEntity?) {
+//		viewModelScope.launch {
+//			_selectedAlbum.value = album
+//			if (album == null) return@launch
+//			_starredState.value = UiState.Loading
+//			try {
+//				val isStarred = repository.isAlbumStarred(album)
+//				_starredState.value = UiState.Success(isStarred)
+//			} catch(e: Exception) {
+//				_starredState.value = UiState.Error(e)
+//			}
+//		}
 	}
 
 	fun starAlbum(starred: Boolean) {
-		viewModelScope.launch {
-			val selection = _selectedAlbum.value ?: return@launch
-			runCatching {
-				if (starred) {
-					repository.starAlbum(selection)
-				} else {
-					repository.unstarAlbum(selection)
-				}
-			}
-		}
+//		viewModelScope.launch {
+//			val selection = _selectedAlbum.value ?: return@launch
+//			runCatching {
+//				if (starred) {
+//					repository.starAlbum(selection)
+//				} else {
+//					repository.unstarAlbum(selection)
+//				}
+//			}
+//		}
 	}
 
 	fun setListType(listType: AlbumListType) {

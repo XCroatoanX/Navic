@@ -78,6 +78,9 @@ interface DatabaseDao {
 	@Query("SELECT * FROM navidrome_albums ORDER BY name ASC")
 	fun getAllAlbums(): Flow<List<AlbumEntity>>
 
+	@Query("SELECT * FROM navidrome_albums")
+	suspend fun getAllAlbumsList(): List<AlbumEntity>
+
 	@Query("SELECT * FROM navidrome_albums WHERE id = :albumId LIMIT 1")
 	suspend fun getAlbumById(albumId: String): AlbumEntity?
 

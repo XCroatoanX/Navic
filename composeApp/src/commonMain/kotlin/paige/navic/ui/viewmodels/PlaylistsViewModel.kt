@@ -3,11 +3,10 @@ package paige.navic.ui.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Playlist
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.database.PlaylistEntity
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.repositories.PlaylistsRepository
 import paige.navic.data.session.SessionManager
@@ -17,25 +16,32 @@ import paige.navic.utils.sortedByMode
 class PlaylistsViewModel(
 	private val repository: PlaylistsRepository = PlaylistsRepository()
 ) : ViewModel() {
-	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading)
+	private val _playlistsState = MutableStateFlow<UiState<List<PlaylistEntity>>>(UiState.Loading)
 	val playlistsState = _playlistsState.asStateFlow()
 
 	private val _isRefreshing = MutableStateFlow(false)
 	val isRefreshing = _isRefreshing.asStateFlow()
 
-	private val _selectedPlaylist = MutableStateFlow<Playlist?>(null)
-	val selectedPlaylist: StateFlow<Playlist?> = _selectedPlaylist.asStateFlow()
+	private val _selectedPlaylist = MutableStateFlow<PlaylistEntity?>(null)
+	val selectedPlaylist = _selectedPlaylist.asStateFlow()
 
 	val gridState = LazyGridState()
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn
-				.collect { refreshPlaylists() }
+			repository.getPlaylistsFlow().collect { dbPlaylists ->
+				if (dbPlaylists.isNotEmpty()) {
+					_playlistsState.value = UiState.Success(dbPlaylists)
+					sortPlaylists()
+				}
+			}
+		}
+		viewModelScope.launch {
+			SessionManager.isLoggedIn.collect { if (it) refreshPlaylists() }
 		}
 	}
 
-	fun selectPlaylist(playlist: Playlist) {
+	fun selectPlaylist(playlist: PlaylistEntity) {
 		_selectedPlaylist.value = playlist
 	}
 
@@ -45,19 +51,11 @@ class PlaylistsViewModel(
 
 	fun refreshPlaylists() {
 		viewModelScope.launch {
-			val currentState = _playlistsState.value
-			val hasData = currentState is UiState.Success && currentState.data.isNotEmpty()
-
-			if (hasData) {
-				_isRefreshing.value = true
-			} else {
-				_playlistsState.value = UiState.Loading
-			}
+			val hasData = (_playlistsState.value as? UiState.Success)?.data?.isNotEmpty() == true
+			if (hasData) _isRefreshing.value = true else _playlistsState.value = UiState.Loading
 
 			try {
-				val playlists = repository.getPlaylists()
-				_playlistsState.value = UiState.Success(playlists)
-				sortPlaylists()
+				repository.refreshPlaylists()
 			} catch (e: Exception) {
 				if (!hasData) {
 					_playlistsState.value = UiState.Error(e)
@@ -69,10 +67,11 @@ class PlaylistsViewModel(
 	}
 
 	fun sortPlaylists() {
-		val playlists = (_playlistsState.value as? UiState.Success)?.data?.sortedByMode(
+		val currentState = _playlistsState.value as? UiState.Success ?: return
+		val sorted = currentState.data.sortedByMode(
 			Settings.shared.playlistSortMode,
 			Settings.shared.playlistsReversed
-		) ?: return
-		_playlistsState.value = UiState.Success(playlists)
+		)
+		_playlistsState.value = UiState.Success(sorted)
 	}
 }

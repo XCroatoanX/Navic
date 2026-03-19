@@ -50,6 +50,7 @@ import navic.composeapp.generated.resources.title_albums
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
@@ -254,7 +255,7 @@ private fun AlbumListType.label() =
 @Composable
 fun AlbumsScreenItem(
 	modifier: Modifier = Modifier,
-	album: Album,
+	album: AlbumEntity,
 	tab: String,
 	viewModel: AlbumsViewModel,
 	onSetShareId: (String) -> Unit
@@ -267,7 +268,7 @@ fun AlbumsScreenItem(
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.Tracks(album, tab))
+//				backStack.add(Screen.Tracks(album, tab))
 			},
 			onLongClick = { viewModel.selectAlbum(album) },
 			coverArt = album.coverArtId,

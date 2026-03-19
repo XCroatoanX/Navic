@@ -77,6 +77,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
+import paige.navic.data.database.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
@@ -163,7 +164,7 @@ fun SearchScreen(
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
 					val albums =
-						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<AlbumEntity>() else emptyList()
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
 					val tracks =

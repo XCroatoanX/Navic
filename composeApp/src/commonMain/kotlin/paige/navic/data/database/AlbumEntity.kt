@@ -18,9 +18,9 @@ data class AlbumEntity(
 	@ColumnInfo(name = "artist_id")
 	val artistId: String,
 	@ColumnInfo(name = "artist")
-	val artist: String,
+	val artistName: String,
 	@ColumnInfo(name = "cover_art")
-	val coverArt: String?,
+	val coverArtId: String?,
 	@ColumnInfo(name = "song_count")
 	val songCount: Int,
 	@ColumnInfo(name = "duration")
@@ -50,8 +50,8 @@ fun ApiAlbum.toEntity(): AlbumEntity {
 		id = this.id,
 		name = this.name,
 		artistId = this.artistId,
-		artist = this.artistName,
-		coverArt = this.coverArtId,
+		artistName = this.artistName,
+		coverArtId = this.coverArtId,
 		songCount = this.songCount,
 		duration = this.duration,
 		year = this.year,

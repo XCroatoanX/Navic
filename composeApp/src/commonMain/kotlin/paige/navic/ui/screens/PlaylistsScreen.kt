@@ -40,6 +40,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.PlaylistEntity
 import paige.navic.data.models.settings.enums.PlaylistSortMode
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -255,7 +256,7 @@ private fun SortButton(
 @Composable
 fun PlaylistsScreenItem(
 	modifier: Modifier = Modifier,
-	playlist: Playlist,
+	playlist: PlaylistEntity,
 	tab: String,
 	viewModel: PlaylistsViewModel,
 	onSetShareId: (String) -> Unit,
@@ -268,7 +269,7 @@ fun PlaylistsScreenItem(
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.Tracks(playlist, "playlists"))
+//				backStack.add(Screen.Tracks(playlist, "playlists"))
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },
 			coverArt = playlist.coverArtId,
