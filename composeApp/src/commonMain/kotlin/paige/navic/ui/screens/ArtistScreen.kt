@@ -91,6 +91,7 @@ import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.TrackRow
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
@@ -360,19 +361,22 @@ private fun ArtistScreenHeader(
 					Row(
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						AnimatedVisibility(!scrollState.canScrollBackward) {
-							Text(
+						AnimatedVisibility(
+							!scrollState.canScrollBackward,
+							modifier = Modifier.weight(1f)
+						) {
+							MarqueeText(
 								text = artistName,
-								style = MaterialTheme.typography.displaySmall,
-								fontWeight = FontWeight.Bold,
-								color = Color.White,
+								style = MaterialTheme.typography.displaySmall.copy(
+									fontWeight = FontWeight.Bold,
+									color = Color.White
+								),
 								modifier = Modifier.sharedBounds(
 									sharedContentState = rememberSharedContentState("name"),
 									animatedVisibilityScope = this@AnimatedVisibility
 								)
 							)
 						}
-						Spacer(Modifier.weight(1f))
 						IconButton(
 							onClick = {
 								ctx.clickSound()
