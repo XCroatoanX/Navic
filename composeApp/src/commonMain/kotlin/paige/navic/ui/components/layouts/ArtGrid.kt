@@ -71,7 +71,7 @@ fun ArtGridItem(
 	modifier: Modifier = Modifier,
 	onClick: () -> Unit,
 	onLongClick: (() -> Unit)? = null,
-	coverArt: String?,
+	coverArtId: String?,
 	title: String,
 	subtitle: String? = null,
 	id: String,

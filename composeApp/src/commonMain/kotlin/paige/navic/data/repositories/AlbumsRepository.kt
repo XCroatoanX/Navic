@@ -6,22 +6,27 @@ import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.AlbumEntity
 import paige.navic.data.database.DatabaseDao
 import paige.navic.data.database.DbContainer
-import paige.navic.data.database.PlaylistEntity
 import paige.navic.data.database.toEntity
 import paige.navic.data.session.SessionManager
 
 open class AlbumsRepository(
 	private val dao: DatabaseDao = DbContainer.dao
 ) {
-	open suspend fun getAlbums(
-		offset: Int = 0,
-		listType: AlbumListType = AlbumListType.AlphabeticalByArtist
-	): List<Album> {
-		return SessionManager.api
-			.getAlbums(type = listType, size = 30, offset = offset)
+	fun getAlbumsFlow(
+		offset: Int,
+		listType: AlbumListType
+	): Flow<List<AlbumEntity>> {
+		val totalToLoad = 30 + offset
+		return when (listType) {
+			is AlbumListType.AlphabeticalByArtist -> dao.getAlbumsAlphabeticalByArtist(totalToLoad)
+			is AlbumListType.Newest -> dao.getAlbumsNewest(totalToLoad)
+			is AlbumListType.Random -> dao.getAlbumsRandom(totalToLoad)
+			is AlbumListType.Starred -> dao.getAlbumsStarred(totalToLoad)
+			is AlbumListType.Frequent -> dao.getAlbumsFrequent(totalToLoad)
+			is AlbumListType.Recent -> dao.getAlbumsRecent(totalToLoad)
+			else -> dao.getAlbumsAlphabeticalByName(totalToLoad)
+		}
 	}
-
-	fun getAlbumsFlow(): Flow<List<AlbumEntity>> = dao.getAllAlbums()
 
 	suspend fun syncAlbums(listType: AlbumListType, offset: Int) {
 		val remote = SessionManager.api.getAlbums(
@@ -32,13 +37,13 @@ open class AlbumsRepository(
 		dao.insertAlbums(remote.map { it.toEntity() })
 	}
 
-	suspend fun isAlbumStarred(album: Album): Boolean {
-		return album in SessionManager.api.getStarred().albums
+	suspend fun isAlbumStarred(album: AlbumEntity): Boolean {
+		return dao.isAlbumStarred(album.id)
 	}
-	suspend fun starAlbum(album: Album) {
+	suspend fun starAlbum(album: AlbumEntity) {
 		SessionManager.api.star(album.id)
 	}
-	suspend fun unstarAlbum(album: Album) {
+	suspend fun unstarAlbum(album: AlbumEntity) {
 		SessionManager.api.unstar(album.id)
 	}
 }

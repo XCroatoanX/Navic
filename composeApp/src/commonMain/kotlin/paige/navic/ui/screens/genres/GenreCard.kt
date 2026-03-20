@@ -14,10 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,8 +29,6 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodels.GenreWithAlbums
@@ -46,7 +41,6 @@ fun GenreCard(
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val platformContext = LocalPlatformContext.current
 	val inDarkTheme = isSystemInDarkTheme()
 	val isDark = remember(Settings.shared.themeMode) {
 		when (Settings.shared.themeMode) {
@@ -68,24 +62,6 @@ fun GenreCard(
 	)
 	val firstAlbumCoverArt = genre.albums.firstOrNull()?.coverArtId
 	val secondAlbumCoverArt = genre.albums.getOrNull(1)?.coverArtId
-	val firstModel = remember(firstAlbumCoverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(firstAlbumCoverArt))
-			.memoryCacheKey(firstAlbumCoverArt)
-			.diskCacheKey(firstAlbumCoverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
-	val secondModel = remember(secondAlbumCoverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(secondAlbumCoverArt))
-			.memoryCacheKey(secondAlbumCoverArt)
-			.diskCacheKey(secondAlbumCoverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
 	Surface(
 		modifier = modifier,
 		color = colorScheme.primary,

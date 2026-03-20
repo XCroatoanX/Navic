@@ -46,7 +46,7 @@ data class SongEntity(
 	@ColumnInfo(name = "mime_type")
 	val mimeType: String,
 	val suffix: String,
-	val path: String,
+	val path: String?,
 	@ColumnInfo(name = "starred_at")
 	val starredAt: Instant?,
 	@ColumnInfo(name = "date_cached")

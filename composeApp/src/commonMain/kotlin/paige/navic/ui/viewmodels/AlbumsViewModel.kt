@@ -3,17 +3,20 @@ package paige.navic.ui.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import paige.navic.data.database.AlbumEntity
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 
+@OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumsViewModel(
 	initialListType: AlbumListType?,
 	private val repository: AlbumsRepository = AlbumsRepository()
@@ -41,7 +44,13 @@ open class AlbumsViewModel(
 
 	init {
 		viewModelScope.launch {
-			repository.getAlbumsFlow().collect { dbAlbums ->
+			combine(_offset, _listType) { offset, type ->
+				type to offset
+			}.flatMapLatest { (type, offset) ->
+				repository.getAlbumsFlow(offset, type)
+			}.collect { dbAlbums ->
+				_isPaginating.value = false
+
 				if (dbAlbums.isNotEmpty()) {
 					_albumsState.value = UiState.Success(dbAlbums)
 				}
@@ -73,43 +82,42 @@ open class AlbumsViewModel(
 	}
 
 	fun paginate() {
-		if (_albumsState.value !is UiState.Success || _isPaginating.value) return
+		if (_isPaginating.value || _albumsState.value !is UiState.Success) return
 
+		val currentDataSize = (_albumsState.value as UiState.Success).data.size
+		val expectedSize = _offset.value + 30
+
+		if (currentDataSize < expectedSize) return
+
+		_isPaginating.value = true
+		_offset.value += 30
+	}
+
+	fun selectAlbum(album: AlbumEntity?) {
 		viewModelScope.launch {
-			val nextOffset = _offset.value + 30
+			_selectedAlbum.value = album
+			if (album == null) return@launch
+			_starredState.value = UiState.Loading
 			try {
-				repository.syncAlbums(_listType.value, nextOffset)
-				_offset.value = nextOffset
-			} catch (_: Exception) {
+				val isStarred = repository.isAlbumStarred(album)
+				_starredState.value = UiState.Success(isStarred)
+			} catch(e: Exception) {
+				_starredState.value = UiState.Error(e)
 			}
 		}
 	}
 
-	fun selectAlbum(album: AlbumEntity?) {
-//		viewModelScope.launch {
-//			_selectedAlbum.value = album
-//			if (album == null) return@launch
-//			_starredState.value = UiState.Loading
-//			try {
-//				val isStarred = repository.isAlbumStarred(album)
-//				_starredState.value = UiState.Success(isStarred)
-//			} catch(e: Exception) {
-//				_starredState.value = UiState.Error(e)
-//			}
-//		}
-	}
-
 	fun starAlbum(starred: Boolean) {
-//		viewModelScope.launch {
-//			val selection = _selectedAlbum.value ?: return@launch
-//			runCatching {
-//				if (starred) {
-//					repository.starAlbum(selection)
-//				} else {
-//					repository.unstarAlbum(selection)
-//				}
-//			}
-//		}
+		viewModelScope.launch {
+			val selection = _selectedAlbum.value ?: return@launch
+			runCatching {
+				if (starred) {
+					repository.starAlbum(selection)
+				} else {
+					repository.unstarAlbum(selection)
+				}
+			}
+		}
 	}
 
 	fun setListType(listType: AlbumListType) {

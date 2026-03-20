@@ -56,7 +56,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.api.model.Artist
 import dev.zt64.subsonic.api.model.Song
@@ -75,6 +74,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
+import paige.navic.data.database.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
@@ -162,7 +162,7 @@ fun SearchScreen(
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
 					val albums =
-						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<AlbumEntity>() else emptyList()
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
 					val tracks =
