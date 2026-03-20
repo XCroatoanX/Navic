@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.genres
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,9 +32,11 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodels.GenreWithAlbums
-import paige.navic.utils.rememberTrackPainter
 import kotlin.math.abs
 
 @Composable
@@ -45,6 +46,7 @@ fun GenreCard(
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
+	val platformContext = LocalPlatformContext.current
 	val inDarkTheme = isSystemInDarkTheme()
 	val isDark = remember(Settings.shared.themeMode) {
 		when (Settings.shared.themeMode) {
@@ -66,8 +68,24 @@ fun GenreCard(
 	)
 	val firstAlbumCoverArt = genre.albums.firstOrNull()?.coverArtId
 	val secondAlbumCoverArt = genre.albums.getOrNull(1)?.coverArtId
-	val firstPainter = rememberTrackPainter(firstAlbumCoverArt)
-	val secondPainter = rememberTrackPainter(secondAlbumCoverArt)
+	val firstModel = remember(firstAlbumCoverArt) {
+		ImageRequest.Builder(platformContext)
+			.data(SessionManager.api.getCoverArtUrl(firstAlbumCoverArt))
+			.memoryCacheKey(firstAlbumCoverArt)
+			.diskCacheKey(firstAlbumCoverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
+	val secondModel = remember(secondAlbumCoverArt) {
+		ImageRequest.Builder(platformContext)
+			.data(SessionManager.api.getCoverArtUrl(secondAlbumCoverArt))
+			.memoryCacheKey(secondAlbumCoverArt)
+			.diskCacheKey(secondAlbumCoverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
 	Surface(
 		modifier = modifier,
 		color = colorScheme.primary,
@@ -85,30 +103,26 @@ fun GenreCard(
 		Box {
 			Box(Modifier.align(Alignment.CenterEnd)) {
 				if (firstAlbumCoverArt != null) {
-					Image(
-						painter = firstPainter,
-						contentDescription = null,
+					CoverArt(
+						coverArtId = firstAlbumCoverArt,
 						modifier = Modifier
 							.padding(top = 10.dp)
 							.rotate(10f)
 							.size(90.dp)
-							.offset(x = 5.dp, y = 5.dp)
-							.shadow(3.dp, MaterialTheme.shapes.medium)
-							.clip(MaterialTheme.shapes.medium),
-						contentScale = ContentScale.Crop
+							.offset(x = 5.dp, y = 5.dp),
+						shape = MaterialTheme.shapes.medium,
+						shadowElevation = 3.dp
 					)
 					if (secondAlbumCoverArt != null) {
-						Image(
-							painter = secondPainter,
-							contentDescription = null,
+						CoverArt(
+							coverArtId = secondAlbumCoverArt,
 							modifier = Modifier
 								.padding(top = 13.dp)
 								.rotate(25f)
 								.size(90.dp)
-								.offset(x = 25.dp, y = 15.dp)
-								.shadow(10.dp, MaterialTheme.shapes.medium)
-								.clip(MaterialTheme.shapes.medium),
-							contentScale = ContentScale.Crop
+								.offset(x = 25.dp, y = 15.dp),
+							shape = MaterialTheme.shapes.medium,
+							shadowElevation = 10.dp
 						)
 					}
 				}

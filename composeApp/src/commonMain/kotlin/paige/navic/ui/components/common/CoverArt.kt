@@ -1,0 +1,119 @@
+package paige.navic.ui.components.common
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.LocalPlatformContext
+import coil3.compose.SubcomposeAsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.kyant.capsule.ContinuousRoundedRectangle
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_image_failed_to_load
+import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.session.SessionManager
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Error
+import paige.navic.ui.theme.defaultFont
+
+@Composable
+fun CoverArt(
+	modifier: Modifier = Modifier,
+	coverArtId: String?,
+	contentDescription: String? = null,
+	onClick: (() -> Unit)? = null,
+	enabled: Boolean = false,
+	square: Boolean = true,
+	crossfadeMs: Int = 500,
+	shadowElevation: Dp = 0.dp,
+	interactionSource: MutableInteractionSource? = null,
+	shape: Shape = ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp)
+) {
+	val uriHandler = LocalUriHandler.current
+	val platformContext = LocalPlatformContext.current
+	val model = remember(coverArtId) {
+		ImageRequest.Builder(platformContext)
+			.data(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.memoryCacheKey(coverArtId)
+			.diskCacheKey(coverArtId)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.crossfade(crossfadeMs)
+			.build()
+	}
+	SubcomposeAsyncImage(
+		model = model,
+		contentDescription = contentDescription,
+		modifier = modifier
+			.then(if (square) Modifier.aspectRatio(1f) else Modifier)
+			.shadow(shadowElevation, shape)
+			.clip(shape)
+			.background(MaterialTheme.colorScheme.surfaceContainer)
+			.then(
+				if (enabled) {
+					if (onClick != null) {
+						Modifier.clickable(
+							interactionSource = interactionSource,
+							onClick = onClick
+						)
+					} else {
+						Modifier.clickable(interactionSource = interactionSource) {
+							(model.data as? String)?.let { uri ->
+								uriHandler.openUri(uri)
+							}
+						}
+					}
+				} else { Modifier }
+			)
+			.then(if (interactionSource != null)
+				Modifier.indication(interactionSource, ripple())
+			else Modifier),
+		contentScale = ContentScale.Crop,
+		error = {
+			LaunchedEffect(it.result.throwable) {
+				it.result.throwable.printStackTrace()
+			}
+			LazyColumn(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center
+			) {
+				item { Icon(Icons.Outlined.Error, null) }
+				item {
+					Text(
+						stringResource(Res.string.info_image_failed_to_load),
+						maxLines = 1,
+						autoSize = TextAutoSize.StepBased(
+							minFontSize = 1.sp,
+							maxFontSize = 14.sp
+						),
+						fontFamily = defaultFont(grade = 10, round = 100f)
+					)
+				}
+			}
+		}
+	)
+}

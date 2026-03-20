@@ -1,16 +1,13 @@
 package paige.navic.ui.components.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_album
@@ -18,7 +15,7 @@ import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.utils.rememberTrackPainter
+import paige.navic.data.models.settings.Settings
 
 @Composable
 fun TrackRow(
@@ -27,7 +24,6 @@ fun TrackRow(
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
-	val painter = rememberTrackPainter(track.coverArtId)
 	ListItem(
 		modifier = modifier.clickable {
 			ctx.clickSound()
@@ -51,13 +47,10 @@ fun TrackRow(
 			)
 		},
 		leadingContent = {
-			Image(
-				painter = painter,
-				contentDescription = null,
-				modifier = Modifier
-					.size(50.dp)
-					.clip(MaterialTheme.shapes.small),
-				contentScale = ContentScale.Crop
+			CoverArt(
+				coverArtId = track.coverArtId,
+				modifier = Modifier.size(50.dp),
+				shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 			)
 		}
 	)

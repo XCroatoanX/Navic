@@ -62,6 +62,9 @@ fun ErrorBox(
 		animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
 	)
 	var copied by remember { mutableStateOf(false) }
+	LaunchedEffect(error.error) {
+		error.error.printStackTrace()
+	}
 	LaunchedEffect(copied) {
 		if (copied) {
 			delay(2000)
@@ -122,8 +125,10 @@ fun ErrorBox(
 					Text(
 						error.error.stackTraceToString(),
 						fontFamily = FontFamily.Monospace,
-						fontSize = 12.sp,
-						color = MaterialTheme.colorScheme.onSurface
+						fontSize = 10.sp,
+						lineHeight = 10.sp,
+						color = MaterialTheme.colorScheme.onSurface,
+						modifier = Modifier.padding(end = 48.dp)
 					)
 				}
 				IconButton(

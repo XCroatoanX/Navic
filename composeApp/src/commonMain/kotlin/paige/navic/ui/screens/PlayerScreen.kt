@@ -9,8 +9,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -60,11 +58,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -89,6 +85,8 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.PlayerBackgroundStyle
+import paige.navic.data.models.settings.enums.PlayerSliderStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
@@ -108,6 +106,7 @@ import paige.navic.icons.outlined.Repeat
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.BlendBackground
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.MarqueeText
@@ -462,7 +461,8 @@ fun PlayerScreen() {
 
 	val progressBar = @Composable {
 		val waveHeight by animateDpAsState(
-			if (!playerState.isPaused && Settings.shared.useWavySlider)
+			if (!playerState.isPaused
+				&& Settings.shared.playerSliderStyle == PlayerSliderStyle.Squiggly)
 				6.dp
 			else 0.dp
 		)
@@ -486,10 +486,15 @@ fun PlayerScreen() {
 	}
 
 	Box(Modifier.fillMaxSize()) {
-		BlendBackground(
-			painter = sharedPainter,
-			isPaused = playerState.isPaused
-		)
+		when (Settings.shared.playerBackgroundStyle) {
+			PlayerBackgroundStyle.Static -> Unit
+			PlayerBackgroundStyle.Dynamic -> {
+				BlendBackground(
+					painter = sharedPainter,
+					isPaused = playerState.isPaused
+				)
+			}
+		}
 		if (!isPlayerCurrent) return@Box
 		BoxWithConstraints(
 			modifier = Modifier
@@ -557,7 +562,6 @@ private fun PlayerArtwork(
 ) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()
-	val painter = rememberTrackPainter(track.coverArtId)
 	val padding by animateDpAsState(
 		targetValue = if (playerState.isPaused || playerState.currentTrack?.id !== track.id)
 			48.dp
@@ -567,17 +571,13 @@ private fun PlayerArtwork(
 		contentAlignment = Alignment.Center,
 		modifier = modifier
 	) {
-		Image(
-			painter = painter,
-			contentDescription = null,
-			contentScale = ContentScale.Crop,
+		CoverArt(
+			coverArtId = track.coverArtId,
 			modifier = Modifier
 				.aspectRatio(1f)
 				.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.fillMaxSize())
-				.padding(padding)
-				.shadow(8.dp, MaterialTheme.shapes.large)
-				.clip(MaterialTheme.shapes.large)
-				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+				.padding(padding),
+			shadowElevation = 8.dp
 		)
 		if (track.coverArtId.isNullOrEmpty()) {
 			Icon(

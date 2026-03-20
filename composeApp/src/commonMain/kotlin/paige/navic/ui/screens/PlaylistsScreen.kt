@@ -272,7 +272,7 @@ fun PlaylistsScreenItem(
 //				backStack.add(Screen.Tracks(playlist, "playlists"))
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },
-			coverArt = playlist.coverArtId,
+			coverArtId = playlist.coverArtId,
 			title = playlist.name,
 			subtitle = buildString {
 				append(

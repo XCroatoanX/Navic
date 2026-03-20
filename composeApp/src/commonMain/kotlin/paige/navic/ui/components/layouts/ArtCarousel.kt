@@ -1,9 +1,6 @@
 package paige.navic.ui.components.layouts
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -18,12 +15,12 @@ import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import paige.navic.LocalCtx
-import paige.navic.utils.rememberTrackPainter
+import paige.navic.ui.components.common.CoverArt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -62,25 +59,24 @@ fun <T> ArtCarousel(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarouselItemScope.ArtCarouselItem(
-	coverArt: String?,
+	coverArtId: String?,
 	contentDescription: String?,
 	onClick: () -> Unit = {}
 ) {
 	val ctx = LocalCtx.current
 	val focusManager = LocalFocusManager.current
-	val painter = rememberTrackPainter(coverArt)
-	Image(
-		painter = painter,
+	CoverArt(
+		coverArtId = coverArtId,
 		contentDescription = contentDescription,
 		modifier = Modifier
 			.fillMaxWidth()
-			.aspectRatio(1f)
-			.maskClip(MaterialTheme.shapes.large)
-			.clickable {
-				ctx.clickSound()
-				focusManager.clearFocus(true)
-				onClick()
-			},
-		contentScale = ContentScale.Crop
+			.maskClip(MaterialTheme.shapes.large),
+		shape = RectangleShape,
+		onClick = {
+			ctx.clickSound()
+			focusManager.clearFocus(true)
+			onClick()
+		},
+		enabled = true
 	)
 }

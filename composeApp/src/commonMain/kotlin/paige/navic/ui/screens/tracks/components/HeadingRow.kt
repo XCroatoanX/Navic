@@ -1,7 +1,6 @@
 package paige.navic.ui.screens.tracks.components
 
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,20 +12,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.Playlist
 import dev.zt64.subsonic.api.model.SongCollection
@@ -38,8 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 
 @Composable
@@ -49,26 +38,11 @@ fun TracksScreenHeadingRow(
 	listState: LazyListState,
 	sharedTransitionScope: SharedTransitionScope
 ) {
-	val platformContext = LocalPlatformContext.current
-	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
-	val artGridRounding = Settings.shared.artGridRounding
-	val model = remember(partialTracks.coverArtId) {
-		partialTracks.coverArtId?.let { id ->
-			ImageRequest.Builder(platformContext)
-				.data(SessionManager.api.getCoverArtUrl(id, auth = true))
-				.memoryCacheKey(id)
-				.diskCacheKey(id)
-				.diskCachePolicy(CachePolicy.ENABLED)
-				.memoryCachePolicy(CachePolicy.ENABLED)
-				.build()
-		}
-	}
 	with(LocalSharedTransitionScope.current) {
-		AsyncImage(
-			model = model,
+		CoverArt(
+			coverArtId = partialTracks.coverArtId,
 			contentDescription = partialTracks.name,
-			contentScale = ContentScale.Crop,
 			modifier = Modifier
 				.widthIn(0.dp, 420.dp)
 				.padding(
@@ -80,16 +54,9 @@ fun TracksScreenHeadingRow(
 				.sharedElement(
 					sharedContentState = this@with.rememberSharedContentState("${tab}-${partialTracks.id}-cover"),
 					animatedVisibilityScope = LocalNavAnimatedContentScope.current
-				)
-				.clip(
-					ContinuousRoundedRectangle(artGridRounding.dp)
-				)
-				.background(MaterialTheme.colorScheme.surfaceContainer)
-				.clickable {
-					(model?.data as? String)?.let { uri ->
-						uriHandler.openUri(uri)
-					}
-				}
+				),
+			crossfadeMs = 0,
+			enabled = true
 		)
 		Spacer(Modifier.height(10.dp))
 		Column(horizontalAlignment = Alignment.CenterHorizontally) {

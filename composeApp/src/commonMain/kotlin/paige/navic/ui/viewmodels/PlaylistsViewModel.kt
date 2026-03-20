@@ -57,9 +57,7 @@ class PlaylistsViewModel(
 			try {
 				repository.refreshPlaylists()
 			} catch (e: Exception) {
-				if (!hasData) {
-					_playlistsState.value = UiState.Error(e)
-				}
+				_playlistsState.value = UiState.Error(e)
 			} finally {
 				_isRefreshing.value = false
 			}

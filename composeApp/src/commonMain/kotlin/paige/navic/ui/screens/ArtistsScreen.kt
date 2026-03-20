@@ -185,7 +185,7 @@ fun ArtistsScreenItem(
 				backStack.add(Screen.Artist(artist.id))
 			},
 			onLongClick = { viewModel.selectArtist(artist) },
-			coverArt = artist.coverArtId,
+			coverArtId = artist.coverArtId,
 			title = artist.name,
 			subtitle = pluralStringResource(
 				Res.plurals.count_albums,

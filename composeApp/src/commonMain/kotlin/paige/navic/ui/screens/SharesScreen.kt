@@ -1,16 +1,13 @@
 package paige.navic.ui.screens
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -39,9 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -67,6 +62,7 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.dialogs.DeletionDialog
@@ -75,7 +71,6 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.SharesViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.toHoursMinutesSeconds
 import paige.navic.utils.withoutTop
 import kotlin.time.Clock
@@ -92,8 +87,7 @@ fun SharesScreen(
 	var deletionId by remember { mutableStateOf<String?>(null) }
 
 	Scaffold(
-		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) },
-		contentWindowInsets = WindowInsets.statusBars
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) }
 	) { contentPadding ->
 		PullToRefreshBox(
 			modifier = Modifier
@@ -205,7 +199,11 @@ private fun SharesScreenItem(
 				ListItem(
 					modifier = modifier,
 					leadingContent = {
-						ShareCover(coverArt = share.items.firstOrNull()?.coverArtId)
+						CoverArt(
+							coverArtId = share.items.firstOrNull()?.coverArtId,
+							modifier = Modifier.size(60.dp),
+							shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.5f).dp)
+						)
 					},
 					content = {
 						Text(share.description)
@@ -267,25 +265,4 @@ private fun SharesScreenItem(
 			}
 		}
 	}
-}
-
-@Composable
-private fun ShareCover(
-	modifier: Modifier = Modifier,
-	coverArt: String?
-) {
-	val artGridRounding = Settings.shared.artGridRounding
-	val painter = rememberTrackPainter(coverArt)
-	Image(
-		painter = painter,
-		contentDescription = null,
-		contentScale = ContentScale.Crop,
-		modifier = Modifier
-			.size(60.dp)
-			.clip(
-				ContinuousRoundedRectangle((artGridRounding / 1.5f).dp)
-			)
-			.background(MaterialTheme.colorScheme.surfaceContainer)
-			.then(modifier)
-	)
 }

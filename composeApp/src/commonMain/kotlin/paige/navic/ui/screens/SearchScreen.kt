@@ -2,7 +2,6 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,16 +47,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.api.model.Artist
@@ -77,13 +75,14 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
-import paige.navic.data.database.AlbumEntity
 import paige.navic.data.models.Screen
+import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.layouts.ArtGrid
@@ -94,7 +93,6 @@ import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.ui.viewmodels.SearchViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.rememberTrackPainter
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),
@@ -164,7 +162,7 @@ fun SearchScreen(
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
 					val albums =
-						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<AlbumEntity>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
 					val tracks =
@@ -193,7 +191,6 @@ fun SearchScreen(
 									tracks.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
-									val painter = rememberTrackPainter(track.coverArtId)
 									ListItem(
 										modifier = Modifier.clickable {
 											ctx.clickSound()
@@ -208,13 +205,10 @@ fun SearchScreen(
 											)
 										},
 										leadingContent = {
-											Image(
-												painter = painter,
-												contentDescription = null,
-												modifier = Modifier
-													.size(50.dp)
-													.clip(MaterialTheme.shapes.small),
-												contentScale = ContentScale.Crop
+											CoverArt(
+												coverArtId = track.coverArtId,
+												modifier = Modifier.size(50.dp),
+												shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 											)
 										}
 									)

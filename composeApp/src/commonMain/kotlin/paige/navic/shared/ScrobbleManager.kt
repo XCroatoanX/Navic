@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.IO
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock

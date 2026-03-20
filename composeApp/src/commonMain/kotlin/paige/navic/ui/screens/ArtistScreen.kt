@@ -11,7 +11,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.LinkAnnotation
@@ -88,9 +87,11 @@ import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
 import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.MoreVert
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.TrackRow
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
@@ -102,7 +103,6 @@ import paige.navic.ui.viewmodels.ArtistState
 import paige.navic.ui.viewmodels.ArtistViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
-import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -151,7 +151,7 @@ fun ArtistScreen(
 				modifier = Modifier.fillMaxSize()
 			) {
 				when (it) {
-					is UiState.Error -> Box(Modifier.fillMaxSize()) {
+					is UiState.Error -> Box(Modifier.fillMaxSize().padding(contentPadding)) {
 						ErrorBox(it)
 					}
 
@@ -170,7 +170,7 @@ fun ArtistScreen(
 						) {
 							ArtistScreenHeader(
 								artistName = state.artist.name,
-								coverArt = state.artist.coverArtId,
+								coverArtId = state.artist.coverArtId,
 								subtitle = (artistState as? UiState.Success)?.data?.info?.biography,
 								lastfm = (artistState as? UiState.Success)?.data?.info?.lastFmUrl,
 								innerPadding = contentPadding,
@@ -254,7 +254,7 @@ fun ArtistScreen(
 												ctx.clickSound()
 												backStack.add(Screen.Artist(artist.id))
 											},
-											coverArt = artist.coverArtId,
+											coverArtId = artist.coverArtId,
 											title = artist.name,
 											subtitle = pluralStringResource(
 												Res.plurals.count_albums,
@@ -288,7 +288,7 @@ fun truncateText(text: String, limit: Int): String {
 @Composable
 private fun ArtistScreenHeader(
 	artistName: String,
-	coverArt: String?,
+	coverArtId: String?,
 	subtitle: String?,
 	lastfm: String?,
 	innerPadding: PaddingValues,
@@ -299,7 +299,6 @@ private fun ArtistScreenHeader(
 ) {
 	val ctx = LocalCtx.current
 	val layoutDirection = LocalLayoutDirection.current
-	val painter = rememberTrackPainter(coverArt)
 	with(sharedTransitionScope) {
 		BoxWithConstraints(
 			modifier = Modifier.fillMaxWidth()
@@ -310,11 +309,11 @@ private fun ArtistScreenHeader(
 					.height((400.dp / (maxWidth / 300.dp)) + innerPadding.calculateTopPadding())
 					.background(MaterialTheme.colorScheme.surfaceContainer)
 			) {
-				Image(
-					painter = painter,
-					contentDescription = null,
-					contentScale = ContentScale.Crop,
-					modifier = Modifier.fillMaxSize()
+				CoverArt(
+					coverArtId = coverArtId,
+					modifier = Modifier.fillMaxSize(),
+					shape = RectangleShape,
+					square = false
 				)
 				Box(
 					modifier = Modifier
@@ -362,19 +361,22 @@ private fun ArtistScreenHeader(
 					Row(
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						AnimatedVisibility(!scrollState.canScrollBackward) {
-							Text(
+						AnimatedVisibility(
+							!scrollState.canScrollBackward,
+							modifier = Modifier.weight(1f)
+						) {
+							MarqueeText(
 								text = artistName,
-								style = MaterialTheme.typography.displaySmall,
-								fontWeight = FontWeight.Bold,
-								color = Color.White,
+								style = MaterialTheme.typography.displaySmall.copy(
+									fontWeight = FontWeight.Bold,
+									color = Color.White
+								),
 								modifier = Modifier.sharedBounds(
 									sharedContentState = rememberSharedContentState("name"),
 									animatedVisibilityScope = this@AnimatedVisibility
 								)
 							)
 						}
-						Spacer(Modifier.weight(1f))
 						IconButton(
 							onClick = {
 								ctx.clickSound()

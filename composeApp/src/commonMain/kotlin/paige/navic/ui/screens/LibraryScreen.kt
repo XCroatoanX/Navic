@@ -117,12 +117,15 @@ fun LibraryScreen(
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			isRefreshing = recentsState is UiState.Loading
-				|| artistsState is UiState.Loading,
+				|| playlistsState is UiState.Loading
+				|| artistsState is UiState.Loading
+				|| genresState is UiState.Loading,
 			onRefresh = {
 				if (!isLoggedIn) return@PullToRefreshBox
 				albumsViewModel.refreshAlbums()
 				playlistsViewModel.refreshPlaylists()
 				artistsViewModel.refreshArtists()
+				genresViewModel.refreshGenres()
 			}
 		) {
 			LazyVerticalGrid(
