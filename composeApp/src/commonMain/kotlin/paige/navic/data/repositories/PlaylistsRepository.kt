@@ -10,7 +10,6 @@ import paige.navic.data.session.SessionManager
 class PlaylistsRepository(
 	private val dao: DatabaseDao = DbContainer.dao
 ) {
-//	suspend fun getPlaylists(): List<Playlist> = SessionManager.api.getPlaylists()
 
 	fun getPlaylistsFlow(): Flow<List<PlaylistEntity>> = dao.getAllPlaylists()
 

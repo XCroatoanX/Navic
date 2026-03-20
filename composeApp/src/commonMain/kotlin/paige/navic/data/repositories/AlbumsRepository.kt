@@ -1,6 +1,5 @@
 package paige.navic.data.repositories
 
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.AlbumEntity
@@ -8,6 +7,7 @@ import paige.navic.data.database.DatabaseDao
 import paige.navic.data.database.DbContainer
 import paige.navic.data.database.toEntity
 import paige.navic.data.session.SessionManager
+import kotlin.time.Clock
 
 open class AlbumsRepository(
 	private val dao: DatabaseDao = DbContainer.dao
@@ -42,8 +42,11 @@ open class AlbumsRepository(
 	}
 	suspend fun starAlbum(album: AlbumEntity) {
 		SessionManager.api.star(album.id)
+		dao.insertAlbum(album.copy(starred_at = Clock.System.now()))
 	}
+
 	suspend fun unstarAlbum(album: AlbumEntity) {
 		SessionManager.api.unstar(album.id)
+		dao.insertAlbum(album.copy(starred_at = null))
 	}
 }

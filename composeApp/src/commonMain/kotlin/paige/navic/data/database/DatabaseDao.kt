@@ -20,7 +20,7 @@ interface DatabaseDao {
 	@Query("SELECT * FROM navidrome_songs WHERE playlist_id = :playlistId ORDER BY track_number ASC")
 	fun getSongsByPlaylist(playlistId: String): Flow<List<SongEntity>>
 
-	@Query("SELECT * FROM navidrome_songs WHERE title LIKE '%' || :query || '%' OR artist LIKE '%' || :query || '%'")
+	@Query("SELECT * FROM navidrome_songs WHERE title LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%'")
 	fun searchSongs(query: String): Flow<List<SongEntity>>
 
 	@Query("SELECT * FROM navidrome_songs WHERE id IN (:ids)")
@@ -40,6 +40,9 @@ interface DatabaseDao {
 
 	@Query("DELETE FROM navidrome_songs WHERE playlist_id = :playlistId")
 	suspend fun deleteSongsByPlaylist(playlistId: String)
+
+	@Query("SELECT EXISTS(SELECT 1 FROM navidrome_songs WHERE id = :songId AND starred_at IS NOT NULL)")
+	suspend fun isSongStarred(songId: String): Boolean
 
 	@Query("SELECT * FROM navidrome_songs WHERE album_id = :albumId ORDER BY disc_number ASC, track_number ASC")
 	fun getSongsByAlbum(albumId: String): Flow<List<SongEntity>>
