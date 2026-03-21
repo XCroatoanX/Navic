@@ -77,7 +77,7 @@ class ArtistViewModel(
 		(_artistState.value as? UiState.Success)?.data?.let { state ->
 			player.clearQueue()
 			state.albums.forEach { album ->
-				player.addToQueue(album)
+//				player.addToQueue(album)TODO
 			}
 			player.togglePlay()
 		}

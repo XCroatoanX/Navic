@@ -26,14 +26,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.action_remove_star
@@ -51,7 +52,9 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.database.AlbumEntity
+import paige.navic.data.database.toUiModel
 import paige.navic.data.models.Screen
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
@@ -264,11 +267,15 @@ fun AlbumsScreenItem(
 	val backStack = LocalNavStack.current
 	val selection by viewModel.selectedAlbum.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
+	val scope = rememberCoroutineScope()
 	Box(modifier) {
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-//				backStack.add(Screen.Tracks(album, tab))
+				scope.launch {
+					val uiModel = viewModel.getAlbumTracks(album)
+					backStack.add(Screen.Tracks(uiModel, tab))
+				}
 			},
 			onLongClick = { viewModel.selectAlbum(album) },
 			coverArtId = album.coverArtId,

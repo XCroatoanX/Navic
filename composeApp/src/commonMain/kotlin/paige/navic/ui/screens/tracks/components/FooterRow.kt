@@ -12,12 +12,13 @@ import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_songs
 import org.jetbrains.compose.resources.pluralStringResource
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.ui.theme.defaultFont
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TracksScreenFooterRow(
-	partialTracks: SongCollection
+	partialTracks: TrackCollectionUiModel
 ) {
 	Text(
 		buildString {

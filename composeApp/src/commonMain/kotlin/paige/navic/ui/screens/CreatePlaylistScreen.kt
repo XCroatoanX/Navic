@@ -23,6 +23,7 @@ import navic.composeapp.generated.resources.title_create_playlist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.SongEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Badge
@@ -32,7 +33,7 @@ import paige.navic.utils.UiState
 
 @Composable
 fun CreatePlaylistScreen(
-	tracks: List<Song>,
+	tracks: List<SongEntity>,
 	viewModel: CreatePlaylistViewModel = viewModel(key = tracks.joinToString()) { CreatePlaylistViewModel(tracks) }
 ) {
 	val ctx = LocalCtx.current
@@ -45,7 +46,7 @@ fun CreatePlaylistScreen(
 				is CreatePlaylistViewModel.Event.Dismiss -> {
 					if (backStack.lastOrNull() is Screen.CreatePlaylist) {
 						backStack.removeLastOrNull()
-						backStack.add(Screen.Tracks(event.playlist, "playlists"))
+//						backStack.add(Screen.Tracks(event.playlist, "playlists"))TODO
 					}
 				}
 			}

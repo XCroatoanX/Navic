@@ -80,6 +80,8 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
+import paige.navic.data.database.toEntity
+import paige.navic.data.database.toUiModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
@@ -225,8 +227,9 @@ fun ArtistScreen(
 										stringResource(Res.string.title_albums),
 										albums.sortedByDescending { it.playCount }
 									) { album ->
+										val songEntities = album.songs.map { it.toEntity() }
 										ArtCarouselItem(album.coverArtId, album.name) {
-											backStack.add(Screen.Tracks(album, "artist"))
+											backStack.add(Screen.Tracks(album.toEntity().toUiModel(songEntities), "artist"))
 										}
 									}
 								}

@@ -195,7 +195,7 @@ fun SearchScreen(
 										modifier = Modifier.clickable {
 											ctx.clickSound()
 											player.clearQueue()
-											player.addToQueueSingle(track)
+//											player.addToQueueSingle(track)TODO
 											player.playAt(0)
 										},
 										headlineContent = { Text(track.title) },

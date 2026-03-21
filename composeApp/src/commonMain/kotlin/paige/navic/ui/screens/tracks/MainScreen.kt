@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.SongCollection
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.dialogs.ShareDialog
@@ -47,7 +48,7 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TracksScreen(
-	partialTracks: SongCollection,
+	partialTracks: TrackCollectionUiModel,
 	tab: String,
 	viewModel: TracksViewModel = viewModel(key = partialTracks.toString()) {
 		TracksViewModel(partialTracks)
@@ -88,7 +89,7 @@ fun TracksScreen(
 					.padding(top = contentPadding.calculateTopPadding())
 					.background(MaterialTheme.colorScheme.surface),
 				isRefreshing = tracksState is UiState.Loading
-					|| (artistState is UiState.Loading && partialTracks is Album),
+					|| (artistState is UiState.Loading && partialTracks.isAlbum),
 				onRefresh = {
 					viewModel.refreshTracks()
 					viewModel.refreshArtist()

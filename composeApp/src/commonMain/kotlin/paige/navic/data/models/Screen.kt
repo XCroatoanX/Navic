@@ -37,15 +37,15 @@ sealed interface Screen : NavKey {
 	@Serializable data object Player : Screen
 	@Serializable data object Lyrics : Screen
 	@Serializable data object Queue : Screen
-	@Serializable data class Tracks(val partialCollection: SongCollection, val tab: String) : Screen
+	@Serializable data class Tracks(val partialCollection: TrackCollectionUiModel, val tab: String) : Screen
 	@Serializable data class TrackInfo(val track: SongEntity) : Screen
 	@Serializable data class Search(
 		val nested: Boolean = false
 	) : Screen
 	@Serializable data object Shares : Screen
 	@Serializable data class Artist(val artist: String) : Screen
-	@Serializable data class AddToPlaylist(val tracks: List<Song>, val playlistToExclude: String? = null) : Screen
-	@Serializable data class CreatePlaylist(val tracks: List<Song> = emptyList()) : Screen
+	@Serializable data class AddToPlaylist(val tracks: List<SongEntity>, val playlistToExclude: String? = null) : Screen
+	@Serializable data class CreatePlaylist(val tracks: List<SongEntity> = emptyList()) : Screen
 
 	// settings
 	@Serializable

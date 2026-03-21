@@ -27,7 +27,6 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import dev.zt64.subsonic.api.model.Song
 import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -36,6 +35,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
+import paige.navic.data.database.SongEntity
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.effectiveGain
@@ -211,7 +212,7 @@ class AndroidMediaPlayerViewModel(
 			runCatching {
 				val album = SessionManager.api.getAlbum(albumId)
 
-				_uiState.update { it.copy(currentCollection = album) }
+//				_uiState.update { it.copy(currentCollection = album) }TODO
 			}.onFailure {
 				loadingCollectionId = null
 			}
@@ -311,7 +312,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(track: Song) {
+	override fun addToQueueSingle(track: SongEntity) {
 		controller?.addMediaItem(track.toMediaItem())
 		_uiState.update { state ->
 			val newQueue = state.queue + track
@@ -324,7 +325,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueue(tracks: SongCollection) {
+	override fun addToQueue(tracks: TrackCollectionUiModel) {
 		val items = tracks.songs.map { it.toMediaItem() }
 		controller?.addMediaItems(items)
 		_uiState.update { state ->
@@ -379,7 +380,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: SongCollection) {
+	override fun shufflePlay(tracks: TrackCollectionUiModel) {
 		val shuffledTracks = tracks.songs.shuffled()
 		val mediaItems = shuffledTracks.map { it.toMediaItem() }
 
@@ -440,11 +441,11 @@ class AndroidMediaPlayerViewModel(
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 
-	private fun Song.toMediaItem(): MediaItem {
+	private fun SongEntity.toMediaItem(): MediaItem {
 		val metadata = MediaMetadata.Builder()
 			.setTitle(title)
 			.setArtist(artistName)
-			.setAlbumTitle(albumTitle)
+			.setAlbumTitle(album)
 			.setArtworkUri(
 				coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() }
 			)

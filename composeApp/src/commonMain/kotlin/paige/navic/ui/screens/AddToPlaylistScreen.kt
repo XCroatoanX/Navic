@@ -43,6 +43,7 @@ import navic.composeapp.generated.resources.info_no_playlists
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.SongEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
@@ -55,7 +56,7 @@ import paige.navic.utils.UiState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddToPlaylistScreen(
-	tracks: List<Song>,
+	tracks: List<SongEntity>,
 	playlistToExclude: String?,
 	viewModel: AddToPlaylistViewModel = viewModel(
 		key = tracks.joinToString() + playlistToExclude

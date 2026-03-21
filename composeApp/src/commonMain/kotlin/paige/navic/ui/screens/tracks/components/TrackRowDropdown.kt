@@ -100,7 +100,7 @@ fun TrackRowDropdown(
 			text = {
 				Text(
 					stringResource(
-						if (tracks is Playlist)
+						if (!tracks.isAlbum)
 							Res.string.action_add_to_another_playlist
 						else Res.string.action_add_to_playlist
 					)
@@ -115,18 +115,18 @@ fun TrackRowDropdown(
 			onClick = {
 				onDismissRequest()
 				if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
-//					backStack.add(
-//						Screen.AddToPlaylist(
-//							listOf(track),
-//							playlistToExclude = if (tracks is Playlist)
-//								tracks.id
-//							else null
-//						)
-//					)TODO
+					backStack.add(
+						Screen.AddToPlaylist(
+							listOf(track),
+							playlistToExclude = if (!tracks.isAlbum)
+								tracks.id
+							else null
+						)
+					)
 				}
 			},
 		)
-		if (tracks is Playlist) {
+		if (!tracks.isAlbum) {
 			DropdownItem(
 				containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 				text = { Text(stringResource(Res.string.action_remove_from_playlist)) },

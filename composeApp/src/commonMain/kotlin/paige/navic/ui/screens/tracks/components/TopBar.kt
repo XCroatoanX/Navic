@@ -119,11 +119,11 @@ fun TracksScreenTopBar(
 						onClick = {
 							expanded = false
 							if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
-//								backStack.add(
-//									Screen.AddToPlaylist(
-//										(tracks as? UiState.Success)?.data?.songs.orEmpty()
-//									)
-//								) TODO
+								backStack.add(
+									Screen.AddToPlaylist(
+										(tracks as? UiState.Success)?.data?.songs.orEmpty()
+									)
+								)
 							}
 						},
 					)

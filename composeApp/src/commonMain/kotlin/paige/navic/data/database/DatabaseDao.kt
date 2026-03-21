@@ -26,6 +26,12 @@ interface DatabaseDao {
 	@Query("SELECT * FROM navidrome_songs WHERE id IN (:ids)")
 	fun getSongsByIds(ids: List<String>): Flow<List<SongEntity>>
 
+	@Query("SELECT * FROM navidrome_songs WHERE album_id = :albumId ORDER BY disc_number ASC, track_number ASC")
+	suspend fun getSongListByAlbumId(albumId: String): List<SongEntity>
+
+	@Query("SELECT * FROM navidrome_songs ORDER BY disc_number ASC, track_number ASC")
+	suspend fun getSongList(): List<SongEntity>
+
 	@Query("SELECT * FROM navidrome_songs WHERE navidrome_id = :navidromeId LIMIT 1")
 	suspend fun getSongByNavidromeId(navidromeId: String): SongEntity?
 
@@ -45,7 +51,8 @@ interface DatabaseDao {
 	suspend fun isSongStarred(songId: String): Boolean
 
 	@Query("SELECT * FROM navidrome_songs WHERE album_id = :albumId ORDER BY disc_number ASC, track_number ASC")
-	fun getSongsByAlbum(albumId: String): Flow<List<SongEntity>>
+	fun getSongsFlowByAlbum(albumId: String): Flow<List<SongEntity>>
+
 
 	// PLAYLISTS
 

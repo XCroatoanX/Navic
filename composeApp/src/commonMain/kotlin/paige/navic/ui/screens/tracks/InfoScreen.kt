@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_track_artist
 import navic.composeapp.generated.resources.info_track_artist_id
@@ -68,7 +67,7 @@ fun TrackInfoScreen(track: SongEntity) {
 					Res.string.info_track_id to track.id,
 					Res.string.info_track_path to track.path,
 					Res.string.info_track_replay_gain to track.replayGain?.toString(),
-//					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()TODO
+					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()
 				).forEach { (key, value) ->
 					FormRow {
 						Text(stringResource(key))

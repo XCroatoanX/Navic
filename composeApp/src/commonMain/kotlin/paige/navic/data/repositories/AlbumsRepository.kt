@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.AlbumEntity
 import paige.navic.data.database.DatabaseDao
 import paige.navic.data.database.DbContainer
+import paige.navic.data.database.SongEntity
 import paige.navic.data.database.toEntity
 import paige.navic.data.session.SessionManager
-import kotlin.time.Clock
 
 open class AlbumsRepository(
 	private val dao: DatabaseDao = DbContainer.dao
@@ -25,6 +25,17 @@ open class AlbumsRepository(
 			is AlbumListType.Frequent -> dao.getAlbumsFrequent(totalToLoad)
 			is AlbumListType.Recent -> dao.getAlbumsRecent(totalToLoad)
 			else -> dao.getAlbumsAlphabeticalByName(totalToLoad)
+		}
+	}
+
+	suspend fun getSongsByAlbumId(albumId: String): List<SongEntity> {
+		val localSongs = dao.getSongListByAlbumId(albumId)
+
+		return localSongs.ifEmpty {
+			val remoteSongs = SessionManager.api.getAlbum(albumId).songs
+			val entities = remoteSongs.map { it.toEntity() }
+			dao.insertSongs(entities)
+			entities
 		}
 	}
 

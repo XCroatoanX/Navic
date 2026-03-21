@@ -59,6 +59,7 @@ import navic.composeapp.generated.resources.action_reorder
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.database.SongEntity
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
@@ -131,7 +132,7 @@ fun QueueScreen(
 private fun QueueScreenItem(
 	index: Int,
 	count: Int,
-	track: Song,
+	track: SongEntity,
 	isPlaying: Boolean,
 	isSelected: Boolean,
 	isDragging: Boolean,

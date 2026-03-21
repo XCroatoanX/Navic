@@ -2,8 +2,6 @@ package paige.navic.shared
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,13 +12,14 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import paige.navic.data.database.SongEntity
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.session.SessionManager
 
 @Serializable
 data class PlayerUiState(
-	val queue: List<Song> = emptyList(),
+	val queue: List<SongEntity> = emptyList(),
 	val currentTrack: SongEntity? = null,
-	val currentCollection: SongCollection? = null,
+	val currentCollection: TrackCollectionUiModel? = null,
 	val currentIndex: Int = -1,
 	val isPaused: Boolean = false,
 	val isShuffleEnabled: Boolean = false,
@@ -42,8 +41,8 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract  fun addToQueueSingle(track: Song)
-	abstract  fun addToQueue(tracks: SongCollection)
+	abstract  fun addToQueueSingle(track: SongEntity)
+	abstract  fun addToQueue(tracks: TrackCollectionUiModel)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
@@ -55,7 +54,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun previous()
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
-	abstract fun shufflePlay(tracks: SongCollection)
+	abstract fun shufflePlay(tracks: TrackCollectionUiModel)
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {

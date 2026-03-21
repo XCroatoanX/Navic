@@ -83,6 +83,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
+import paige.navic.data.database.SongEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.PlayerBackgroundStyle
@@ -145,7 +146,7 @@ fun PlayerScreen() {
 			onClick = {
 				isStarred = !isStarred
 				scope.launch {
-					if (isStarred) player.starTrack() else player.unstarTrack()
+//					if (isStarred) player.starTrack() else player.unstarTrack()TODO
 				}
 			},
 			colors = IconButtonDefaults.filledTonalIconButtonColors(),
@@ -185,7 +186,7 @@ fun PlayerScreen() {
 						playerState.currentCollection?.let { tracks ->
 							expanded = false
 							backStack.remove(Screen.Player)
-							backStack.add(Screen.Tracks(tracks, ""))
+//							backStack.add(Screen.Tracks(tracks, ""))TODO
 						}
 					},
 					text = {
@@ -216,7 +217,7 @@ fun PlayerScreen() {
 						track?.let { track ->
 							expanded = false
 							backStack.remove(Screen.Player)
-							backStack.add(Screen.AddToPlaylist(listOf(track)))
+//							backStack.add(Screen.AddToPlaylist(listOf(track)))TODO
 						}
 					},
 					text = { Text(stringResource(Res.string.action_add_to_playlist)) },
@@ -261,13 +262,13 @@ fun PlayerScreen() {
 									false
 								}
 
-								if (!isSameAlbum)
-									backStack.add(
-										Screen.Tracks(
-											playerState.currentCollection ?: return@clickable,
-											""
-										)
-									)
+//								if (!isSameAlbum)
+//									backStack.add(
+//										Screen.Tracks(
+//											playerState.currentCollection ?: return@clickable,
+//											""
+//										)
+//									)TODO
 							}
 						},
 						style = MaterialTheme.typography.bodyLarge
@@ -558,7 +559,7 @@ fun PlayerScreen() {
 private fun PlayerArtwork(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean,
-	track: Song
+	track: SongEntity
 ) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()

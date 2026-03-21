@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.database.AlbumEntity
 import paige.navic.data.database.SongEntity
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.repositories.TracksRepository
@@ -18,7 +19,7 @@ import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 
 class TracksViewModel(
-	private val partialCollection: SongCollection,
+	private val partialCollection: TrackCollectionUiModel,
 	private val repository: TracksRepository = TracksRepository()
 ) : ViewModel() {
 	private val _tracksState = MutableStateFlow<UiState<TrackCollectionUiModel>>(UiState.Loading)
@@ -79,16 +80,20 @@ class TracksViewModel(
 	}
 
 	fun refreshArtist() {
-		(partialCollection as? Album)?.let { album ->
+		if (partialCollection.isAlbum) {
 			viewModelScope.launch {
 				_artistState.value = UiState.Loading
 				try {
-					_artistState.value = UiState.Success(SessionManager.api.getArtist(album.artistId))
+					_artistState.value = UiState.Success(SessionManager.api.getArtist(partialCollection.id))
 				} catch (e: Exception) {
 					e.printStackTrace()
 					_artistState.value = UiState.Error(e)
 				}
 			}
+		} else {
+			// Free the UI from the loading state if it's a playlist
+			_artistState.value = UiState.Error(Exception("Not an album, no artist to fetch"))
+			// Or use a default/empty Success state depending on your UI logic
 		}
 	}
 

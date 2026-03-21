@@ -1,8 +1,10 @@
 package paige.navic.data.models
 
+import kotlinx.serialization.Serializable
 import paige.navic.data.database.SongEntity
 import kotlin.time.Duration
 
+@Serializable
 data class TrackCollectionUiModel(
 	val id: String,
 	val name: String,

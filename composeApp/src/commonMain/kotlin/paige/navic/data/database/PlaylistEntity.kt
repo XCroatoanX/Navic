@@ -3,6 +3,7 @@ package paige.navic.data.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import paige.navic.data.models.TrackCollectionUiModel
 import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -54,3 +55,12 @@ fun ApiPlaylist.toEntity(): PlaylistEntity {
 	)
 }
 
+private fun PlaylistEntity.toUiModel(songs: List<SongEntity>) = TrackCollectionUiModel(
+	id = id,
+	name = name,
+	coverArtId = coverArtId,
+	duration = duration,
+	songCount = songCount,
+	isAlbum = false,
+	songs = songs
+)

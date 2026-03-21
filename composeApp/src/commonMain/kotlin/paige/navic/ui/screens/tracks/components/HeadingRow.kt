@@ -28,12 +28,13 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun TracksScreenHeadingRow(
-	partialTracks: SongCollection,
+	partialTracks: TrackCollectionUiModel,
 	tab: String,
 	listState: LazyListState,
 	sharedTransitionScope: SharedTransitionScope
@@ -71,23 +72,24 @@ fun TracksScreenHeadingRow(
 					textAlign = TextAlign.Center
 				)
 			}
-			val subtitle = when (partialTracks) {
-				is Album -> partialTracks.artistName
-				is Playlist -> partialTracks.comment
+//			val subtitle = when (partialTracks) {
+//				is Album -> partialTracks.artistName
+//				is Playlist -> partialTracks.comment
+//			}TODO :(
+			val subtitle = if(partialTracks.isAlbum){ partialTracks.name } else {
+				"Playlist"
 			}
-			subtitle?.let { subtitle ->
-				Text(
-					subtitle,
-					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(partialTracks is Album) {
-						(partialTracks as? Album)?.artistId?.let { id ->
-							backStack.add(Screen.Artist(id))
-						}
-					},
-					style = MaterialTheme.typography.bodyMedium,
-					fontFamily = defaultFont(grade = 100, round = 100f)
-				)
-			}
+			Text(
+				subtitle,
+				color = MaterialTheme.colorScheme.primary,
+				modifier = Modifier.clickable(partialTracks is Album) {
+					(partialTracks as? Album)?.artistId?.let { id ->
+						backStack.add(Screen.Artist(id))
+					}
+				},
+				style = MaterialTheme.typography.bodyMedium,
+				fontFamily = defaultFont(grade = 100, round = 100f)
+			)
 			Text(
 				if (partialTracks is Album)
 					"${partialTracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${

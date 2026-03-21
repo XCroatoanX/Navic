@@ -10,11 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.database.PlaylistEntity
+import paige.navic.data.database.SongEntity
+import paige.navic.data.database.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 
 class CreatePlaylistViewModel(
-	private val tracks: List<Song>
+	private val tracks: List<SongEntity>
 ) : ViewModel() {
 	private val _creationState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val creationState = _creationState.asStateFlow()
@@ -30,9 +33,10 @@ class CreatePlaylistViewModel(
 			try {
 				val playlist = SessionManager.api.createPlaylistFromSongs(
 					name = name.text.toString(),
-					songs = tracks
+					songs = tracks as List<Song>
+					//TODO horrible
 				)
-				_events.send(Event.Dismiss(playlist))
+				_events.send(Event.Dismiss(playlist.toEntity()))
 				_creationState.value = UiState.Success(null)
 			} catch (e: Exception) {
 				_creationState.value = UiState.Error(e)
@@ -41,6 +45,6 @@ class CreatePlaylistViewModel(
 	}
 
 	sealed class Event {
-		data class Dismiss(val playlist: Playlist) : Event()
+		data class Dismiss(val playlist: PlaylistEntity) : Event()
 	}
 }

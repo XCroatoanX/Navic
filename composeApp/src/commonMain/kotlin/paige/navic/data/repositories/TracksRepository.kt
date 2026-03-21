@@ -1,9 +1,6 @@
 package paige.navic.data.repositories
 
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumInfo
-import dev.zt64.subsonic.api.model.Playlist
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.flow.first
 import paige.navic.data.database.DatabaseDao
 import paige.navic.data.database.DbContainer
@@ -15,11 +12,10 @@ import kotlin.time.Clock
 class TracksRepository(
 	private val dao: DatabaseDao = DbContainer.dao
 ) {
-	suspend fun fetchWithAllTracks(collection: SongCollection): TrackCollectionUiModel? {
-		return when (collection) {
-			is Album -> {
+	suspend fun fetchWithAllTracks(collection: TrackCollectionUiModel): TrackCollectionUiModel? {
+		return if (collection.isAlbum) {
 				val album = dao.getAlbumById(collection.id) ?: return null
-				val songs = dao.getSongsByAlbum(collection.id).first()
+				val songs = dao.getSongsFlowByAlbum(collection.id).first()
 
 				TrackCollectionUiModel(
 					id = album.id,
@@ -30,8 +26,7 @@ class TracksRepository(
 					isAlbum = true,
 					songs = songs
 				)
-			}
-			is Playlist -> {
+			} else {
 				val playlist = dao.getPlaylistById(collection.id) ?: return null
 				val songs = dao.getSongsByPlaylist(collection.id).first()
 
@@ -46,7 +41,6 @@ class TracksRepository(
 				)
 			}
 		}
-	}
 
 	suspend fun getAlbumInfo(albumId: String): AlbumInfo {
 		return SessionManager.api.getAlbumInfo(albumId)
