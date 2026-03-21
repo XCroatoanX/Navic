@@ -8,13 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -77,6 +74,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.database.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
@@ -142,12 +140,8 @@ fun SearchScreen(
 			}
 		},
 		bottomBar = {
-			if (!nested) {
-				RootBottomBar(
-					scrolled = viewModel.gridState.lastScrolledForward,
-					modifier = Modifier.imePadding(),
-					hidePlayerBar = WindowInsets.ime.asPaddingValues().calculateBottomPadding() >= 100.dp
-				)
+			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
 			}
 		}
 	) { contentPadding ->

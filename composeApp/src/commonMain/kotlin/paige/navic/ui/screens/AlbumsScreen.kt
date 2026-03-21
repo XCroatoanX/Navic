@@ -56,6 +56,7 @@ import paige.navic.data.database.toUiModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
@@ -114,7 +115,7 @@ fun AlbumsScreen(
 			}
 		},
 		bottomBar = {
-			if (!nested || Settings.shared.showBarsOnAllScreens) {
+			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
 			}
 		}

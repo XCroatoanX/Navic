@@ -1,6 +1,15 @@
 package paige.navic.ui.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -23,7 +32,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.Playlist
@@ -44,6 +55,8 @@ import paige.navic.data.database.PlaylistEntity
 import paige.navic.data.models.settings.enums.PlaylistSortMode
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarCollapseMode
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
@@ -86,7 +99,10 @@ fun PlaylistsScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-	val isLoggedIn = SessionManager.isLoggedIn.collectAsState()
+	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
+
+	val slideSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+	val scaleInSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
 
 	Scaffold(
 		topBar = {
@@ -104,25 +120,43 @@ fun PlaylistsScreen(
 			}
 		},
 		floatingActionButton = {
-			MediumFloatingActionButton(
-				shape = MaterialTheme.shapes.large,
-				containerColor = MaterialTheme.colorScheme.primary,
-				onClick = {
-					ctx.clickSound()
-					if (backStack.lastOrNull() !is Screen.CreatePlaylist) {
-						backStack.add(Screen.CreatePlaylist())
+			if (!isLoggedIn) return@Scaffold
+			AnimatedContent(
+				!viewModel.gridState.lastScrolledForward
+					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
+				transitionSpec = {
+					val transformOrigin = TransformOrigin(0f, 1f)
+					(slideInHorizontally(slideSpec) { it / 2 }
+						+ scaleIn(scaleInSpec, transformOrigin = transformOrigin)
+						+ slideInVertically(slideSpec) { it / 2 })
+						.togetherWith(slideOutHorizontally(slideSpec) { it / 2 }
+							+ scaleOut(transformOrigin = transformOrigin)
+							+ slideOutVertically(slideSpec) { it / 2 })
+						.using(SizeTransform(clip = false))
+				}
+			) { notScrolled ->
+				if (notScrolled) {
+					MediumFloatingActionButton(
+						shape = MaterialTheme.shapes.large,
+						containerColor = MaterialTheme.colorScheme.primary,
+						onClick = {
+							ctx.clickSound()
+							if (backStack.lastOrNull() !is Screen.CreatePlaylist) {
+								backStack.add(Screen.CreatePlaylist())
+							}
+						}
+					) {
+						Icon(
+							imageVector = Icons.Outlined.Add,
+							contentDescription = stringResource(Res.string.title_create_playlist),
+							modifier = Modifier.size(26.dp)
+						)
 					}
 				}
-			) {
-				Icon(
-					imageVector = Icons.Outlined.Add,
-					contentDescription = stringResource(Res.string.title_create_playlist),
-					modifier = Modifier.size(26.dp)
-				)
 			}
 		},
 		bottomBar = {
-			if (!nested || Settings.shared.showBarsOnAllScreens) {
+			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
 			}
 		}
@@ -134,7 +168,7 @@ fun PlaylistsScreen(
 			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
 		) {
-			if (!isLoggedIn.value) {
+			if (!isLoggedIn) {
 				Text(
 					stringResource(Res.string.info_needs_log_in),
 					color = MaterialTheme.colorScheme.onSurfaceVariant,

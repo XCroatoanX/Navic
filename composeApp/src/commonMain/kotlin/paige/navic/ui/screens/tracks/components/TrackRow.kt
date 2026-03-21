@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.tracks.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -35,6 +36,7 @@ fun TracksScreenTrackRow(
 			end = 16.dp,
 			bottom = ListItemDefaults.SegmentedGap
 		),
+		contentPadding = PaddingValues(14.dp),
 		onClick = onClick,
 		onLongClick = onLongClick,
 		shapes = ListItemDefaults.segmentedShapes(

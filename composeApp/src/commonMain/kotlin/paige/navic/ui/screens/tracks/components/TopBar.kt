@@ -1,8 +1,11 @@
 package paige.navic.ui.screens.tracks.components
 
-import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -11,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import dev.zt64.subsonic.api.model.AlbumInfo
 import navic.composeapp.generated.resources.Res
@@ -41,22 +43,19 @@ import kotlin.collections.orEmpty
 fun TracksScreenTopBar(
 	tracks: UiState<TrackCollectionUiModel>,
 	albumInfoState: UiState<AlbumInfo>,
-	onSetShareId: (shareId: String?) -> Unit,
-	sharedTransitionScope: SharedTransitionScope,
-	listState: LazyListState
+	scrolled: Boolean,
+	onSetShareId: (shareId: String?) -> Unit
 ) {
 	val backStack = LocalNavStack.current
 	val uriHandler = LocalUriHandler.current
 	NestedTopBar(
 		title = {
-			with(sharedTransitionScope) {
-				Text(
-					(tracks as? UiState.Success)?.data?.name ?: "",
-					modifier = Modifier.sharedElementWithCallerManagedVisibility(
-						sharedContentState = rememberSharedContentState("name"),
-						visible = listState.canScrollBackward
-					)
-				)
+			AnimatedVisibility(
+				scrolled,
+				enter = scaleIn() + fadeIn(),
+				exit = scaleOut() + fadeOut()
+			) {
+				Text((tracks as? UiState.Success)?.data?.name ?: "")
 			}
 		},
 		actions = {

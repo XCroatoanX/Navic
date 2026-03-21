@@ -59,6 +59,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalShareManager
 import paige.navic.LocalSnackbarState
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
@@ -68,6 +69,7 @@ import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.SharesViewModel
 import paige.navic.utils.UiState
@@ -87,7 +89,12 @@ fun SharesScreen(
 	var deletionId by remember { mutableStateOf<String?>(null) }
 
 	Scaffold(
-		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) }
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) },
+		bottomBar = {
+			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+			}
+		}
 	) { contentPadding ->
 		PullToRefreshBox(
 			modifier = Modifier

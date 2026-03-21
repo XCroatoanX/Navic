@@ -1,6 +1,11 @@
 package paige.navic.ui.screens.tracks.components
 
-import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +13,14 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
@@ -36,10 +43,10 @@ import paige.navic.ui.theme.defaultFont
 fun TracksScreenHeadingRow(
 	partialTracks: TrackCollectionUiModel,
 	tab: String,
-	listState: LazyListState,
-	sharedTransitionScope: SharedTransitionScope
+	scrolled: Boolean
 ) {
 	val backStack = LocalNavStack.current
+	val progress by animateFloatAsState(if (scrolled) 0f else 1f)
 	with(LocalSharedTransitionScope.current) {
 		CoverArt(
 			coverArtId = partialTracks.coverArtId,
@@ -61,17 +68,12 @@ fun TracksScreenHeadingRow(
 		)
 		Spacer(Modifier.height(10.dp))
 		Column(horizontalAlignment = Alignment.CenterHorizontally) {
-			with(sharedTransitionScope) {
-				Text(
-					partialTracks.name,
-					modifier = Modifier.sharedElementWithCallerManagedVisibility(
-						sharedContentState = rememberSharedContentState("name"),
-						visible = !listState.canScrollBackward
-					),
-					style = MaterialTheme.typography.headlineSmall,
-					textAlign = TextAlign.Center
-				)
-			}
+			Text(
+				partialTracks.name,
+				style = MaterialTheme.typography.headlineSmall,
+				textAlign = TextAlign.Center,
+				modifier = Modifier.alpha(progress).scale(progress)
+			)
 //			val subtitle = when (partialTracks) {
 //				is Album -> partialTracks.artistName
 //				is Playlist -> partialTracks.comment

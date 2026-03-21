@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.tracks
 
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +28,7 @@ import dev.zt64.subsonic.api.model.SongCollection
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.RootBottomBar
@@ -67,105 +68,106 @@ fun TracksScreen(
 	val starredState by viewModel.starredState.collectAsState()
 	val artistState by viewModel.artistState.collectAsState()
 
-	SharedTransitionLayout {
-		Scaffold(
-			topBar = {
-				TracksScreenTopBar(
-					albumInfoState = albumInfoState,
-					tracks = tracksState,
-					sharedTransitionScope = this@SharedTransitionLayout,
-					listState = viewModel.listState,
-					onSetShareId = { shareId = it }
-				)
-			},
-			bottomBar = {
-				if (Settings.shared.showBarsOnAllScreens) {
-					RootBottomBar(scrolled = viewModel.listState.lastScrolledForward)
-				}
+	val scrolled by remember {
+		derivedStateOf {
+			viewModel.listState.firstVisibleItemIndex >= 1
+		}
+	}
+
+	Scaffold(
+		topBar = {
+			TracksScreenTopBar(
+				albumInfoState = albumInfoState,
+				tracks = tracksState,
+				scrolled = scrolled,
+				onSetShareId = { shareId = it }
+			)
+		},
+		bottomBar = {
+			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				RootBottomBar(scrolled = viewModel.listState.lastScrolledForward)
 			}
-		) { contentPadding ->
-			PullToRefreshBox(
+		}
+	) { contentPadding ->
+		PullToRefreshBox(
+			modifier = Modifier
+				.padding(top = contentPadding.calculateTopPadding())
+				.background(MaterialTheme.colorScheme.surface),
+			isRefreshing = tracksState is UiState.Loading
+				|| (artistState is UiState.Loading && partialTracks.isAlbum),
+			onRefresh = {
+				viewModel.refreshTracks()
+				viewModel.refreshArtist()
+			}
+		) {
+			LazyColumn(
 				modifier = Modifier
-					.padding(top = contentPadding.calculateTopPadding())
-					.background(MaterialTheme.colorScheme.surface),
-				isRefreshing = tracksState is UiState.Loading
-					|| (artistState is UiState.Loading && partialTracks.isAlbum),
-				onRefresh = {
-					viewModel.refreshTracks()
-					viewModel.refreshArtist()
-				}
+					.background(MaterialTheme.colorScheme.surface)
+					.fillMaxSize()
+					.fadeFromTop(),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				contentPadding = contentPadding.withoutTop() + PaddingValues(
+					top = 16.dp
+				),
+				state = viewModel.listState
 			) {
-				LazyColumn(
-					modifier = Modifier
-						.background(MaterialTheme.colorScheme.surface)
-						.fillMaxSize()
-						.fadeFromTop(),
-					horizontalAlignment = Alignment.CenterHorizontally,
-					contentPadding = contentPadding.withoutTop() + PaddingValues(
-						top = 16.dp
-					),
-					state = viewModel.listState
-				) {
-					item {
-						TracksScreenHeadingRow(
-							partialTracks = partialTracks,
-							tab = tab,
-							listState = viewModel.listState,
-							sharedTransitionScope = this@SharedTransitionLayout
-						)
-					}
+				item {
+					TracksScreenHeadingRow(
+						partialTracks = partialTracks,
+						tab = tab,
+						scrolled = scrolled
+					)
+				}
 
 					val error = (tracksState as? UiState.Error)
-					val uiModel = (tracksState as? UiState.Success)?.data
-
+					val tracks = (tracksState as? UiState.Success)?.data
 					if (error != null) {
 						item { ErrorBox(error) }
 						return@LazyColumn
 					}
-					if (uiModel == null) {
+					if (tracks == null) {
 						tracksScreenTrackRowPlaceholder(partialTracks.songCount)
 						return@LazyColumn
 					}
 
-					item { TracksScreenHeadingRowButtons(uiModel) }
+				item { TracksScreenHeadingRowButtons(tracks) }
 
-					itemsIndexed(uiModel.songs) { index, track ->
-						Box {
-							TracksScreenTrackRow(
-								track = track,
-								index = index,
-								count = uiModel.songs.count(),
-								onClick = {
-									player.clearQueue()
-//									player.addToQueue(uiModel)TODO
-									player.playAt(index)
-								},
-								onLongClick = {
-									viewModel.selectTrack(track, index)
-								}
-							)
-							TrackRowDropdown(
-								expanded = selection == track && selectedIndex == index,
-								onDismissRequest = { viewModel.clearSelection() },
-								onRemoveStar = { viewModel.unstarSelectedTrack() },
-								onAddStar = { viewModel.starSelectedTrack() },
-								onShare = { shareId = track.id },
-								tracks = uiModel,
-								track = track,
-								onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
-								starredState = starredState
-							)
-						}
+				itemsIndexed(tracks.songs) { index, track ->
+					Box {
+						TracksScreenTrackRow(
+							track = track,
+							index = index,
+							count = tracks.songs.count(),
+							onClick = {
+								player.clearQueue()
+								player.addToQueue(tracks)
+								player.playAt(index)
+							},
+							onLongClick = {
+								viewModel.selectTrack(track, index)
+							}
+						)
+						TrackRowDropdown(
+							expanded = selection == track && selectedIndex == index,
+							onDismissRequest = { viewModel.clearSelection() },
+							onRemoveStar = { viewModel.unstarSelectedTrack() },
+							onAddStar = { viewModel.starSelectedTrack() },
+							onShare = { shareId = track.id },
+							tracks = tracks,
+							track = track,
+							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
+							starredState = starredState
+						)
 					}
-
-					item { TracksScreenFooterRow(partialTracks) }
-
-					tracksScreenMoreByArtistRow(
-						partialTracks = partialTracks,
-						artistState = artistState,
-						tab = tab
-					)
 				}
+
+				item { TracksScreenFooterRow(tracks) }
+
+				tracksScreenMoreByArtistRow(
+					tracks = tracks,
+					artistState = artistState,
+					tab = tab
+				)
 			}
 		}
 	}

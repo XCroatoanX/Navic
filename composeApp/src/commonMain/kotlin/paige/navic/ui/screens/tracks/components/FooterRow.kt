@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_songs
 import org.jetbrains.compose.resources.pluralStringResource
@@ -18,17 +17,17 @@ import paige.navic.ui.theme.defaultFont
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TracksScreenFooterRow(
-	partialTracks: TrackCollectionUiModel
+	tracks: TrackCollectionUiModel
 ) {
 	Text(
 		buildString {
 			append(pluralStringResource(
 				Res.plurals.count_songs,
-				partialTracks.songCount,
-				partialTracks.songCount
+				tracks.songCount,
+				tracks.songCount
 			))
 			append(" • ")
-			append(partialTracks.duration.toString())
+			append(tracks.duration.toString())
 		},
 		style = MaterialTheme.typography.titleSmall,
 		fontFamily = defaultFont(round = 100f),
