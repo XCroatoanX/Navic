@@ -13,23 +13,23 @@ import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.utils.UiState
 
 fun LazyListScope.tracksScreenMoreByArtistRow(
-	partialTracks: TrackCollectionUiModel,
+	tracks: TrackCollectionUiModel,
 	artistState: UiState<Artist>,
 	tab: String
 ) {
 	(artistState as? UiState.Success)?.data?.takeIf {
-		it.album.any { album -> album.id != partialTracks.id }
+		it.album.any { album -> album.id != tracks.id }
 	}?.let { artist ->
 		item {
 			val backStack = LocalNavStack.current
 			ArtCarousel(
 				title = stringResource(Res.string.title_more_by_artist, artist.name),
 				items = artist.album
-					.filter { it.id != partialTracks.id }
+					.filter { it.id != tracks.id }
 					.sortedByDescending { it.playCount }
 			) { album ->
 				ArtCarouselItem(album.coverArtId, album.name) {
-					backStack.add(Screen.Tracks(partialTracks, tab))
+					backStack.add(Screen.Tracks(tracks, tab))
 				}
 			}
 		}
