@@ -5,6 +5,7 @@ import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.api.model.Song
 import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.serialization.Serializable
+import paige.navic.data.database.SongEntity
 
 @Serializable
 sealed interface Screen : NavKey {
@@ -37,7 +38,7 @@ sealed interface Screen : NavKey {
 	@Serializable data object Lyrics : Screen
 	@Serializable data object Queue : Screen
 	@Serializable data class Tracks(val partialCollection: SongCollection, val tab: String) : Screen
-	@Serializable data class TrackInfo(val track: Song) : Screen
+	@Serializable data class TrackInfo(val track: SongEntity) : Screen
 	@Serializable data class Search(
 		val nested: Boolean = false
 	) : Screen

@@ -55,7 +55,7 @@ fun TracksScreen(
 ) {
 	val player = LocalMediaPlayer.current
 
-	val tracks by viewModel.tracksState.collectAsState()
+	val tracksState by viewModel.tracksState.collectAsState()
 	val selection by viewModel.selectedTrack.collectAsState()
 	val selectedIndex by viewModel.selectedIndex.collectAsState()
 
@@ -71,7 +71,7 @@ fun TracksScreen(
 			topBar = {
 				TracksScreenTopBar(
 					albumInfoState = albumInfoState,
-					tracks = tracks,
+					tracks = tracksState,
 					sharedTransitionScope = this@SharedTransitionLayout,
 					listState = viewModel.listState,
 					onSetShareId = { shareId = it }
@@ -87,7 +87,7 @@ fun TracksScreen(
 				modifier = Modifier
 					.padding(top = contentPadding.calculateTopPadding())
 					.background(MaterialTheme.colorScheme.surface),
-				isRefreshing = tracks is UiState.Loading
+				isRefreshing = tracksState is UiState.Loading
 					|| (artistState is UiState.Loading && partialTracks is Album),
 				onRefresh = {
 					viewModel.refreshTracks()
@@ -114,28 +114,29 @@ fun TracksScreen(
 						)
 					}
 
-					val error = (tracks as? UiState.Error)
-					val tracks = (tracks as? UiState.Success)?.data
+					val error = (tracksState as? UiState.Error)
+					val uiModel = (tracksState as? UiState.Success)?.data
+
 					if (error != null) {
 						item { ErrorBox(error) }
 						return@LazyColumn
 					}
-					if (tracks == null) {
+					if (uiModel == null) {
 						tracksScreenTrackRowPlaceholder(partialTracks.songCount)
 						return@LazyColumn
 					}
 
-					item { TracksScreenHeadingRowButtons(tracks) }
+					item { TracksScreenHeadingRowButtons(uiModel) }
 
-					itemsIndexed(tracks.songs) { index, track ->
+					itemsIndexed(uiModel.songs) { index, track ->
 						Box {
 							TracksScreenTrackRow(
 								track = track,
 								index = index,
-								count = tracks.songs.count(),
+								count = uiModel.songs.count(),
 								onClick = {
 									player.clearQueue()
-									player.addToQueue(tracks)
+//									player.addToQueue(uiModel)TODO
 									player.playAt(index)
 								},
 								onLongClick = {
@@ -148,7 +149,7 @@ fun TracksScreen(
 								onRemoveStar = { viewModel.unstarSelectedTrack() },
 								onAddStar = { viewModel.starSelectedTrack() },
 								onShare = { shareId = track.id },
-								tracks = tracks,
+								tracks = uiModel,
 								track = track,
 								onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
 								starredState = starredState

@@ -42,11 +42,11 @@ open class AlbumsRepository(
 	}
 	suspend fun starAlbum(album: AlbumEntity) {
 		SessionManager.api.star(album.id)
-		dao.insertAlbum(album.copy(starred_at = Clock.System.now()))
+//		dao.insertAlbum(album.copy(starred_at = Clock.System.now()))
 	}
 
 	suspend fun unstarAlbum(album: AlbumEntity) {
 		SessionManager.api.unstar(album.id)
-		dao.insertAlbum(album.copy(starred_at = null))
+//		dao.insertAlbum(album.copy(starred_at = null))
 	}
 }

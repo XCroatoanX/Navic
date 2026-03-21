@@ -13,12 +13,13 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import paige.navic.data.database.SongEntity
 import paige.navic.data.session.SessionManager
 
 @Serializable
 data class PlayerUiState(
 	val queue: List<Song> = emptyList(),
-	val currentTrack: Song? = null,
+	val currentTrack: SongEntity? = null,
 	val currentCollection: SongCollection? = null,
 	val currentIndex: Int = -1,
 	val isPaused: Boolean = false,
@@ -64,17 +65,17 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	suspend fun starTrack() {
-		_uiState.value.currentTrack?.let {
-			SessionManager.api.star(it)
-		}
-	}
-
-	suspend fun unstarTrack() {
-		_uiState.value.currentTrack?.let {
-			SessionManager.api.unstar(it)
-		}
-	}
+//	suspend fun starTrack() {
+//		_uiState.value.currentTrack?.let {
+//			SessionManager.api.star(it)
+//		}
+//	}
+//
+//	suspend fun unstarTrack() {
+//		_uiState.value.currentTrack?.let {
+//			SessionManager.api.unstar(it)
+//		}
+//	}TODO
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
 

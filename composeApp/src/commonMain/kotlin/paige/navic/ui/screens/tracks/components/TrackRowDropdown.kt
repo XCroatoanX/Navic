@@ -17,7 +17,9 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
+import paige.navic.data.database.SongEntity
 import paige.navic.data.models.Screen
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Info
@@ -36,8 +38,8 @@ fun TrackRowDropdown(
 	onRemoveStar: () -> Unit,
 	onAddStar: () -> Unit,
 	onShare: () -> Unit,
-	tracks: SongCollection,
-	track: Song,
+	tracks: TrackCollectionUiModel,
+	track: SongEntity,
 	onRemoveFromPlaylist: () -> Unit,
 	starredState: UiState<Boolean>,
 ) {
@@ -113,14 +115,14 @@ fun TrackRowDropdown(
 			onClick = {
 				onDismissRequest()
 				if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
-					backStack.add(
-						Screen.AddToPlaylist(
-							listOf(track),
-							playlistToExclude = if (tracks is Playlist)
-								tracks.id
-							else null
-						)
-					)
+//					backStack.add(
+//						Screen.AddToPlaylist(
+//							listOf(track),
+//							playlistToExclude = if (tracks is Playlist)
+//								tracks.id
+//							else null
+//						)
+//					)TODO
 				}
 			},
 		)

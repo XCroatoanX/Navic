@@ -14,19 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.Shuffle
 
 @Composable
 fun TracksScreenHeadingRowButtons(
-	tracks: SongCollection
+	tracks: TrackCollectionUiModel
 ) {
 	val player = LocalMediaPlayer.current
 	Row(
@@ -41,7 +41,7 @@ fun TracksScreenHeadingRowButtons(
 			modifier = Modifier.weight(1f),
 			onClick = {
 				player.clearQueue()
-				player.addToQueue(tracks)
+//				player.addToQueue(tracks)TODO
 				player.playAt(0)
 			},
 			shape = shape
@@ -59,7 +59,7 @@ fun TracksScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.weight(1f),
 			onClick = {
-				player.shufflePlay(tracks)
+//				player.shufflePlay(tracks)TODO
 			},
 			shape = shape
 		) {

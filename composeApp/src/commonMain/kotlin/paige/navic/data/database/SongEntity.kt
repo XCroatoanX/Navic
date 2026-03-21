@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import paige.navic.data.models.LocalContributor
 import paige.navic.data.models.LocalReplayGain
 import kotlin.time.Clock
@@ -11,6 +12,7 @@ import kotlin.time.Duration
 import kotlin.time.Instant
 import dev.zt64.subsonic.api.model.Song as ApiSong
 
+@Serializable
 @Entity(
 	tableName = "navidrome_songs",
 	indices = [

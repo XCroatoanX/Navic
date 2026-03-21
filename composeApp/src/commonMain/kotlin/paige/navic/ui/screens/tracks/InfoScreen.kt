@@ -30,6 +30,7 @@ import navic.composeapp.generated.resources.info_track_replay_gain_effective
 import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.database.SongEntity
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -39,7 +40,7 @@ import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
 
 @Composable
-fun TrackInfoScreen(track: Song) {
+fun TrackInfoScreen(track: SongEntity) {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(track.title) }) }
 	) { contentPadding ->
@@ -65,9 +66,9 @@ fun TrackInfoScreen(track: Song) {
 					Res.string.info_track_genre to track.genre,
 					Res.string.info_track_duration to track.duration.toHoursMinutesSeconds(),
 					Res.string.info_track_id to track.id,
-					Res.string.info_track_path to track.filePath,
+					Res.string.info_track_path to track.path,
 					Res.string.info_track_replay_gain to track.replayGain?.toString(),
-					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()
+//					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()TODO
 				).forEach { (key, value) ->
 					FormRow {
 						Text(stringResource(key))

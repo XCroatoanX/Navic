@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import dev.zt64.subsonic.api.model.AlbumInfo
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_all_to_playlist
 import navic.composeapp.generated.resources.action_more
@@ -24,6 +23,7 @@ import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -39,7 +39,7 @@ import kotlin.collections.orEmpty
 
 @Composable
 fun TracksScreenTopBar(
-	tracks: UiState<SongCollection>,
+	tracks: UiState<TrackCollectionUiModel>,
 	albumInfoState: UiState<AlbumInfo>,
 	onSetShareId: (shareId: String?) -> Unit,
 	sharedTransitionScope: SharedTransitionScope,
@@ -119,11 +119,11 @@ fun TracksScreenTopBar(
 						onClick = {
 							expanded = false
 							if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
-								backStack.add(
-									Screen.AddToPlaylist(
-										(tracks as? UiState.Success)?.data?.songs.orEmpty()
-									)
-								)
+//								backStack.add(
+//									Screen.AddToPlaylist(
+//										(tracks as? UiState.Success)?.data?.songs.orEmpty()
+//									)
+//								) TODO
 							}
 						},
 					)
