@@ -23,8 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.SongCollection
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
