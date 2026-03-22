@@ -1,4 +1,4 @@
-package paige.navic.ui.components.settings
+package paige.navic.ui.screens.settings.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

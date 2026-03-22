@@ -33,8 +33,8 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.NowPlayingSliderStyleDialog
 import paige.navic.ui.components.layouts.NestedTopBar
-import paige.navic.ui.components.settings.SettingSelectionRow
-import paige.navic.ui.components.settings.SettingSwitchRow
+import paige.navic.ui.screens.settings.components.SettingSelectionRow
+import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.utils.fadeFromTop
 
 @Composable

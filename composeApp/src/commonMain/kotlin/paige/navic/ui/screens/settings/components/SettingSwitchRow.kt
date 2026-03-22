@@ -1,4 +1,4 @@
-package paige.navic.ui.components.settings
+package paige.navic.ui.screens.settings.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

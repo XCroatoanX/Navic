@@ -42,7 +42,7 @@ import paige.navic.ui.components.common.DurationPicker
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.common.FormRow
-import paige.navic.ui.components.settings.SettingSwitchRow
+import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.utils.UiState
 import kotlin.time.Clock
 import kotlin.time.Duration
