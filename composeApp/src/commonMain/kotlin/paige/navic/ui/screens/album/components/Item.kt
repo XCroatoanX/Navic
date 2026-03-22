@@ -6,7 +6,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
@@ -38,12 +40,15 @@ fun AlbumListScreenItem(
 	val backStack = LocalNavStack.current
 	val selection by viewModel.selectedAlbum.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
+	val scope = rememberCoroutineScope()
 	Box(modifier) {
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				// TODO
-				//backStack.add(Screen.TrackList(album, tab))
+				scope.launch {
+					val uiModel = viewModel.getAlbumTracks(album)
+					backStack.add(Screen.TrackList(uiModel, tab))
+				}
 			},
 			onLongClick = { viewModel.selectAlbum(album) },
 			coverArtId = album.coverArtId,

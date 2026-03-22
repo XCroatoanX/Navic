@@ -6,8 +6,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import dev.zt64.subsonic.api.model.Playlist
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_share
@@ -38,12 +39,15 @@ fun PlaylistListScreenItem(
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val selection by viewModel.selectedPlaylist.collectAsState()
+	val scope = rememberCoroutineScope()
 	Box(modifier) {
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				// TODO
-				//backStack.add(Screen.TrackList(playlist, "playlists"))
+				scope.launch {
+					val uiModel = viewModel.getPlaylistTracks(playlist)
+					backStack.add(Screen.TrackList(uiModel, tab))
+				}
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },
 			coverArtId = playlist.coverArtId,

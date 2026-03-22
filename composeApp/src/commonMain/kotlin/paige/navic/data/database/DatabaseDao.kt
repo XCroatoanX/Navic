@@ -29,6 +29,9 @@ interface DatabaseDao {
 	@Query("SELECT * FROM navidrome_songs WHERE album_id = :albumId ORDER BY disc_number ASC, track_number ASC")
 	suspend fun getSongListByAlbumId(albumId: String): List<SongEntity>
 
+	@Query("SELECT * FROM navidrome_songs WHERE playlist_id = :playlistId")
+	suspend fun getSongListByPlaylistId(playlistId: String): List<SongEntity>
+
 	@Query("SELECT * FROM navidrome_songs ORDER BY disc_number ASC, track_number ASC")
 	suspend fun getSongList(): List<SongEntity>
 

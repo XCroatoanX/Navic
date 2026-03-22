@@ -52,7 +52,7 @@ fun ApiPlaylist.toEntity(): PlaylistEntity {
 	)
 }
 
-private fun PlaylistEntity.toUiModel(songs: List<SongEntity>) = TrackCollectionUiModel(
+fun PlaylistEntity.toUiModel(songs: List<SongEntity>) = TrackCollectionUiModel(
 	id = id,
 	name = name,
 	coverArtId = coverArtId,

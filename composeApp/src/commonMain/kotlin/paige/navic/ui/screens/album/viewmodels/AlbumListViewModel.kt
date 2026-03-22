@@ -83,7 +83,7 @@ open class AlbumListViewModel(
 
 	suspend fun getAlbumTracks(album: AlbumEntity): TrackCollectionUiModel {
 		val songs = repository.getSongsByAlbumId(album.id)
-		println(songs)
+		print(songs)
 		return album.toUiModel(songs)
 	}
 
