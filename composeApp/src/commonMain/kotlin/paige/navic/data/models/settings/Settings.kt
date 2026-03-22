@@ -41,8 +41,8 @@ class Settings(
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
 	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.Default)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
-	var playerBarStyle by preference(PlayerBarStyle.Detached)
-	var playerBarProgressStyle by preference(PlayerBarProgressStyle.Seekable)
+	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
+	var miniPlayerProgressStyle by preference(MiniPlayerProgressStyle.Seekable)
 
 	/**
 	 * If we have informed the user (on Android) about

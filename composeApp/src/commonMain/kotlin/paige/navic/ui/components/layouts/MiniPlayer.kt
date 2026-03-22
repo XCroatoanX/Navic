@@ -57,8 +57,8 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.PlayerBarProgressStyle
-import paige.navic.data.models.settings.enums.PlayerBarStyle
+import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
+import paige.navic.data.models.settings.enums.MiniPlayerStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -70,7 +70,7 @@ import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerBar(
+fun MiniPlayer(
 	modifier: Modifier = Modifier,
 	clicksEnabled: Boolean = true
 ) {
@@ -86,7 +86,7 @@ fun PlayerBar(
 	}
 	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
 
-	val detached = Settings.shared.playerBarStyle == PlayerBarStyle.Detached
+	val detached = Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached
 
 	val spec = MaterialTheme.motionScheme.defaultSpatialSpec<Dp>()
 	val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Dp>()
@@ -310,8 +310,8 @@ fun PlayerBar(
 				},
 				enabled = clicksEnabled
 			)
-			if (Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Visible
-				|| Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable) {
+			if (Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
+				|| Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable) {
 				var dragging by remember { mutableStateOf(false) }
 				val alpha by animateFloatAsState(
 					if (dragging) 1f else .7f
@@ -345,7 +345,7 @@ fun PlayerBar(
 							.height(14.dp)
 							.then(
 								if (track != null
-									&& Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable
+									&& Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
 									&& clicksEnabled)
 									Modifier.pointerInput(Unit) {
 										detectDragGestures(
