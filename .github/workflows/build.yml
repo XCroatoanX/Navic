@@ -9,6 +9,7 @@ on:
       - build.gradle.kts
       - settings.gradle.kts
       - .github/workflows/build.yml
+      - "!**/strings.xml"
     tags:
       - 'v*'
     branches:
@@ -21,6 +22,7 @@ on:
       - build.gradle.kts
       - settings.gradle.kts
       - .github/workflows/build.yml
+      - "!**/strings.xml"
   workflow_dispatch:
 
 concurrency:

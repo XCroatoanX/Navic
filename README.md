@@ -1,14 +1,13 @@
 <div align="center">
 
 # Navic
-Navidrome client app for Android and iOS, featuring the Material 3
-Expressive design language.
+A modern Navidrome client for Android and iOS.
 
 [![Add to Obtainium](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/obtainium.svg)][ADD_TO_OBTAINIUM]
 [![AltSource provides links for most sideloading apps, like Feather](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/altsource.svg)][ALTSOURCE]
 [![Link to the latest release where you can download the APK or IPA directly](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/direct_download.svg)][LATEST_RELEASE]
 [![Discord](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/discord.svg)](https://discord.gg/TBcnNX66PH)
-[![Translate](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/translate.svg)](https://github.com/paigely/Navic/issues/3)
+[![Translate](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/translate.svg)](#translating)
 [![Matrix](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/matrix.svg)](https://matrix.to/#/#navic:maize.moe)
 [![Codeberg](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
 
@@ -31,7 +30,7 @@ Expressive design language.
 ## Translating
 You can help translate Navic by contributing on [Weblate](https://hosted.weblate.org/engage/navic/).
 
-[![Translation status](https://hosted.weblate.org/widget/navic/translations/svg-badge.svg)](https://hosted.weblate.org/engage/navic/)
+[![Translation status](https://hosted.weblate.org/widget/navic/navic/svg-badge.svg?threshold=0)](https://hosted.weblate.org/engage/navic/)
 
 ## Star History
 <a href="https://star-history.com/#paigely/Navic&Date">
