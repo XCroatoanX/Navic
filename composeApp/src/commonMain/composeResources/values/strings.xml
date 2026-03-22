@@ -145,7 +145,7 @@
 	</plurals>
 
 	<plurals name="count_playlists">
-		<item quantity="one">%1$d playlists</item>
+		<item quantity="one">%1$d playlist</item>
 		<item quantity="other">%1$d playlists</item>
 	</plurals>
 
