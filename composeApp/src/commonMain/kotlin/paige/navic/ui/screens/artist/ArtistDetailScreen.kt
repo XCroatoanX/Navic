@@ -200,8 +200,8 @@ fun ArtistDetailScreen(
 									albums.sortedByDescending { it.playCount }
 								) { album ->
 									val songEntities = album.songs.map { it.toEntity() }
-									ArtCarouselItem(album.coverArtId, album.name) {
-										backStack.add(Screen.Tracks(album.toEntity().toUiModel(songEntities), "artist"))
+									ArtCarouselItem(album.coverArtId, album.name, null) {
+										backStack.add(Screen.TrackList(album.toEntity().toUiModel(songEntities), "artist"))
 									}
 								}
 							}

@@ -60,11 +60,11 @@ data class SongEntity(
 	@ColumnInfo(name = "user_rating")
 	val userRating: Int?,
 	@ColumnInfo(name = "average_rating")
-	val averageRating: Int?,
+	val averageRating: Float?,
 	@ColumnInfo(name = "starred_at")
 	val starredAt: Instant?,
 	@ColumnInfo(name = "bit_rate")
-	val bitRate: Int,
+	val bitRate: Int?,
 	@ColumnInfo(name = "bit_depth")
 	val bitDepth: Int?,
 	@ColumnInfo(name = "sample_rate")

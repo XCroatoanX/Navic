@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import dev.zt64.subsonic.api.model.Album
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
@@ -15,6 +14,7 @@ import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
@@ -29,7 +29,7 @@ import paige.navic.utils.UiState
 @Composable
 fun AlbumListScreenItem(
 	modifier: Modifier = Modifier,
-	album: Album,
+	album: AlbumEntity,
 	tab: String,
 	viewModel: AlbumListViewModel,
 	onSetShareId: (String) -> Unit
@@ -42,7 +42,8 @@ fun AlbumListScreenItem(
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.TrackList(album, tab))
+				// TODO
+				//backStack.add(Screen.TrackList(album, tab))
 			},
 			onLongClick = { viewModel.selectAlbum(album) },
 			coverArtId = album.coverArtId,

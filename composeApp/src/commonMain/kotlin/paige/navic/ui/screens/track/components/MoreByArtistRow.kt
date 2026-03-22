@@ -32,7 +32,7 @@ fun LazyListScope.tracksScreenMoreByArtistRow(
 					title = album.name,
 					contentDescription = album.name,
 					onClick = {
-						backStack.add(Screen.TrackList(album, tab))
+						backStack.add(Screen.TrackList(tracks, tab))
 					}
 				)
 			}

@@ -44,7 +44,7 @@ fun NowPlayingScreen() {
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 
-	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
+	val sharedPainter = rememberTrackPainter(track?.coverArtId)
 
 	Box(Modifier.fillMaxSize()) {
 		when (Settings.shared.nowPlayingBackgroundStyle) {

@@ -16,6 +16,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.PlaylistEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
@@ -28,7 +29,7 @@ import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 @Composable
 fun PlaylistListScreenItem(
 	modifier: Modifier = Modifier,
-	playlist: Playlist,
+	playlist: PlaylistEntity,
 	tab: String,
 	viewModel: PlaylistListViewModel,
 	onSetShareId: (String) -> Unit,
@@ -41,7 +42,8 @@ fun PlaylistListScreenItem(
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.TrackList(playlist, "playlists"))
+				// TODO
+				//backStack.add(Screen.TrackList(playlist, "playlists"))
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },
 			coverArtId = playlist.coverArtId,

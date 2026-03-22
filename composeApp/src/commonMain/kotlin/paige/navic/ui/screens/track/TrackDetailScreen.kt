@@ -41,7 +41,7 @@ import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
 
 @Composable
-fun TrackInfoScreen(track: SongEntity) {
+fun TrackDetailScreen(track: SongEntity) {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(track.title) }) }
 	) { contentPadding ->
@@ -56,7 +56,7 @@ fun TrackInfoScreen(track: SongEntity) {
 				mapOf(
 					Res.string.info_track_name to track.title,
 					Res.string.info_track_artist to track.artistName,
-					Res.string.info_track_album to track.albumTitle,
+					Res.string.info_track_album to track.album,
 
 					Res.string.info_track_number to track.trackNumber,
 					Res.string.info_track_disc_number to track.discNumber,
@@ -71,7 +71,7 @@ fun TrackInfoScreen(track: SongEntity) {
 					Res.string.info_track_channel_count to track.audioChannelCount,
 
 					Res.string.info_track_file_size to track.fileSize.toFileSize(),
-					Res.string.info_track_path to track.filePath,
+					Res.string.info_track_path to track.path,
 
 					Res.string.info_track_replay_gain to track.replayGain?.trackGain?.let { "$it dB" },
 					Res.string.info_album_replay_gain to track.replayGain?.albumGain?.let { "$it dB" },

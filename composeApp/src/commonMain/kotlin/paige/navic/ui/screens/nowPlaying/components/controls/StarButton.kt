@@ -34,7 +34,8 @@ fun NowPlayingStarButton() {
 		onClick = {
 			isStarred = !isStarred
 			scope.launch {
-				if (isStarred) player.starTrack() else player.unstarTrack()
+				// TODO
+				// if (isStarred) player.starTrack() else player.unstarTrack()
 			}
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),

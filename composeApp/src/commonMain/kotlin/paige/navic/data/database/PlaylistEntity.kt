@@ -27,8 +27,6 @@ data class PlaylistEntity(
 	val createdAt: Instant?,
 	@ColumnInfo(name = "modified_at")
 	val modifiedAt: Instant?,
-	@ColumnInfo(name = "starred_at")
-	val starredAt: Instant?,
 	@ColumnInfo(name = "valid_until")
 	val validUntil: Instant?,
 	@ColumnInfo(name = "allowed_users")
@@ -49,7 +47,6 @@ fun ApiPlaylist.toEntity(): PlaylistEntity {
 		readOnly = this.readOnly ?: false,
 		createdAt = this.createdAt,
 		modifiedAt = this.modifiedAt,
-		starredAt = this.starredAt,
 		validUntil = this.validUntil,
 		allowedUsers = this.allowedUsers.joinToString(",")
 	)
