@@ -16,8 +16,8 @@ import paige.navic.data.models.Screen
 actual fun animatedTabIconPainter(destination: NavKey): Painter? {
 	val res = when (destination) {
 		is Screen.Library -> R.drawable.anim_library
-		is Screen.Playlists -> R.drawable.anim_playlist
-		is Screen.Artists -> R.drawable.anim_artist
+		is Screen.PlaylistList -> R.drawable.anim_playlist
+		is Screen.ArtistList -> R.drawable.anim_artist
 		else -> return null
 	}
 

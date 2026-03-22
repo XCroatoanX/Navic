@@ -16,36 +16,34 @@ sealed interface Screen : NavKey {
 		val nested: Boolean = false
 	) : Screen
 	@Serializable
-	data class Playlists(
+	data class PlaylistList(
 		val nested: Boolean = false
 	) : Screen
 	@Serializable
-	data class Artists(
+	data class ArtistList(
 		val nested: Boolean = false
 	) : Screen
 	@Serializable
-	data class Albums(
+	data class AlbumList(
 		val nested: Boolean = false,
 		val listType: AlbumListType? = null
 	) : Screen
 	@Serializable
-	data class Genres(
+	data class GenreList(
 		val nested: Boolean = false
 	) : Screen
 
 	// misc
-	@Serializable data object Player : Screen
+	@Serializable data object NowPlaying : Screen
 	@Serializable data object Lyrics : Screen
 	@Serializable data object Queue : Screen
-	@Serializable data class Tracks(val partialCollection: TrackCollectionUiModel, val tab: String) : Screen
-	@Serializable data class TrackInfo(val track: SongEntity) : Screen
+	@Serializable data class TrackList(val partialCollection: TrackCollectionUiModel, val tab: String) : Screen
+	@Serializable data class TrackDetail(val track: SongEntity) : Screen
 	@Serializable data class Search(
 		val nested: Boolean = false
 	) : Screen
-	@Serializable data object Shares : Screen
-	@Serializable data class Artist(val artist: String) : Screen
-	@Serializable data class AddToPlaylist(val tracks: List<SongEntity>, val playlistToExclude: String? = null) : Screen
-	@Serializable data class CreatePlaylist(val tracks: List<SongEntity> = emptyList()) : Screen
+	@Serializable data object ShareList : Screen
+	@Serializable data class ArtistDetail(val artist: String) : Screen
 
 	// settings
 	@Serializable

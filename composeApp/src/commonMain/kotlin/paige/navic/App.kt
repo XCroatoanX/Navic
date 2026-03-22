@@ -32,10 +32,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -67,19 +69,17 @@ import paige.navic.shared.rememberShareManager
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
-import paige.navic.ui.screens.AddToPlaylistScreen
-import paige.navic.ui.screens.AlbumsScreen
-import paige.navic.ui.screens.ArtistScreen
-import paige.navic.ui.screens.ArtistsScreen
-import paige.navic.ui.screens.CreatePlaylistScreen
-import paige.navic.ui.screens.LibraryScreen
-import paige.navic.ui.screens.LyricsScreen
-import paige.navic.ui.screens.PlayerScreen
-import paige.navic.ui.screens.PlaylistsScreen
-import paige.navic.ui.screens.QueueScreen
-import paige.navic.ui.screens.SearchScreen
-import paige.navic.ui.screens.SharesScreen
-import paige.navic.ui.screens.genres.GenresScreen
+import paige.navic.ui.screens.album.AlbumListScreen
+import paige.navic.ui.screens.artist.ArtistDetailScreen
+import paige.navic.ui.screens.artist.ArtistListScreen
+import paige.navic.ui.screens.library.LibraryScreen
+import paige.navic.ui.screens.lyrics.LyricsScreen
+import paige.navic.ui.screens.nowPlaying.NowPlayingScreen
+import paige.navic.ui.screens.playlist.PlaylistListScreen
+import paige.navic.ui.screens.queue.QueueScreen
+import paige.navic.ui.screens.search.SearchScreen
+import paige.navic.ui.screens.share.ShareListScreen
+import paige.navic.ui.screens.genre.GenreListScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
 import paige.navic.ui.screens.settings.FontsScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
@@ -89,9 +89,11 @@ import paige.navic.ui.screens.settings.SettingsDeveloperScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
-import paige.navic.ui.screens.tracks.TrackInfoScreen
-import paige.navic.ui.screens.tracks.TracksScreen
+import paige.navic.ui.screens.track.TrackDetailScreen
+import paige.navic.ui.screens.track.TrackListScreen
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.utils.BottomBarScrollManager
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.checkForUpdate
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -124,6 +126,9 @@ fun App() {
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current
+	val scrollManager = remember {
+		BottomBarScrollManager(with(density) { 50.dp.toPx() })
+	}
 
 	// todo: this should survive config changes but im lazy ykyk
 	LaunchedEffect(Unit) {
@@ -148,10 +153,12 @@ fun App() {
 			LocalImageBuilder provides imageBuilder,
 			LocalSnackbarState provides snackbarState,
 			LocalShareManager provides shareManager,
-			LocalSharedTransitionScope provides this@SharedTransitionLayout
+			LocalSharedTransitionScope provides this@SharedTransitionLayout,
+			LocalBottomBarScrollManager provides scrollManager
 		) {
 			NavicTheme {
 				Scaffold(
+					modifier = Modifier.nestedScroll(scrollManager.connection),
 					snackbarHost = {
 						SnackbarHost(hostState = snackbarState) { snackbarData ->
 							Snackbar(
@@ -224,27 +231,27 @@ private fun entryProvider(
 		entry<Screen.Library>(metadata = navtabMetadata) {
 			LibraryScreen()
 		}
-		entry<Screen.Albums>(metadata = navtabMetadata) { key ->
-			AlbumsScreen(key.nested, key.listType)
+		entry<Screen.AlbumList>(metadata = navtabMetadata) { key ->
+			AlbumListScreen(key.nested, key.listType)
 		}
-		entry<Screen.Playlists>(metadata = navtabMetadata) { key ->
-			PlaylistsScreen(key.nested)
+		entry<Screen.PlaylistList>(metadata = navtabMetadata) { key ->
+			PlaylistListScreen(key.nested)
 		}
-		entry<Screen.Artists>(metadata = navtabMetadata) { key ->
-			ArtistsScreen(key.nested)
+		entry<Screen.ArtistList>(metadata = navtabMetadata) { key ->
+			ArtistListScreen(key.nested)
 		}
-		entry<Screen.Genres>(metadata = navtabMetadata) { key ->
-			GenresScreen(key.nested)
+		entry<Screen.GenreList>(metadata = navtabMetadata) { key ->
+			GenreListScreen(key.nested)
 		}
 
 		// misc
-		entry<Screen.Player>(
+		entry<Screen.NowPlaying>(
 			metadata = BottomSheetSceneStrategy.bottomSheet(
 				maxWidth = Dp.Unspecified,
 				screenType = "player"
 			)
 		) {
-			PlayerScreen()
+			NowPlayingScreen()
 		}
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			val player = LocalMediaPlayer.current
@@ -255,26 +262,20 @@ private fun entryProvider(
 		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			QueueScreen()
 		}
-		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->
-			TracksScreen(key.partialCollection, key.tab)
+		entry<Screen.TrackList>(metadata = detailPane("root")) { key ->
+			TrackListScreen(key.partialCollection, key.tab)
 		}
-		entry<Screen.TrackInfo>(metadata = detailPane("root")) { key ->
-			TrackInfoScreen(key.track)
+		entry<Screen.TrackDetail>(metadata = detailPane("root")) { key ->
+			TrackDetailScreen(key.track)
 		}
 		entry<Screen.Search>(metadata = navtabMetadata) { key ->
 			SearchScreen(key.nested)
 		}
-		entry<Screen.Shares> {
-			SharesScreen()
+		entry<Screen.ShareList> {
+			ShareListScreen()
 		}
-		entry<Screen.Artist> { key ->
-			ArtistScreen(key.artist)
-		}
-		entry<Screen.AddToPlaylist>(metadata = DialogSceneStrategy.dialog()) { key ->
-			AddToPlaylistScreen(key.tracks, key.playlistToExclude)
-		}
-		entry<Screen.CreatePlaylist>(metadata = DialogSceneStrategy.dialog()) { key ->
-			CreatePlaylistScreen(key.tracks)
+		entry<Screen.ArtistDetail> { key ->
+			ArtistDetailScreen(key.artist)
 		}
 
 		// settings

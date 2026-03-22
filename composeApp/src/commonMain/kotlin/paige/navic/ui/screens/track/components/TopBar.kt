@@ -1,0 +1,136 @@
+package paige.navic.ui.screens.track.components
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalUriHandler
+import dev.zt64.subsonic.api.model.AlbumInfo
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_all_to_playlist
+import navic.composeapp.generated.resources.action_more
+import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.action_view_on_lastfm
+import navic.composeapp.generated.resources.action_view_on_musicbrainz
+import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.icons.Icons
+import paige.navic.icons.brand.Lastfm
+import paige.navic.icons.brand.Musicbrainz
+import paige.navic.icons.outlined.MoreVert
+import paige.navic.icons.outlined.PlaylistAdd
+import paige.navic.icons.outlined.Share
+import paige.navic.ui.components.common.Dropdown
+import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.layouts.TopBarButton
+import paige.navic.utils.UiState
+import kotlin.collections.orEmpty
+
+@Composable
+fun TracksScreenTopBar(
+	tracks: UiState<TrackCollectionUiModel>,
+	albumInfoState: UiState<AlbumInfo>,
+	scrolled: Boolean,
+	onSetShareId: (shareId: String?) -> Unit
+) {
+	val uriHandler = LocalUriHandler.current
+	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+
+	NestedTopBar(
+		title = {
+			AnimatedVisibility(
+				scrolled,
+				enter = scaleIn() + fadeIn(),
+				exit = scaleOut() + fadeOut()
+			) {
+				Text((tracks as? UiState.Success)?.data?.name ?: "")
+			}
+		},
+		actions = {
+			Box {
+				var expanded by remember { mutableStateOf(false) }
+				TopBarButton({
+					expanded = true
+				}) {
+					Icon(
+						Icons.Outlined.MoreVert,
+						stringResource(Res.string.action_more)
+					)
+				}
+				Dropdown(
+					expanded = expanded,
+					onDismissRequest = { expanded = false }
+				) {
+					val info = (albumInfoState as? UiState.Success)?.data
+					DropdownItem(
+						text = { Text(stringResource(Res.string.action_view_on_lastfm)) },
+						leadingIcon = { Icon(Icons.Brand.Lastfm, null) },
+						enabled = albumInfoState is UiState.Success
+							&& info?.lastFmUrl != null,
+						onClick = {
+							expanded = false
+							info?.lastFmUrl?.let { url ->
+								uriHandler.openUri(url)
+							}
+						}
+					)
+					DropdownItem(
+						text = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
+						leadingIcon = { Icon(Icons.Brand.Musicbrainz, null) },
+						enabled = albumInfoState is UiState.Success
+							&& info?.musicBrainzId != null,
+						onClick = {
+							expanded = false
+							info?.musicBrainzId?.let { id ->
+								uriHandler.openUri(
+									"https://musicbrainz.org/release/$id"
+								)
+							}
+						}
+					)
+					DropdownItem(
+						text = { Text(stringResource(Res.string.action_share)) },
+						leadingIcon = { Icon(Icons.Outlined.Share, null) },
+						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+						enabled = tracks is UiState.Success,
+						onClick = {
+							expanded = false
+							onSetShareId((tracks as? UiState.Success)?.data?.id)
+						},
+					)
+					DropdownItem(
+						text = { Text(stringResource(Res.string.action_add_all_to_playlist)) },
+						leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) },
+						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+						enabled = tracks is UiState.Success,
+						onClick = {
+							expanded = false
+							playlistDialogShown = true
+						},
+					)
+				}
+			}
+		}
+	)
+
+	if (playlistDialogShown) {
+		@Suppress("AssignedValueIsNeverRead")
+		PlaylistUpdateDialog(
+			tracks = (tracks as? UiState.Success)?.data?.songs.orEmpty(),
+			onDismissRequest = { playlistDialogShown = false }
+		)
+	}
+}

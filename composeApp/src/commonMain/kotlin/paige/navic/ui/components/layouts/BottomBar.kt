@@ -51,7 +51,7 @@ import paige.navic.icons.outlined.LibraryMusic
 import paige.navic.icons.outlined.PlaylistPlay
 import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
-import paige.navic.ui.components.dialogs.NavtabsViewModel
+import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
 
 private enum class NavItem(
@@ -67,18 +67,18 @@ private enum class NavItem(
 		label = Res.string.title_library
 	),
 	ALBUMS(
-		destination = Screen.Albums(),
+		destination = Screen.AlbumList(),
 		icon = Icons.Filled.Album,
 		iconUnselected = Icons.Outlined.Album,
 		label = Res.string.title_albums
 	),
 	PLAYLISTS(
-		destination = Screen.Playlists(),
+		destination = Screen.PlaylistList(),
 		icon = Icons.Outlined.PlaylistPlay,
 		label = Res.string.title_playlists
 	),
 	ARTISTS(
-		destination = Screen.Artists(),
+		destination = Screen.ArtistList(),
 		icon = Icons.Filled.Artist,
 		iconUnselected = Icons.Outlined.Artist,
 		label = Res.string.title_artists
@@ -90,7 +90,7 @@ private enum class NavItem(
 		label = Res.string.title_search
 	),
 	GENRES(
-		destination = Screen.Genres(),
+		destination = Screen.GenreList(),
 		icon = Icons.Outlined.Genre,
 		iconUnselected = Icons.Outlined.Genre,
 		label = Res.string.title_genres
@@ -102,6 +102,7 @@ fun BottomBar(
 	modifier: Modifier = Modifier,
 	containerColor: Color = NavigationBarDefaults.containerColor,
 	windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
+	enabled: Boolean = true,
 	viewModel: NavtabsViewModel = viewModel {
 		NavtabsViewModel(
 			com.russhwolf.settings.Settings(),
@@ -139,6 +140,7 @@ fun BottomBar(
 
 					NavigationBarItem(
 						selected = selected,
+						enabled = enabled,
 						onClick = {
 							ctx.clickSound()
 							backStack.apply {
@@ -192,6 +194,7 @@ fun BottomBar(
 							NavigationItemIconPosition.Start
 						else NavigationItemIconPosition.Top,
 						selected = backStack.last() == item.destination,
+						enabled = enabled,
 						onClick = {
 							ctx.clickSound()
 							backStack.apply {

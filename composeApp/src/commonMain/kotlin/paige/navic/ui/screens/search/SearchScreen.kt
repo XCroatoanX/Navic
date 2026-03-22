@@ -1,0 +1,273 @@
+package paige.navic.ui.screens.search
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.insert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kyant.capsule.ContinuousRoundedRectangle
+import dev.zt64.subsonic.api.model.AlbumListType
+import dev.zt64.subsonic.api.model.Artist
+import dev.zt64.subsonic.api.model.Song
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_remove_from_history
+import navic.composeapp.generated.resources.action_search_history
+import navic.composeapp.generated.resources.title_albums
+import navic.composeapp.generated.resources.title_all
+import navic.composeapp.generated.resources.title_artists
+import navic.composeapp.generated.resources.title_songs
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
+import paige.navic.LocalMediaPlayer
+import paige.navic.LocalNavStack
+import paige.navic.data.database.AlbumEntity
+import paige.navic.data.models.Screen
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.History
+import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.layouts.ArtGrid
+import paige.navic.ui.components.layouts.RootBottomBar
+import paige.navic.ui.components.layouts.artGridPlaceholder
+import paige.navic.ui.components.layouts.horizontalSection
+import paige.navic.ui.screens.album.components.AlbumListScreenItem
+import paige.navic.ui.screens.artist.ArtistsScreenItem
+import paige.navic.ui.screens.search.components.SearchScreenChips
+import paige.navic.ui.screens.search.components.SearchScreenTopBar
+import paige.navic.ui.screens.search.viewmodels.SearchViewModel
+import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
+import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.UiState
+
+enum class SearchCategory(val res: StringResource) {
+	ALL(Res.string.title_all),
+	SONGS(Res.string.title_songs),
+	ALBUMS(Res.string.title_albums),
+	ARTISTS(Res.string.title_artists)
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun SearchScreen(
+	nested: Boolean,
+	viewModel: SearchViewModel = viewModel { SearchViewModel() }
+) {
+	val query = viewModel.searchQuery
+	val state by viewModel.searchState.collectAsState()
+	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+
+	val ctx = LocalCtx.current
+	val player = LocalMediaPlayer.current
+
+	val artistListViewModel = viewModel { ArtistListViewModel() }
+	val albumListViewModel = viewModel { AlbumListViewModel(AlbumListType.AlphabeticalByName) }
+
+	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
+
+	Scaffold(
+		topBar = {
+			Column(
+				modifier = Modifier
+					.background(MaterialTheme.colorScheme.surface)
+					.padding(
+						TopAppBarDefaults.windowInsets.asPaddingValues()
+					)
+			) {
+				SearchScreenTopBar(
+					query = query,
+					nested = nested,
+					onSearch = { submittedQuery ->
+						viewModel.addToSearchHistory(submittedQuery)
+					}
+				)
+				SearchScreenChips(
+					selectedCategory = selectedCategory,
+					onCategorySelect = { selectedCategory = it }
+				)
+			}
+		},
+		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
+			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				RootBottomBar(scrolled = scrollManager.isTriggered)
+			}
+		}
+	) { contentPadding ->
+		AnimatedContent(
+			state,
+			modifier = Modifier.fillMaxSize()
+		) { uiState ->
+			when (uiState) {
+				is UiState.Loading -> ArtGrid(contentPadding = contentPadding) { artGridPlaceholder() }
+				is UiState.Error -> ErrorBox(uiState, padding = contentPadding)
+				is UiState.Success -> {
+					val results = uiState.data
+					val showAll = selectedCategory == SearchCategory.ALL
+					val albums =
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<AlbumEntity>() else emptyList()
+					val artists =
+						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
+					val tracks =
+						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Song>() else emptyList()
+
+					LazyVerticalGrid(
+						modifier = Modifier.fillMaxSize(),
+						columns = GridCells.Fixed(2),
+						contentPadding = contentPadding,
+						state = viewModel.gridState,
+						verticalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						if (query.text.isNotBlank()) {
+							if (tracks.isNotEmpty()) {
+								item(span = { GridItemSpan(maxLineSpan) }) {
+									Text(
+										stringResource(Res.string.title_songs),
+										style = MaterialTheme.typography.headlineSmall,
+										modifier = Modifier.padding(
+											horizontal = 16.dp,
+											vertical = 8.dp
+										)
+									)
+								}
+								items(
+									tracks.take(10).size,
+									span = { GridItemSpan(maxLineSpan) }) { index ->
+									val track = tracks[index]
+									ListItem(
+										modifier = Modifier.clickable {
+											ctx.clickSound()
+											player.clearQueue()
+//											player.addToQueueSingle(track)TODO
+											player.playAt(0)
+										},
+										headlineContent = { Text(track.title) },
+										supportingContent = {
+											MarqueeText(
+												"${track.albumTitle ?: ""} • ${track.artistName} • ${track.year ?: ""}"
+											)
+										},
+										leadingContent = {
+											CoverArt(
+												coverArtId = track.coverArtId,
+												modifier = Modifier.size(50.dp),
+												shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+											)
+										}
+									)
+								}
+							}
+
+							horizontalSection(
+								title = Res.string.title_albums,
+								destination = Screen.AlbumList(true),
+								state = UiState.Success(albums),
+								key = { it.id },
+								seeAll = false
+							) { album ->
+								AlbumListScreenItem(
+									modifier = Modifier.animateItem(fadeInSpec = null)
+										.width(150.dp),
+									album = album,
+									viewModel = albumListViewModel,
+									onSetShareId = { },
+									tab = "search"
+								)
+							}
+
+							horizontalSection(
+								title = Res.string.title_artists,
+								destination = Screen.ArtistList(true),
+								state = UiState.Success(artists),
+								key = { it.id },
+								seeAll = false
+							) { artist ->
+								ArtistsScreenItem(
+									modifier = Modifier.animateItem(fadeInSpec = null)
+										.width(150.dp),
+									artist = artist,
+									viewModel = artistListViewModel,
+									tab = "search"
+								)
+							}
+						} else {
+							if (searchHistory.isNotEmpty()) {
+								item(span = { GridItemSpan(maxLineSpan) }) {
+									Text(
+										text = stringResource(Res.string.action_search_history),
+										style = MaterialTheme.typography.titleMedium,
+										color = MaterialTheme.colorScheme.primary,
+										modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+									)
+								}
+								items(searchHistory.size, span = { GridItemSpan(maxLineSpan) }) { index ->
+									val historyItem = searchHistory[index]
+									ListItem(
+										modifier = Modifier.clickable {
+											ctx.clickSound()
+											query.clearText()
+											query.edit { insert(0, historyItem) }
+										},
+										headlineContent = { Text(historyItem) },
+										leadingContent = {
+											Icon(
+												imageVector = Icons.Outlined.History,
+												contentDescription = null,
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										},
+										trailingContent = {
+											IconButton(onClick = {
+												ctx.clickSound()
+												viewModel.removeFromSearchHistory(historyItem)
+											}) {
+												Icon(
+													imageVector = Icons.Outlined.Close,
+													contentDescription = stringResource(Res.string.action_remove_from_history),
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+											}
+										}
+									)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

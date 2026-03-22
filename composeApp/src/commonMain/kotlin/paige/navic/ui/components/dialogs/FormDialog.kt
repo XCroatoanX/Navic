@@ -1,6 +1,7 @@
 package paige.navic.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +36,7 @@ fun FormDialog(
 	onDismissRequest: () -> Unit,
 	icon: @Composable () -> Unit = {},
 	title: @Composable () -> Unit = {},
+	action: @Composable () -> Unit = {},
 	buttons: @Composable ColumnScope.() -> Unit = {},
 	content: @Composable () -> Unit
 ) {
@@ -53,42 +55,51 @@ fun FormDialog(
 			shape = MaterialTheme.shapes.extraLarge,
 			tonalElevation = AlertDialogDefaults.TonalElevation,
 		) {
-			Column(
-				modifier = Modifier
-					.padding(16.dp)
-					.fillMaxWidth(),
-				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.spacedBy(12.dp)
-			) {
-				Spacer(Modifier.height(12.dp))
-				CompositionLocalProvider(
-					LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
-					content = icon
-				)
-				CompositionLocalProvider(
-					LocalTextStyle provides MaterialTheme.typography.headlineSmall
-						.copy(fontFamily = defaultFont(round = 100f)),
-					content = title
-				)
-				CompositionLocalProvider(
-					LocalTextStyle provides MaterialTheme.typography.bodyMedium,
-					LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
-				) {
-					Column(
-						modifier = Modifier
-							.heightIn(max = 400.dp)
-							.verticalScroll(rememberScrollState()),
-						horizontalAlignment = Alignment.CenterHorizontally
+			Box {
+				Box(Modifier.align(Alignment.TopEnd).padding(16.dp)) {
+					CompositionLocalProvider(
+						LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
 					) {
-						content()
+						action()
 					}
 				}
-				Spacer(Modifier.height(12.dp))
-				Form(
-					bottomPadding = 0.dp,
-					spacing = 4.dp
+				Column(
+					modifier = Modifier
+						.padding(16.dp)
+						.fillMaxWidth(),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.spacedBy(12.dp)
 				) {
-					buttons()
+					Spacer(Modifier.height(12.dp))
+					CompositionLocalProvider(
+						LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+						content = icon
+					)
+					CompositionLocalProvider(
+						LocalTextStyle provides MaterialTheme.typography.headlineSmall
+							.copy(fontFamily = defaultFont(round = 100f)),
+						content = title
+					)
+					CompositionLocalProvider(
+						LocalTextStyle provides MaterialTheme.typography.bodyMedium,
+						LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
+					) {
+						Column(
+							modifier = Modifier
+								.heightIn(max = 400.dp)
+								.verticalScroll(rememberScrollState()),
+							horizontalAlignment = Alignment.CenterHorizontally
+						) {
+							content()
+						}
+					}
+					Spacer(Modifier.height(12.dp))
+					Form(
+						bottomPadding = 0.dp,
+						spacing = 4.dp
+					) {
+						buttons()
+					}
 				}
 			}
 		}

@@ -61,7 +61,7 @@ import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.dialogs.LoginDialog
-import paige.navic.ui.components.dialogs.NavtabsViewModel
+import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.viewmodels.LoginViewModel
 import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
@@ -192,7 +192,7 @@ private fun Actions(
 						text = { Text(stringResource(Res.string.action_view_shares)) },
 						onClick = {
 							expanded = false
-							backStack.add(Screen.Shares)
+							backStack.add(Screen.ShareList)
 						},
 						leadingIcon = { Icon(Icons.Outlined.Share, null) }
 					)
