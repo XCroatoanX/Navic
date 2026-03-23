@@ -9,7 +9,7 @@ import paige.navic.domain.models.DomainReplayGain
 data class SongWithExtras(
 	@Embedded val song: SongEntity,
 	// TODO
-	val contributors: List<DomainContributor> = emptyList(),
-	val replayGain: DomainReplayGain? = null,
-	val explicitStatus: DomainExplicitStatus? = null
+	//val contributors: List<DomainContributor> = emptyList(),
+	//val replayGain: DomainReplayGain? = null,
+	//val explicitStatus: DomainExplicitStatus? = null
 )

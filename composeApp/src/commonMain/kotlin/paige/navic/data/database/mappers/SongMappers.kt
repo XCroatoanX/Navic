@@ -71,9 +71,9 @@ fun SongWithExtras.toDomainModel() = DomainSong(
 	audioChannelCount = song.audioChannelCount,
 	fileSize = song.fileSize,
 	musicBrainzId = song.musicBrainzId,
-	contributors = contributors,
-	replayGain = replayGain,
-	explicitStatus = explicitStatus,
+	contributors = emptyList(),
+	replayGain = null,
+	explicitStatus = null,
 )
 
 fun DomainSong.toEntity() = SongEntity(
