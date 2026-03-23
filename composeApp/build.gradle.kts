@@ -144,6 +144,8 @@ kotlin {
 			implementation(libs.bundles.coil)
 			implementation(libs.bundles.cmpThirdParty)
 			implementation(libs.bundles.androidx.lifecycle)
+			implementation(libs.bundles.room)
+			implementation(libs.bundles.koin)
 
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
@@ -151,9 +153,6 @@ kotlin {
 			implementation(libs.androidx.datastore.preferences)
 
 			implementation(libs.subsonicKotlin)
-
-			implementation(libs.androidx.room.runtime)
-			implementation(libs.androidx.sqlite.bundled)
 		}
 
 		androidMain.dependencies {
