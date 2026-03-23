@@ -7,11 +7,11 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
+actual fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase> {
 	val dbFilePath = documentDirectory() + "/navic.db"
-	return Room.databaseBuilder<AppDatabase>(
+	return Room.databaseBuilder<CacheDatabase>(
 		name = dbFilePath,
-		factory = { AppDatabaseConstructor.initialize() }
+		factory = { CacheDatabaseConstructor.initialize() }
 	)
 }
 
