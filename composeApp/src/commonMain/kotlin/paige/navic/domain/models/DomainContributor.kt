@@ -1,9 +1,9 @@
-package paige.navic.data.models
+package paige.navic.domain.models
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LocalContributor(
+data class DomainContributor(
 	val role: String,
 	val subRole: String?,
 	val artistId: String,

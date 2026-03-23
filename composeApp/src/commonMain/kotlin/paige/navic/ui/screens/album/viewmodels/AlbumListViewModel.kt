@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
@@ -81,7 +81,7 @@ open class AlbumListViewModel(
 		}
 	}
 
-	suspend fun getAlbumTracks(album: AlbumEntity): TrackCollectionUiModel {
+	suspend fun getAlbumTracks(album: AlbumEntity): DomainSongCollection {
 		val songs = repository.getSongsByAlbumId(album.id)
 		print(songs)
 		return album.toDomainModel(songs)

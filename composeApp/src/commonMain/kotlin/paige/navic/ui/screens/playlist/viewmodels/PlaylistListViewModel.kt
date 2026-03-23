@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.repositories.PlaylistsRepository
 import paige.navic.data.session.SessionManager
@@ -75,7 +75,7 @@ class PlaylistListViewModel(
 		_playlistsState.value = UiState.Success(sorted)
 	}
 
-	suspend fun getPlaylistTracks(playlist: PlaylistEntity): TrackCollectionUiModel {
+	suspend fun getPlaylistTracks(playlist: PlaylistEntity): DomainSongCollection {
 		val songs = repository.getSongsByPlaylistId(playlist.id)
 		print(songs)
 		return playlist.toDomainModel(songs)

@@ -5,12 +5,10 @@ package paige.navic.shared
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
@@ -164,7 +162,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueue(tracks: TrackCollectionUiModel) {
+	override fun addToQueue(tracks: DomainSongCollection) {
 		_uiState.update { state ->
 			val newQueue = state.queue + tracks.songs
 			val newIndex = newQueue.indexOf(state.currentTrack)
@@ -252,7 +250,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: TrackCollectionUiModel) {
+	override fun shufflePlay(tracks: DomainSongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
 		_uiState.update { state ->
 			val newIndex = shuffledTracks.indexOf(state.currentTrack)

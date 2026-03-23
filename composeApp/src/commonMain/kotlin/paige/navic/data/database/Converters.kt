@@ -1,8 +1,8 @@
 package paige.navic.data.database
 
 import androidx.room.TypeConverter
-import paige.navic.data.models.LocalContributor
-import paige.navic.data.models.LocalReplayGain
+import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
@@ -43,18 +43,18 @@ class Converters {
 
 	// List<Contributor>
 	@TypeConverter
-	fun fromContributorList(list: List<LocalContributor>?): String? {
+	fun fromContributorList(list: List<DomainContributor>?): String? {
 		return list?.joinToString(separator = ";") { c ->
 			"${c.role}^${c.subRole ?: ""}^${c.artistId}^${c.artistName}"
 		}
 	}
 
 	@TypeConverter
-	fun toContributorList(data: String?): List<LocalContributor>? {
+	fun toContributorList(data: String?): List<DomainContributor>? {
 		if (data == null) return null
 		return data.split(";").filter { it.isNotEmpty() }.map { item ->
 			val parts = item.split("^")
-			LocalContributor(
+			DomainContributor(
 				role = parts[0],
 				subRole = parts[1].ifEmpty { null },
 				artistId = parts[2],
@@ -65,18 +65,18 @@ class Converters {
 
 	// ReplayGain
 	@TypeConverter
-	fun fromReplayGain(rg: LocalReplayGain?): String? {
+	fun fromReplayGain(rg: DomainReplayGain?): String? {
 		if (rg == null) return null
 		return "${rg.albumGain ?: ""},${rg.albumPeak ?: ""},${rg.trackGain ?: ""},${rg.trackPeak ?: ""},${rg.baseGain ?: ""},${rg.fallbackGain ?: ""}"
 	}
 
 	@TypeConverter
-	fun toReplayGain(data: String?): LocalReplayGain? {
+	fun toReplayGain(data: String?): DomainReplayGain? {
 		if (data.isNullOrEmpty()) return null
 		val parts = data.split(",")
 		if (parts.size < 6) return null
 
-		return LocalReplayGain(
+		return DomainReplayGain(
 			albumGain = parts[0].toFloatOrNull(),
 			albumPeak = parts[1].toFloatOrNull(),
 			trackGain = parts[2].toFloatOrNull(),

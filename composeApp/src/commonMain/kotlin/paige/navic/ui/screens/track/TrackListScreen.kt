@@ -27,7 +27,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_tracks
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.icons.Icons
@@ -54,9 +54,9 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackListScreen(
-	partialTracks: TrackCollectionUiModel,
-	tab: String,
-	viewModel: TrackListViewModel = viewModel(key = partialTracks.toString()) {
+    partialTracks: DomainSongCollection,
+    tab: String,
+    viewModel: TrackListViewModel = viewModel(key = partialTracks.toString()) {
 		TrackListViewModel(partialTracks)
 	}
 ) {

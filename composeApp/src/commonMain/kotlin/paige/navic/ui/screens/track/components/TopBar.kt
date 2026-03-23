@@ -24,7 +24,7 @@ import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -41,10 +41,10 @@ import kotlin.collections.orEmpty
 
 @Composable
 fun TracksScreenTopBar(
-	tracks: UiState<TrackCollectionUiModel>,
-	albumInfoState: UiState<AlbumInfo>,
-	scrolled: Boolean,
-	onSetShareId: (shareId: String?) -> Unit
+    tracks: UiState<DomainSongCollection>,
+    albumInfoState: UiState<AlbumInfo>,
+    scrolled: Boolean,
+    onSetShareId: (shareId: String?) -> Unit
 ) {
 	val uriHandler = LocalUriHandler.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }

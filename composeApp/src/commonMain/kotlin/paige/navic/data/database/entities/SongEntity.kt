@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import paige.navic.data.models.LocalContributor
-import paige.navic.data.models.LocalReplayGain
+import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Duration
 import kotlin.time.Instant
 import dev.zt64.subsonic.api.model.Song as ApiSong
@@ -53,7 +53,7 @@ data class SongEntity(
 	val isrc: List<String>,
 	val bpm: Int?,
 	val comment: String?,
-	val contributors: List<LocalContributor>,
+	val contributors: List<DomainContributor>,
 	@ColumnInfo(name = "play_count")
 	val playCount: Int = 0,
 	@ColumnInfo(name = "user_rating")
@@ -77,7 +77,7 @@ data class SongEntity(
 	val suffix: String,
 	val path: String?,
 	@ColumnInfo(name = "replay_gain")
-	val replayGain: LocalReplayGain?,
+	val replayGain: DomainReplayGain?,
 	@ColumnInfo(name = "explicit_status")
 	val explicitStatus: ApiSong.ExplicitStatus?
 )

@@ -12,19 +12,19 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 
 @Serializable
 data class PlayerUiState(
-	val queue: List<SongEntity> = emptyList(),
-	val currentTrack: SongEntity? = null,
-	val currentCollection: TrackCollectionUiModel? = null,
-	val currentIndex: Int = -1,
-	val isPaused: Boolean = false,
-	val isShuffleEnabled: Boolean = false,
-	val repeatMode: Int = 0,
-	val progress: Float = 0f,
-	val isLoading: Boolean = false
+    val queue: List<SongEntity> = emptyList(),
+    val currentTrack: SongEntity? = null,
+    val currentCollection: DomainSongCollection? = null,
+    val currentIndex: Int = -1,
+    val isPaused: Boolean = false,
+    val isShuffleEnabled: Boolean = false,
+    val repeatMode: Int = 0,
+    val progress: Float = 0f,
+    val isLoading: Boolean = false
 )
 
 abstract class MediaPlayerViewModel(
@@ -41,7 +41,7 @@ abstract class MediaPlayerViewModel(
 	}
 
 	abstract  fun addToQueueSingle(track: SongEntity)
-	abstract  fun addToQueue(tracks: TrackCollectionUiModel)
+	abstract  fun addToQueue(tracks: DomainSongCollection)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
@@ -53,7 +53,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun previous()
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
-	abstract fun shufflePlay(tracks: TrackCollectionUiModel)
+	abstract fun shufflePlay(tracks: DomainSongCollection)
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {

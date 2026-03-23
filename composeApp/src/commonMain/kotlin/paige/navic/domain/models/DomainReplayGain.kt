@@ -1,9 +1,9 @@
-package paige.navic.data.models
+package paige.navic.domain.models
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LocalReplayGain(
+data class DomainReplayGain(
 	val albumGain: Float?,
 	val albumPeak: Float?,
 	val trackGain: Float?,

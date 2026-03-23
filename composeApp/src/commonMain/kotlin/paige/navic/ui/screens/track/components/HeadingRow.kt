@@ -20,8 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.Playlist
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
@@ -30,15 +28,15 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun TracksScreenHeadingRow(
-	partialTracks: TrackCollectionUiModel,
-	tab: String,
-	scrolled: Boolean
+    partialTracks: DomainSongCollection,
+    tab: String,
+    scrolled: Boolean
 ) {
 	val backStack = LocalNavStack.current
 	val progress by animateFloatAsState(if (scrolled) 0f else 1f)

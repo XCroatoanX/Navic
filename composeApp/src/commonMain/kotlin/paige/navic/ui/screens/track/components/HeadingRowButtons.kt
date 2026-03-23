@@ -19,14 +19,14 @@ import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.Shuffle
 
 @Composable
 fun TracksScreenHeadingRowButtons(
-	tracks: TrackCollectionUiModel
+	tracks: DomainSongCollection
 ) {
 	val player = LocalMediaPlayer.current
 	Row(

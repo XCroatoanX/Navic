@@ -21,7 +21,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.Screen
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Info
@@ -36,15 +36,15 @@ import paige.navic.utils.UiState
 
 @Composable
 fun TrackRowDropdown(
-	expanded: Boolean,
-	onDismissRequest: () -> Unit,
-	onRemoveStar: () -> Unit,
-	onAddStar: () -> Unit,
-	onShare: () -> Unit,
-	tracks: TrackCollectionUiModel,
-	track: SongEntity,
-	onRemoveFromPlaylist: () -> Unit,
-	starredState: UiState<Boolean>,
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onRemoveStar: () -> Unit,
+    onAddStar: () -> Unit,
+    onShare: () -> Unit,
+    tracks: DomainSongCollection,
+    track: SongEntity,
+    onRemoveFromPlaylist: () -> Unit,
+    starredState: UiState<Boolean>,
 ) {
 	val backStack = LocalNavStack.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }

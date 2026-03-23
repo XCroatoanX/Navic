@@ -2,8 +2,8 @@ package paige.navic.data.database.mappers
 
 import dev.zt64.subsonic.api.model.Song as ApiSong
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.models.LocalContributor
-import paige.navic.data.models.LocalReplayGain
+import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Clock
 
 fun ApiSong.toEntity(playlistId: String = "__library__"): SongEntity {
@@ -35,7 +35,7 @@ fun ApiSong.toEntity(playlistId: String = "__library__"): SongEntity {
 		bpm = this.bpm,
 		comment = this.comment,
 		contributors = this.contributors.map {
-			LocalContributor(
+			DomainContributor(
 				role = it.role,
 				subRole = it.subRole,
 				artistId = it.artist.id,
@@ -50,7 +50,7 @@ fun ApiSong.toEntity(playlistId: String = "__library__"): SongEntity {
 		audioChannelCount = this.audioChannelCount,
 		fileSize = this.fileSize,
 		replayGain = this.replayGain?.let {
-			LocalReplayGain(
+			DomainReplayGain(
 				albumGain = it.albumGain,
 				albumPeak = it.albumPeak,
 				trackGain = it.trackGain,

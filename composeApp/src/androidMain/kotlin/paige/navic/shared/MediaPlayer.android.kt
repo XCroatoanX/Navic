@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.effectiveGain
@@ -324,7 +324,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueue(tracks: TrackCollectionUiModel) {
+	override fun addToQueue(tracks: DomainSongCollection) {
 		val items = tracks.songs.map { it.toMediaItem() }
 		controller?.addMediaItems(items)
 		_uiState.update { state ->
@@ -379,7 +379,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: TrackCollectionUiModel) {
+	override fun shufflePlay(tracks: DomainSongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
 		val mediaItems = shuffledTracks.map { it.toMediaItem() }
 

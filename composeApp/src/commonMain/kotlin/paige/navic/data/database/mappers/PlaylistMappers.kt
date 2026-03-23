@@ -3,7 +3,7 @@ package paige.navic.data.database.mappers
 import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 
 fun ApiPlaylist.toEntity(): PlaylistEntity {
 	return PlaylistEntity(
@@ -23,7 +23,7 @@ fun ApiPlaylist.toEntity(): PlaylistEntity {
 	)
 }
 
-fun PlaylistEntity.toDomainModel(songs: List<SongEntity>) = TrackCollectionUiModel(
+fun PlaylistEntity.toDomainModel(songs: List<SongEntity>) = DomainSongCollection(
 	id = id,
 	name = name,
 	coverArtId = coverArtId,

@@ -7,7 +7,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock
 
@@ -16,12 +16,12 @@ class TracksRepository(
 	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
 	private val songDao: SongDao = DbContainer.songDao,
 ) {
-	suspend fun fetchWithAllTracks(collection: TrackCollectionUiModel): TrackCollectionUiModel? {
+	suspend fun fetchWithAllTracks(collection: DomainSongCollection): DomainSongCollection? {
 		return if (collection.isAlbum) {
 				val album = albumDao.getAlbumById(collection.id) ?: return null
 				val songs = songDao.getSongsFlowByAlbum(collection.id).first()
 
-				TrackCollectionUiModel(
+				DomainSongCollection(
 					id = album.id,
 					name = album.name,
 					coverArtId = album.coverArtId,
@@ -34,7 +34,7 @@ class TracksRepository(
 				val playlist = playlistDao.getPlaylistById(collection.id) ?: return null
 				val songs = songDao.getSongsByPlaylist(collection.id).first()
 
-				TrackCollectionUiModel(
+				DomainSongCollection(
 					id = playlist.id,
 					name = playlist.name,
 					coverArtId = playlist.coverArtId,

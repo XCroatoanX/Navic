@@ -7,15 +7,15 @@ import navic.composeapp.generated.resources.title_more_by_artist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.TrackCollectionUiModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.utils.UiState
 
 fun LazyListScope.tracksScreenMoreByArtistRow(
-	tracks: TrackCollectionUiModel,
-	artistState: UiState<Artist>,
-	tab: String
+    tracks: DomainSongCollection,
+    artistState: UiState<Artist>,
+    tab: String
 ) {
 	(artistState as? UiState.Success)?.data?.takeIf {
 		it.album.any { album -> album.id != tracks.id }
