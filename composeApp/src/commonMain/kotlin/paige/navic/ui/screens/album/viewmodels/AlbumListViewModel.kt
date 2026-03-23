@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import paige.navic.data.database.entities.AlbumEntity
-import paige.navic.data.database.entities.toUiModel
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager
@@ -84,7 +84,7 @@ open class AlbumListViewModel(
 	suspend fun getAlbumTracks(album: AlbumEntity): TrackCollectionUiModel {
 		val songs = repository.getSongsByAlbumId(album.id)
 		print(songs)
-		return album.toUiModel(songs)
+		return album.toDomainModel(songs)
 	}
 
 	fun paginate() {

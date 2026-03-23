@@ -6,7 +6,7 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.database.entities.toEntity
+import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
 
 class PlaylistsRepository(
