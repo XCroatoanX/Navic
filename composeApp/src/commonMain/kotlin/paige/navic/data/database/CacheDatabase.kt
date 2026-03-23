@@ -1,7 +1,9 @@
 package paige.navic.data.database
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.PlaylistDao
@@ -19,6 +21,7 @@ import paige.navic.data.database.entities.SongEntity
 	]
 )
 @TypeConverters(Converters::class)
+@ConstructedBy(CacheDatabaseConstructor::class)
 abstract class CacheDatabase : RoomDatabase() {
 	abstract fun albumDao(): AlbumDao
 	abstract fun playlistDao(): PlaylistDao
@@ -26,3 +29,9 @@ abstract class CacheDatabase : RoomDatabase() {
 }
 
 expect fun provideCacheDatabase(): CacheDatabase
+
+@Suppress("KotlinNoActualForExpect")
+expect object CacheDatabaseConstructor : RoomDatabaseConstructor<CacheDatabase> {
+	override fun initialize(): CacheDatabase
+}
+
