@@ -1,33 +1,25 @@
 package paige.navic.data.database.entities
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlin.time.Clock
+import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.Instant
 
-@Entity(tableName = "navidrome_playlists")
+@Serializable
+@Entity
 data class PlaylistEntity(
-	@PrimaryKey val id: String,
+	@PrimaryKey val playlistId: String,
 	val name: String,
 	val comment: String?,
-	val owner: String?,
-	@ColumnInfo(name = "cover_art_id")
+	val owner: String,
 	val coverArtId: String?,
-	@ColumnInfo(name = "song_count")
 	val songCount: Int,
 	val duration: Duration,
-	val public: Boolean,
-	@ColumnInfo(name = "read_only")
-	val readOnly: Boolean,
-	@ColumnInfo(name = "created_at")
-	val createdAt: Instant?,
-	@ColumnInfo(name = "modified_at")
-	val modifiedAt: Instant?,
-	@ColumnInfo(name = "valid_until")
+	val public: Boolean?,
+	val readOnly: Boolean?,
+	val createdAt: Instant,
+	val modifiedAt: Instant,
 	val validUntil: Instant?,
-	@ColumnInfo(name = "allowed_users")
-	val allowedUsers: String,
-	val dateCached: Long = Clock.System.now().toEpochMilliseconds()
+	val allowedUsers: List<String>
 )

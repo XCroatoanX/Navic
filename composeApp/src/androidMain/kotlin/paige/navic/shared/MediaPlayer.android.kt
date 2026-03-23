@@ -34,10 +34,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
-import paige.navic.data.database.entities.SongEntity
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
 import paige.navic.utils.effectiveGain
 
 class PlaybackService : MediaSessionService() {
@@ -311,7 +311,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(track: SongEntity) {
+	override fun addToQueueSingle(track: DomainSong) {
 		controller?.addMediaItem(track.toMediaItem())
 		_uiState.update { state ->
 			val newQueue = state.queue + track
@@ -440,11 +440,11 @@ class AndroidMediaPlayerViewModel(
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 
-	private fun SongEntity.toMediaItem(): MediaItem {
+	private fun DomainSong.toMediaItem(): MediaItem {
 		val metadata = MediaMetadata.Builder()
 			.setTitle(title)
 			.setArtist(artistName)
-			.setAlbumTitle(album)
+			.setAlbumTitle(albumTitle)
 			.setArtworkUri(
 				coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() }
 			)

@@ -10,6 +10,7 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.entities.SongEntity
 
 @Database(
@@ -17,6 +18,7 @@ import paige.navic.data.database.entities.SongEntity
 	entities = [
 		AlbumEntity::class,
 		PlaylistEntity::class,
+		PlaylistSongCrossRef::class,
 		SongEntity::class,
 	]
 )

@@ -16,8 +16,8 @@ import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Share
@@ -31,7 +31,7 @@ import paige.navic.utils.UiState
 @Composable
 fun AlbumListScreenItem(
 	modifier: Modifier = Modifier,
-	album: AlbumEntity,
+	album: DomainAlbum,
 	tab: String,
 	viewModel: AlbumListViewModel,
 	onSetShareId: (String) -> Unit
@@ -46,8 +46,7 @@ fun AlbumListScreenItem(
 			onClick = {
 				ctx.clickSound()
 				scope.launch {
-					val uiModel = viewModel.getAlbumTracks(album)
-					backStack.add(Screen.TrackList(uiModel, tab))
+					backStack.add(Screen.TrackList(album, tab))
 				}
 			},
 			onLongClick = { viewModel.selectAlbum(album) },

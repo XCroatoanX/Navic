@@ -17,8 +17,8 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
@@ -30,7 +30,7 @@ import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 @Composable
 fun PlaylistListScreenItem(
 	modifier: Modifier = Modifier,
-	playlist: PlaylistEntity,
+	playlist: DomainPlaylist,
 	tab: String,
 	viewModel: PlaylistListViewModel,
 	onSetShareId: (String) -> Unit,
@@ -45,8 +45,7 @@ fun PlaylistListScreenItem(
 			onClick = {
 				ctx.clickSound()
 				scope.launch {
-					val uiModel = viewModel.getPlaylistTracks(playlist)
-					backStack.add(Screen.TrackList(uiModel, tab))
+					backStack.add(Screen.TrackList(playlist, tab))
 				}
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },

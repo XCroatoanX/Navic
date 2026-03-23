@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import paige.navic.data.database.entities.SongEntity
+import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 
 @Serializable
 data class PlayerUiState(
-    val queue: List<SongEntity> = emptyList(),
-    val currentTrack: SongEntity? = null,
+    val queue: List<DomainSong> = emptyList(),
+    val currentTrack: DomainSong? = null,
     val currentCollection: DomainSongCollection? = null,
     val currentIndex: Int = -1,
     val isPaused: Boolean = false,
@@ -40,7 +40,7 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract  fun addToQueueSingle(track: SongEntity)
+	abstract  fun addToQueueSingle(track: DomainSong)
 	abstract  fun addToQueue(tracks: DomainSongCollection)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)

@@ -2,22 +2,21 @@ package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.flow.Flow
-import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.DbContainer
 import paige.navic.data.database.dao.AlbumDao
-import paige.navic.data.database.dao.SongDao
-import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.database.mappers.toEntity
+import paige.navic.data.database.relations.AlbumWithSongs
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
+import kotlin.time.Clock
 
 open class AlbumsRepository(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
-	private val songDao: SongDao = DbContainer.songDao,
 ) {
 	fun getAlbumsFlow(
 		offset: Int,
 		listType: AlbumListType
-	): Flow<List<AlbumEntity>> {
+	): Flow<List<AlbumWithSongs>> {
 		val totalToLoad = 30 + offset
 		return when (listType) {
 			is AlbumListType.AlphabeticalByArtist -> albumDao.getAlbumsAlphabeticalByArtist(totalToLoad)
@@ -30,17 +29,7 @@ open class AlbumsRepository(
 		}
 	}
 
-	suspend fun getSongsByAlbumId(albumId: String): List<SongEntity> {
-		val localSongs = songDao.getSongListByAlbumId(albumId)
-
-		return localSongs.ifEmpty {
-			val remoteSongs = SessionManager.api.getAlbum(albumId).songs
-			val entities = remoteSongs.map { it.toEntity() }
-			songDao.insertSongs(entities)
-			entities
-		}
-	}
-
+	// TODO: is this even necessary?
 	suspend fun syncAlbums(listType: AlbumListType, offset: Int) {
 		val remote = SessionManager.api.getAlbums(
 			type = listType,
@@ -50,16 +39,16 @@ open class AlbumsRepository(
 		albumDao.insertAlbums(remote.map { it.toEntity() })
 	}
 
-	suspend fun isAlbumStarred(album: AlbumEntity): Boolean {
+	suspend fun isAlbumStarred(album: DomainAlbum): Boolean {
 		return albumDao.isAlbumStarred(album.id)
 	}
-	suspend fun starAlbum(album: AlbumEntity) {
+	suspend fun starAlbum(album: DomainAlbum) {
 		SessionManager.api.star(album.id)
-//		albumDao.insertAlbum(album.copy(starred_at = Clock.System.now()))
+		albumDao.insertAlbum(album.toEntity().copy(starredAt = Clock.System.now()))
 	}
 
-	suspend fun unstarAlbum(album: AlbumEntity) {
+	suspend fun unstarAlbum(album: DomainAlbum) {
 		SessionManager.api.unstar(album.id)
-//		albumDao.insertAlbum(album.copy(starred_at = null))
+		albumDao.insertAlbum(album.toEntity().copy(starredAt = null))
 	}
 }

@@ -67,7 +67,7 @@ class DbRepository(
 
 			if (totalPlaylists > 0) {
 				playlists.forEachIndexed { index, playlist ->
-					syncPlaylistSongs(playlist.id)
+					syncPlaylistSongs(playlist.playlistId)
 					val currentProgress = 0.7f + (0.3f * ((index + 1).toFloat() / totalPlaylists))
 					onProgress(currentProgress, "Syncing playlist: ${playlist.name}...")
 				}
@@ -104,7 +104,7 @@ class DbRepository(
 
 		val albumEntities = fullAlbums.map { it.toEntity() }
 		val songEntities = fullAlbums.flatMap { album ->
-			album.songs.map { it.toEntity(playlistId = "__library__") }
+			album.songs.map { it.toEntity() }
 		}
 
 		albumDao.insertAlbums(albumEntities)
@@ -125,13 +125,12 @@ class DbRepository(
 		}
 
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
-		val remoteIds = playlistEntities.map { it.id }.toSet()
-		val localPlaylists = playlistDao.getAllPlaylistsList()
+		val remoteIds = playlistEntities.map { it.playlistId }.toSet()
+		val localPlaylists = playlistDao.getAllPlaylists()
 
 		localPlaylists.forEach { local ->
-			if (local.id !in remoteIds) {
-				playlistDao.deletePlaylist(local.id)
-				songDao.deleteSongsByPlaylist(local.id)
+			if (local.playlist.playlistId !in remoteIds) {
+				playlistDao.deletePlaylist(local.playlist.playlistId)
 			}
 		}
 
@@ -144,10 +143,9 @@ class DbRepository(
 	suspend fun syncPlaylistSongs(playlistId: String): Result<Int> = runDbOp {
 		val playlist = api.getPlaylist(playlistId)
 		val songs = playlist.songs
-		val songEntities = songs.map { it.toEntity(playlistId = playlistId) }
+		val songEntities = songs.map { it.toEntity() }
 
 		if (songEntities.isNotEmpty()) {
-			songDao.deleteSongsByPlaylist(playlistId)
 			songDao.insertSongs(songEntities)
 		}
 

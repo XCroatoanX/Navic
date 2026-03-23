@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.relations.PlaylistWithSongs
 
 @Suppress("unused")
 @Dao
@@ -16,27 +18,25 @@ interface PlaylistDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertPlaylists(playlists: List<PlaylistEntity>)
 
-	@Query("SELECT * FROM navidrome_playlists ORDER BY name ASC")
-	fun getAllPlaylists(): Flow<List<PlaylistEntity>>
 
-	@Query("SELECT * FROM navidrome_playlists")
-	suspend fun getAllPlaylistsList(): List<PlaylistEntity>
+	@Transaction
+	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")
+	fun getAllPlaylists(): List<PlaylistWithSongs>
 
-	@Query("SELECT * FROM navidrome_playlists WHERE id = :playlistId LIMIT 1")
-	suspend fun getPlaylistById(playlistId: String): PlaylistEntity?
+	@Transaction
+	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")
+	fun getAllPlaylistsFlow(): Flow<List<PlaylistWithSongs>>
 
-	@Query("DELETE FROM navidrome_playlists WHERE id = :playlistId")
+	@Transaction
+	@Query("SELECT * FROM PlaylistEntity WHERE playlistId = :playlistId LIMIT 1")
+	suspend fun getPlaylistById(playlistId: String): PlaylistWithSongs?
+
+	@Query("DELETE FROM PlaylistEntity WHERE playlistId = :playlistId")
 	suspend fun deletePlaylist(playlistId: String)
 
-	@Query("SELECT COUNT(*) FROM navidrome_playlists")
+	@Query("SELECT COUNT(*) FROM PlaylistEntity")
 	suspend fun getPlaylistCount(): Int
 
-	@Query("SELECT DISTINCT navidrome_id FROM navidrome_songs")
-	suspend fun getAllDistinctNavidromeIds(): List<String>
-
-	@Query("DELETE FROM navidrome_songs WHERE playlist_id = '__library__'")
-	suspend fun clearLibrarySongs()
-
-	@Query("DELETE FROM navidrome_playlists")
+	@Query("DELETE FROM PlaylistEntity")
 	suspend fun clearAllPlaylists()
 }

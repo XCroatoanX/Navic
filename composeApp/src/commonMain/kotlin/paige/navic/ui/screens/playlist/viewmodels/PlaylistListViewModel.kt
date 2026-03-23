@@ -6,25 +6,24 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.repositories.PlaylistsRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainPlaylist
 import paige.navic.utils.UiState
 import paige.navic.utils.sortedByMode
 
 class PlaylistListViewModel(
 	private val repository: PlaylistsRepository = PlaylistsRepository()
 ) : ViewModel() {
-	private val _playlistsState = MutableStateFlow<UiState<List<PlaylistEntity>>>(UiState.Loading)
+	private val _playlistsState = MutableStateFlow<UiState<List<DomainPlaylist>>>(UiState.Loading)
 	val playlistsState = _playlistsState.asStateFlow()
 
 	private val _isRefreshing = MutableStateFlow(false)
 	val isRefreshing = _isRefreshing.asStateFlow()
 
-	private val _selectedPlaylist = MutableStateFlow<PlaylistEntity?>(null)
+	private val _selectedPlaylist = MutableStateFlow<DomainPlaylist?>(null)
 	val selectedPlaylist = _selectedPlaylist.asStateFlow()
 
 	val gridState = LazyGridState()
@@ -33,7 +32,7 @@ class PlaylistListViewModel(
 		viewModelScope.launch {
 			repository.getPlaylistsFlow().collect { dbPlaylists ->
 				if (dbPlaylists.isNotEmpty()) {
-					_playlistsState.value = UiState.Success(dbPlaylists)
+					_playlistsState.value = UiState.Success(dbPlaylists.map { it.toDomainModel() })
 					sortPlaylists()
 				}
 			}
@@ -43,7 +42,7 @@ class PlaylistListViewModel(
 		}
 	}
 
-	fun selectPlaylist(playlist: PlaylistEntity) {
+	fun selectPlaylist(playlist: DomainPlaylist) {
 		_selectedPlaylist.value = playlist
 	}
 
@@ -73,11 +72,5 @@ class PlaylistListViewModel(
 			Settings.shared.playlistsReversed
 		)
 		_playlistsState.value = UiState.Success(sorted)
-	}
-
-	suspend fun getPlaylistTracks(playlist: PlaylistEntity): DomainSongCollection {
-		val songs = repository.getSongsByPlaylistId(playlist.id)
-		print(songs)
-		return playlist.toDomainModel(songs)
 	}
 }

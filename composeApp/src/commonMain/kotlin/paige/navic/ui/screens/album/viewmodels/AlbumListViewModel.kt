@@ -11,11 +11,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -23,7 +22,7 @@ open class AlbumListViewModel(
     initialListType: AlbumListType?,
     private val repository: AlbumsRepository = AlbumsRepository()
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<List<AlbumEntity>>>(UiState.Loading)
+	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading)
 	val albumsState = _albumsState.asStateFlow()
 
 	private val _isRefreshing = MutableStateFlow(false)
@@ -32,7 +31,7 @@ open class AlbumListViewModel(
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
-	private val _selectedAlbum = MutableStateFlow<AlbumEntity?>(null)
+	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
 
 	private val _offset = MutableStateFlow(0)
@@ -54,7 +53,7 @@ open class AlbumListViewModel(
 				_isPaginating.value = false
 
 				if (dbAlbums.isNotEmpty()) {
-					_albumsState.value = UiState.Success(dbAlbums)
+					_albumsState.value = UiState.Success(dbAlbums.map { it.toDomainModel() })
 				}
 			}
 		}
@@ -81,12 +80,6 @@ open class AlbumListViewModel(
 		}
 	}
 
-	suspend fun getAlbumTracks(album: AlbumEntity): DomainSongCollection {
-		val songs = repository.getSongsByAlbumId(album.id)
-		print(songs)
-		return album.toDomainModel(songs)
-	}
-
 	fun paginate() {
 		if (_isPaginating.value || _albumsState.value !is UiState.Success) return
 
@@ -99,7 +92,7 @@ open class AlbumListViewModel(
 		_offset.value += 30
 	}
 
-	fun selectAlbum(album: AlbumEntity?) {
+	fun selectAlbum(album: DomainAlbum?) {
 		viewModelScope.launch {
 			_selectedAlbum.value = album
 			if (album == null) return@launch

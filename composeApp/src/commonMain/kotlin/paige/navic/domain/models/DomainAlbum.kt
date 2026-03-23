@@ -1,22 +1,21 @@
-package paige.navic.data.database.entities
+package paige.navic.domain.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.Instant
 
-@Entity
-data class AlbumEntity(
-	@PrimaryKey val albumId: String,
-	val name: String,
+@Serializable
+data class DomainAlbum(
+	override val id: String,
+	override val name: String,
 	val artistName: String,
 	val artistId: String,
 	val year: Int?,
-	val coverArtId: String,
+	override val coverArtId: String,
 	val genre: String?,
 	val genres: List<String>,
-	val songCount: Int,
-	val duration: Duration?,
+	override val songCount: Int,
+	override val duration: Duration?,
 	val createdAt: Instant,
 	val starredAt: Instant?,
 	val lastPlayedAt: Instant?,
@@ -24,4 +23,5 @@ data class AlbumEntity(
 	val userRating: Int?,
 	val version: String?,
 	val musicBrainzId: String?,
-)
+	override val songs: List<DomainSong>
+) : DomainSongCollection
