@@ -7,6 +7,7 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.PlaylistEntity

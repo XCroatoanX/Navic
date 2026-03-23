@@ -9,6 +9,8 @@ import dev.zt64.subsonic.api.model.Song
 import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
+import paige.navic.data.database.entities.SongEntity
+import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.session.SessionManager
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
@@ -150,7 +152,7 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(trackToPlay)
 	}
 
-	override fun addToQueueSingle(track: Song) {
+	override fun addToQueueSingle(track: SongEntity) {
 		_uiState.update { state ->
 			val newQueue = state.queue + track
 			val newIndex = newQueue.indexOf(state.currentTrack)
@@ -162,7 +164,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueue(tracks: SongCollection) {
+	override fun addToQueue(tracks: TrackCollectionUiModel) {
 		_uiState.update { state ->
 			val newQueue = state.queue + tracks.songs
 			val newIndex = newQueue.indexOf(state.currentTrack)
@@ -250,7 +252,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: SongCollection) {
+	override fun shufflePlay(tracks: TrackCollectionUiModel) {
 		val shuffledTracks = tracks.songs.shuffled()
 		_uiState.update { state ->
 			val newIndex = shuffledTracks.indexOf(state.currentTrack)
@@ -291,7 +293,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	private fun updateNowPlayingInfo(track: Song?) {
+	private fun updateNowPlayingInfo(track: SongEntity?) {
 		if (track == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
 			return
@@ -300,7 +302,7 @@ class IOSMediaPlayerViewModel(
 		val info = mutableMapOf<Any?, Any?>()
 		info[MPMediaItemPropertyTitle] = track.title
 		info[MPMediaItemPropertyArtist] = track.artistName
-		info[MPMediaItemPropertyAlbumTitle] = track.albumTitle
+		info[MPMediaItemPropertyAlbumTitle] = track.album
 
 		val duration = player.currentItem?.duration
 		if (duration != null) {

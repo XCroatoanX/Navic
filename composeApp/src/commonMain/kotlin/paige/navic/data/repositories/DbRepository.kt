@@ -4,6 +4,7 @@ import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
