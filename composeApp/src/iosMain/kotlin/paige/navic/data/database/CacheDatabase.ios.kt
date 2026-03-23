@@ -1,18 +1,19 @@
 package paige.navic.data.database
 
 import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase> {
-	val dbFilePath = documentDirectory() + "/navic.db"
-	return Room.databaseBuilder<CacheDatabase>(
-		name = dbFilePath,
-		factory = { CacheDatabaseConstructor.initialize() }
-	)
+actual fun provideCacheDatabase(): CacheDatabase {
+	val dbPath = documentDirectory() + "/cache.db"
+
+	return Room
+		.databaseBuilder<CacheDatabase>(dbPath)
+		.setDriver(BundledSQLiteDriver())
+		.build()
 }
 
 @OptIn(ExperimentalForeignApi::class)

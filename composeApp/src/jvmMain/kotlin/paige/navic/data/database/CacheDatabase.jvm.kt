@@ -1,13 +1,14 @@
 package paige.navic.data.database
 
 import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import java.io.File
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase> {
-	val dbFile = File(System.getProperty("user.home"), "navic.db")
-	return Room.databaseBuilder<CacheDatabase>(
-		name = dbFile.absolutePath,
-		factory = { CacheDatabaseConstructor.initialize() }
-	)
+actual fun provideCacheDatabase(): CacheDatabase {
+	val dbPath = File(System.getProperty("user.home"), "cache.db").absolutePath
+
+	return Room
+		.databaseBuilder<CacheDatabase>(dbPath)
+		.setDriver(BundledSQLiteDriver())
+		.build()
 }

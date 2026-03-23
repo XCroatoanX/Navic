@@ -2,7 +2,7 @@ package paige.navic.data.database
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 
 private lateinit var applicationContext: Context
 
@@ -10,11 +10,11 @@ fun initAndroidContext(context: Context) {
 	applicationContext = context.applicationContext
 }
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase> {
-	val dbFile = applicationContext.getDatabasePath("navic.db")
+actual fun provideCacheDatabase(): CacheDatabase {
+	val dbPath = applicationContext.getDatabasePath("cache.db").absolutePath
 
-	return Room.databaseBuilder<CacheDatabase>(
-		context = applicationContext,
-		name = dbFile.absolutePath
-	)
+	return Room
+		.databaseBuilder<CacheDatabase>(applicationContext, dbPath)
+		.setDriver(BundledSQLiteDriver())
+		.build()
 }
