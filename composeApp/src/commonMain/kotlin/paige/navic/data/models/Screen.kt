@@ -3,7 +3,7 @@ package paige.navic.data.models
 import androidx.navigation3.runtime.NavKey
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.serialization.Serializable
-import paige.navic.data.database.entities.SongEntity
+import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 
 @Serializable
@@ -37,7 +37,7 @@ sealed interface Screen : NavKey {
 	@Serializable data object Lyrics : Screen
 	@Serializable data object Queue : Screen
 	@Serializable data class TrackList(val partialCollection: DomainSongCollection, val tab: String) : Screen
-	@Serializable data class TrackDetail(val track: SongEntity) : Screen
+	@Serializable data class TrackDetail(val track: DomainSong) : Screen
 	@Serializable data class Search(
 		val nested: Boolean = false
 	) : Screen

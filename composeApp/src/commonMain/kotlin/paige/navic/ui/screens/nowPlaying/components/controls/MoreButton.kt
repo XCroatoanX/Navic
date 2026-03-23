@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.Playlist
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_more
@@ -28,6 +27,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Artist
@@ -79,7 +79,7 @@ fun NowPlayingMoreButton() {
 					Text(
 						stringResource(
 							when (playerState.currentCollection) {
-								is Playlist -> Res.string.action_view_playlist
+								is DomainPlaylist -> Res.string.action_view_playlist
 								else -> Res.string.action_view_album
 							}
 						)

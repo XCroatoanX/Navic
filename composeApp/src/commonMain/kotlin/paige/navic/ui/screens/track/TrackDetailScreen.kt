@@ -32,7 +32,7 @@ import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_track_year
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.database.entities.SongEntity
+import paige.navic.domain.models.DomainSong
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -42,7 +42,7 @@ import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
 
 @Composable
-fun TrackDetailScreen(track: SongEntity) {
+fun TrackDetailScreen(track: DomainSong) {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(track.title) }) },
 		contentWindowInsets = WindowInsets(0, 0 , 0 ,0)
@@ -58,7 +58,7 @@ fun TrackDetailScreen(track: SongEntity) {
 				mapOf(
 					Res.string.info_track_name to track.title,
 					Res.string.info_track_artist to track.artistName,
-					Res.string.info_track_album to track.album,
+					Res.string.info_track_album to track.albumTitle,
 
 					Res.string.info_track_number to track.trackNumber,
 					Res.string.info_track_disc_number to track.discNumber,
@@ -73,7 +73,7 @@ fun TrackDetailScreen(track: SongEntity) {
 					Res.string.info_track_channel_count to track.audioChannelCount,
 
 					Res.string.info_track_file_size to track.fileSize.toFileSize(),
-					Res.string.info_track_path to track.path,
+					Res.string.info_track_path to track.filePath,
 
 					Res.string.info_track_replay_gain to track.replayGain?.trackGain?.let { "$it dB" },
 					Res.string.info_album_replay_gain to track.replayGain?.albumGain?.let { "$it dB" },

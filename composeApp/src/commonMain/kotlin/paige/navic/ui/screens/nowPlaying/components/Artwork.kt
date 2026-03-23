@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.database.entities.SongEntity
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.ui.components.common.CoverArt
@@ -25,7 +25,7 @@ import paige.navic.ui.components.common.CoverArt
 fun NowPlayingArtwork(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean,
-	track: SongEntity
+	track: DomainSong
 ) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()

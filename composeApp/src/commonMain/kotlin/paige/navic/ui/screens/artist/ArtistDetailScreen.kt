@@ -55,8 +55,6 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
-import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
@@ -194,15 +192,12 @@ fun ArtistDetailScreen(
 										}
 									}
 								}
-							state.artist.album.let { albums ->
-								ArtCarousel(
-									stringResource(Res.string.title_albums),
-									albums.sortedByDescending { it.playCount }
-								) { album ->
-									val songEntities = album.songs.map { it.toEntity() }
-									ArtCarouselItem(album.coverArtId, album.name, null) {
-										backStack.add(Screen.TrackList(album.toEntity().toDomainModel(songEntities), "artist"))
-									}
+							ArtCarousel(
+								stringResource(Res.string.title_albums),
+								state.albums.sortedByDescending { it.playCount }
+							) { album ->
+								ArtCarouselItem(album.coverArtId, album.name, null) {
+									backStack.add(Screen.TrackList(album, "artist"))
 								}
 							}
 							Text(

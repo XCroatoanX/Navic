@@ -30,6 +30,7 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Note
 import paige.navic.ui.components.common.ContentUnavailable
@@ -100,7 +101,7 @@ fun TrackListScreen(
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			isRefreshing = tracksState is UiState.Loading
-				|| (artistState is UiState.Loading && partialTracks.isAlbum),
+				|| (artistState is UiState.Loading && partialTracks is DomainAlbum),
 			onRefresh = {
 				viewModel.refreshTracks()
 				viewModel.refreshArtist()

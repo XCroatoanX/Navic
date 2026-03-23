@@ -36,7 +36,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.database.entities.SongEntity
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
@@ -49,7 +49,7 @@ import paige.navic.utils.dragHandle
 fun QueueScreenItem(
 	index: Int,
 	count: Int,
-	track: SongEntity,
+	track: DomainSong,
 	isPlaying: Boolean,
 	isSelected: Boolean,
 	isDragging: Boolean,

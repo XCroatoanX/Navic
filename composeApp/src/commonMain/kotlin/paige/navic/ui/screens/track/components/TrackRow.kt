@@ -16,14 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import paige.navic.data.database.entities.SongEntity
+import paige.navic.domain.models.DomainSong
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.utils.toHoursMinutesSeconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TracksScreenTrackRow(
-	track: SongEntity,
+	track: DomainSong,
 	index: Int,
 	count: Int,
 	onClick: (() -> Unit),

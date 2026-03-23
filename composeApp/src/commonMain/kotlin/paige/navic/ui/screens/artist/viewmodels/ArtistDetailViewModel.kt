@@ -13,20 +13,29 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.database.DbContainer
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.SongDao
+import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.UiState
 
 data class ArtistState(
 	val artist: Artist,
-	val albums: List<Album>,
-	val topSongs: List<Song>,
+	val albums: List<DomainAlbum>,
+	val topSongs: List<DomainSong>,
 	val info: ArtistInfo,
 	val similarArtists: List<Artist>
 )
 
 class ArtistDetailViewModel(
-	private val artistId: String
+	private val artistId: String,
+	private val albumDao: AlbumDao = DbContainer.albumDao,
+	private val songDao: SongDao = DbContainer.songDao
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading)
 	val artistState = _artistState.asStateFlow()
@@ -61,8 +70,8 @@ class ArtistDetailViewModel(
 
 					_artistState.value = UiState.Success(ArtistState(
 						artist,
-						albums,
-						topSongs,
+						albums.mapNotNull { albumDao.getAlbumById(it.id)?.toDomainModel() },
+						topSongs.mapNotNull { songDao.getSongById(it.id)?.toDomainModel() },
 						artistInfo,
 						similarArtists
 					))
@@ -77,7 +86,7 @@ class ArtistDetailViewModel(
 		(_artistState.value as? UiState.Success)?.data?.let { state ->
 			player.clearQueue()
 			state.albums.forEach { album ->
-//				player.addToQueue(album)TODO
+				player.addToQueue(album)
 			}
 			player.togglePlay()
 		}

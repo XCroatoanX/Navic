@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.database.entities.SongEntity
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.repositories.TracksRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
 
 class TrackListViewModel(
@@ -22,8 +23,8 @@ class TrackListViewModel(
 	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading)
 	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()
 
-	private val _selectedTrack = MutableStateFlow<SongEntity?>(null)
-	val selectedTrack: StateFlow<SongEntity?> = _selectedTrack.asStateFlow()
+	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
+	val selectedTrack: StateFlow<DomainSong?> = _selectedTrack.asStateFlow()
 
 	private val _selectedIndex = MutableStateFlow<Int?>(null)
 	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
@@ -53,22 +54,17 @@ class TrackListViewModel(
 			_tracksState.value = UiState.Loading
 			try {
 				val localCollection = repository.fetchWithAllTracks(partialCollection)
+				_tracksState.value = UiState.Success(localCollection)
 
-				if (localCollection != null) {
-					_tracksState.value = UiState.Success(localCollection)
-
-					if (localCollection.isAlbum) {
-						try {
-							val albumInfo = repository.getAlbumInfo(localCollection.id)
-							_albumInfoState.value = UiState.Success(albumInfo)
-						} catch (e: Exception) {
-							_albumInfoState.value = UiState.Error(e)
-						}
-					} else {
-						_albumInfoState.value = UiState.Error(Exception("No album info for playlists"))
+				if (localCollection is DomainAlbum) {
+					try {
+						val albumInfo = repository.getAlbumInfo(localCollection.id)
+						_albumInfoState.value = UiState.Success(albumInfo)
+					} catch (e: Exception) {
+						_albumInfoState.value = UiState.Error(e)
 					}
 				} else {
-					_tracksState.value = UiState.Error(Exception("Collection not found in local database"))
+					_albumInfoState.value = UiState.Error(Exception("No album info for playlists"))
 				}
 			} catch (e: Exception) {
 				_tracksState.value = UiState.Error(e)
@@ -77,7 +73,7 @@ class TrackListViewModel(
 	}
 
 	fun refreshArtist() {
-		if (partialCollection.isAlbum) {
+		if (partialCollection is DomainAlbum) {
 			viewModelScope.launch {
 				_artistState.value = UiState.Loading
 				try {
@@ -92,7 +88,7 @@ class TrackListViewModel(
 		}
 	}
 
-	fun selectTrack(track: SongEntity, index: Int) {
+	fun selectTrack(track: DomainSong, index: Int) {
 		viewModelScope.launch {
 			_selectedTrack.value = track
 			_selectedIndex.value = index

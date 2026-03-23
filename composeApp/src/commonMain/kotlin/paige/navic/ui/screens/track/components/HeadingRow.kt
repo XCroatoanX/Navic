@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import dev.zt64.subsonic.api.model.Album
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
@@ -28,6 +27,8 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
@@ -67,30 +68,16 @@ fun TracksScreenHeadingRow(
 				textAlign = TextAlign.Center,
 				modifier = Modifier.alpha(progress).scale(progress)
 			)
-//			val subtitle = when (partialTracks) {
-//				is Album -> partialTracks.artistName
-//				is Playlist -> partialTracks.comment
-//			}TODO :(
-			val subtitle = if(partialTracks.isAlbum){ partialTracks.name } else {
-				"Playlist"
+			val subtitle = when (partialTracks) {
+				is DomainAlbum -> partialTracks.artistName
+				is DomainPlaylist -> partialTracks.comment
 			}
-			Text(
-				subtitle,
-				color = MaterialTheme.colorScheme.primary,
-				modifier = Modifier.clickable(partialTracks is Album) {
-					(partialTracks as? Album)?.artistId?.let { id ->
-						backStack.add(Screen.ArtistDetail(id))
-					}
-				},
-				style = MaterialTheme.typography.bodyMedium,
-				fontFamily = defaultFont(grade = 100, round = 100f)
-			)
 			subtitle?.let { subtitle ->
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(partialTracks is Album) {
-						(partialTracks as? Album)?.artistId?.let { id ->
+					modifier = Modifier.clickable(partialTracks is DomainAlbum) {
+						(partialTracks as? DomainAlbum)?.artistId?.let { id ->
 							backStack.add(Screen.ArtistDetail(id))
 						}
 					},
@@ -99,7 +86,7 @@ fun TracksScreenHeadingRow(
 				)
 			}
 			Text(
-				if (partialTracks is Album)
+				if (partialTracks is DomainAlbum)
 					"${partialTracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
 						partialTracks.year ?: stringResource(
 							Res.string.info_unknown_year

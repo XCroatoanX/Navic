@@ -52,6 +52,8 @@ import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
@@ -137,11 +139,11 @@ fun SearchScreen(
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
 					val albums =
-						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<AlbumEntity>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbum>() else emptyList()
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
 					val tracks =
-						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Song>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
 
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),

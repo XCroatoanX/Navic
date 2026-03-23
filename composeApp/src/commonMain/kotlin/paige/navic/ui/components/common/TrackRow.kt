@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
@@ -16,11 +15,12 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainSong
 
 @Composable
 fun TrackRow(
 	modifier: Modifier = Modifier,
-	track: Song
+	track: DomainSong
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
@@ -28,7 +28,7 @@ fun TrackRow(
 		modifier = modifier.clickable {
 			ctx.clickSound()
 			player.clearQueue()
-//			player.addToQueueSingle(track)TODO
+			player.addToQueueSingle(track)
 			player.playAt(0)
 		},
 		headlineContent = {
