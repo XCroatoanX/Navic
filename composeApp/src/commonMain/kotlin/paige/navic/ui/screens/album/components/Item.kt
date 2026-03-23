@@ -16,7 +16,7 @@ import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.AlbumEntity
+import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star

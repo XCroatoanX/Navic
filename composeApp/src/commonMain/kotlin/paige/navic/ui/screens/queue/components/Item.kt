@@ -32,14 +32,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle

@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.database.PlaylistEntity
-import paige.navic.data.database.toUiModel
+import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.toUiModel
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.repositories.PlaylistsRepository

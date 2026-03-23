@@ -32,7 +32,7 @@ import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_track_year
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar

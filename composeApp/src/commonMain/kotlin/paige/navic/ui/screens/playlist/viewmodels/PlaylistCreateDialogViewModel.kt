@@ -3,16 +3,15 @@ package paige.navic.ui.screens.playlist.viewmodels
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Playlist
 import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.database.PlaylistEntity
-import paige.navic.data.database.SongEntity
-import paige.navic.data.database.toEntity
+import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.SongEntity
+import paige.navic.data.database.entities.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 

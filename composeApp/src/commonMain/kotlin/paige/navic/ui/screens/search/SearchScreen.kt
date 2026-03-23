@@ -48,8 +48,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.LocalNavStack
-import paige.navic.data.database.AlbumEntity
+import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode

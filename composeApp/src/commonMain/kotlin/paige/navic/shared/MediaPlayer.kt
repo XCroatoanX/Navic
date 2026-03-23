@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.TrackCollectionUiModel
-import paige.navic.data.session.SessionManager
 
 @Serializable
 data class PlayerUiState(

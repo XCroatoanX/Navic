@@ -2,9 +2,9 @@ package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumInfo
 import kotlinx.coroutines.flow.first
-import paige.navic.data.database.DatabaseDao
+import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.DbContainer
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock

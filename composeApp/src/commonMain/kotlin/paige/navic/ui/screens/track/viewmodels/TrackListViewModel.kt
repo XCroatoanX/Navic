@@ -3,16 +3,13 @@ package paige.navic.ui.screens.track.viewmodels
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumInfo
 import dev.zt64.subsonic.api.model.Artist
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.database.AlbumEntity
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.repositories.TracksRepository
 import paige.navic.data.session.SessionManager

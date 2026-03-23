@@ -2,11 +2,11 @@ package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.flow.Flow
-import paige.navic.data.database.AlbumEntity
-import paige.navic.data.database.DatabaseDao
+import paige.navic.data.database.entities.AlbumEntity
+import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.DbContainer
-import paige.navic.data.database.SongEntity
-import paige.navic.data.database.toEntity
+import paige.navic.data.database.entities.SongEntity
+import paige.navic.data.database.entities.toEntity
 import paige.navic.data.session.SessionManager
 
 open class AlbumsRepository(

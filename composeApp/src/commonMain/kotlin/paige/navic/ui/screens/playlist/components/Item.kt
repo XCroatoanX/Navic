@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.PlaylistEntity
+import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove

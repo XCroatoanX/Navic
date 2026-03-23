@@ -1,7 +1,7 @@
 package paige.navic.data.models
 
 import kotlinx.serialization.Serializable
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import kotlin.time.Duration
 
 @Serializable

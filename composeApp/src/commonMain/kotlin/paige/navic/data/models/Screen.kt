@@ -2,10 +2,8 @@ package paige.navic.data.models
 
 import androidx.navigation3.runtime.NavKey
 import dev.zt64.subsonic.api.model.AlbumListType
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.serialization.Serializable
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 
 @Serializable
 sealed interface Screen : NavKey {

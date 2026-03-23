@@ -27,7 +27,6 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -35,7 +34,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager

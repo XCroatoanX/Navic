@@ -41,7 +41,7 @@ import navic.composeapp.generated.resources.info_no_other_playlists
 import navic.composeapp.generated.resources.info_no_playlists
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Refresh

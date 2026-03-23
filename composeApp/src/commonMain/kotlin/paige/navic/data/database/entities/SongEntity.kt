@@ -1,4 +1,4 @@
-package paige.navic.data.database
+package paige.navic.data.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

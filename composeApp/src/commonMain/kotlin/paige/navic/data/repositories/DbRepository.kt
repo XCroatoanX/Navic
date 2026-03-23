@@ -10,10 +10,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
-import paige.navic.data.database.DatabaseDao
+import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.DbContainer
-import paige.navic.data.database.PlaylistEntity
-import paige.navic.data.database.toEntity
+import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.toEntity
 import paige.navic.data.session.SessionManager
 import kotlin.coroutines.cancellation.CancellationException
 

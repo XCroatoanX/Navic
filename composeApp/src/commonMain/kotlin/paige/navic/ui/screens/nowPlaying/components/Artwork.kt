@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.ui.components.common.CoverArt

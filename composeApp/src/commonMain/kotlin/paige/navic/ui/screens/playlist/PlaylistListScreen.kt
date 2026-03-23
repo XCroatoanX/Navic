@@ -45,10 +45,6 @@ import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.LocalNavStack
-import paige.navic.data.database.PlaylistEntity
-import paige.navic.data.models.settings.enums.PlaylistSortMode
-import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode

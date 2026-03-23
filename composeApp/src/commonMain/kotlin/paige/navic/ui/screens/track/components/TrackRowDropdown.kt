@@ -9,8 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import dev.zt64.subsonic.api.model.Playlist
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
 import navic.composeapp.generated.resources.action_add_to_playlist
@@ -21,7 +19,7 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.icons.Icons

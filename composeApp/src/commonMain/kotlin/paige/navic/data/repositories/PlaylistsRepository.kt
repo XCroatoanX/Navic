@@ -1,11 +1,11 @@
 package paige.navic.data.repositories
 
 import kotlinx.coroutines.flow.Flow
-import paige.navic.data.database.DatabaseDao
+import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.DbContainer
-import paige.navic.data.database.PlaylistEntity
-import paige.navic.data.database.SongEntity
-import paige.navic.data.database.toEntity
+import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.SongEntity
+import paige.navic.data.database.entities.toEntity
 import paige.navic.data.session.SessionManager
 
 class PlaylistsRepository(

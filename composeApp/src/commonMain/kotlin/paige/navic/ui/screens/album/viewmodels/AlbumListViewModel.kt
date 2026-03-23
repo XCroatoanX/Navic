@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import paige.navic.data.database.AlbumEntity
-import paige.navic.data.database.toUiModel
+import paige.navic.data.database.entities.AlbumEntity
+import paige.navic.data.database.entities.toUiModel
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager

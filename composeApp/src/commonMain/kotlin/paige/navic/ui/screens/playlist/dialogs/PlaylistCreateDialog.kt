@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
@@ -24,7 +23,7 @@ import navic.composeapp.generated.resources.title_create_playlist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.SongEntity
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd

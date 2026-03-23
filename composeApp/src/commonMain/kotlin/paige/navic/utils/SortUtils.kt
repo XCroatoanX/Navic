@@ -1,6 +1,6 @@
 package paige.navic.utils
 
-import paige.navic.data.database.PlaylistEntity
+import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.models.settings.enums.PlaylistSortMode
 
 fun List<PlaylistEntity>.sortedByMode(mode: PlaylistSortMode, reversed: Boolean): List<PlaylistEntity> {

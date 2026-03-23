@@ -1,5 +1,7 @@
 package paige.navic.data.database
 
+import paige.navic.data.database.dao.DatabaseDao
+
 object DbContainer {
 	private lateinit var database: AppDatabase
 

@@ -1,14 +1,18 @@
-package paige.navic.data.database
+package paige.navic.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import paige.navic.data.database.entities.AlbumEntity
+import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.SongEntity
 
 /**
  * Data Access Object for Navidrome/Subsonic cached data.
  */
+@Suppress("unused")
 @Dao
 interface DatabaseDao {
 
