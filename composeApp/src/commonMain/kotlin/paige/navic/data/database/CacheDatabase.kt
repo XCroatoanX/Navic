@@ -21,21 +21,21 @@ import paige.navic.data.database.entities.SongEntity
 	version = 1
 )
 @TypeConverters(Converters::class)
-@ConstructedBy(AppDatabaseConstructor::class)
-abstract class AppDatabase : RoomDatabase() {
+@ConstructedBy(CacheDatabaseConstructor::class)
+abstract class CacheDatabase : RoomDatabase() {
 	abstract fun getDao(): DatabaseDao
 }
 
-expect fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase>
+expect fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase>
 
 @Suppress("KotlinNoActualForExpect")
-expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
-	override fun initialize(): AppDatabase
+expect object CacheDatabaseConstructor : RoomDatabaseConstructor<CacheDatabase> {
+	override fun initialize(): CacheDatabase
 }
 
 fun getRoomDatabase(
-	builder: RoomDatabase.Builder<AppDatabase>
-): AppDatabase {
+	builder: RoomDatabase.Builder<CacheDatabase>
+): CacheDatabase {
 	return builder
 		.setDriver(BundledSQLiteDriver())
 		.setQueryCoroutineContext(Dispatchers.IO)

@@ -10,10 +10,10 @@ fun initAndroidContext(context: Context) {
 	applicationContext = context.applicationContext
 }
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
+actual fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase> {
 	val dbFile = applicationContext.getDatabasePath("navic.db")
 
-	return Room.databaseBuilder<AppDatabase>(
+	return Room.databaseBuilder<CacheDatabase>(
 		context = applicationContext,
 		name = dbFile.absolutePath
 	)

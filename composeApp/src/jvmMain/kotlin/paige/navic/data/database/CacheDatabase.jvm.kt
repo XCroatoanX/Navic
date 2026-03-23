@@ -4,10 +4,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import java.io.File
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
+actual fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase> {
 	val dbFile = File(System.getProperty("user.home"), "navic.db")
-	return Room.databaseBuilder<AppDatabase>(
+	return Room.databaseBuilder<CacheDatabase>(
 		name = dbFile.absolutePath,
-		factory = { AppDatabaseConstructor.initialize() }
+		factory = { CacheDatabaseConstructor.initialize() }
 	)
 }
