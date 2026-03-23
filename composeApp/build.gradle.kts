@@ -183,7 +183,6 @@ dependencies {
 	val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
 	if (isMacOs) {
 		add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-		add("kspIosX64", libs.androidx.room.compiler)
 		add("kspIosArm64", libs.androidx.room.compiler)
 	}
 }
