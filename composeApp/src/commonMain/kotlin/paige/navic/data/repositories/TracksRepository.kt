@@ -2,20 +2,24 @@ package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumInfo
 import kotlinx.coroutines.flow.first
-import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.DbContainer
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.TrackCollectionUiModel
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock
 
 class TracksRepository(
-	private val dao: DatabaseDao = DbContainer.dao
+	private val albumDao: AlbumDao = DbContainer.albumDao,
+	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
+	private val songDao: SongDao = DbContainer.songDao,
 ) {
 	suspend fun fetchWithAllTracks(collection: TrackCollectionUiModel): TrackCollectionUiModel? {
 		return if (collection.isAlbum) {
-				val album = dao.getAlbumById(collection.id) ?: return null
-				val songs = dao.getSongsFlowByAlbum(collection.id).first()
+				val album = albumDao.getAlbumById(collection.id) ?: return null
+				val songs = songDao.getSongsFlowByAlbum(collection.id).first()
 
 				TrackCollectionUiModel(
 					id = album.id,
@@ -27,8 +31,8 @@ class TracksRepository(
 					songs = songs
 				)
 			} else {
-				val playlist = dao.getPlaylistById(collection.id) ?: return null
-				val songs = dao.getSongsByPlaylist(collection.id).first()
+				val playlist = playlistDao.getPlaylistById(collection.id) ?: return null
+				val songs = songDao.getSongsByPlaylist(collection.id).first()
 
 				TrackCollectionUiModel(
 					id = playlist.id,
@@ -47,16 +51,16 @@ class TracksRepository(
 	}
 
 	suspend fun isTrackStarred(trackId: String): Boolean {
-		return dao.isSongStarred(trackId)
+		return songDao.isSongStarred(trackId)
 	}
 
 	suspend fun starTrack(track: SongEntity) {
 		SessionManager.api.star(track.navidromeId)
-		dao.insertSong(track.copy(starredAt = Clock.System.now()))
+		songDao.insertSong(track.copy(starredAt = Clock.System.now()))
 	}
 
 	suspend fun unstarTrack(track: SongEntity) {
 		SessionManager.api.unstar(track.navidromeId)
-		dao.insertSong(track.copy(starredAt = null))
+		songDao.insertSong(track.copy(starredAt = null))
 	}
 }

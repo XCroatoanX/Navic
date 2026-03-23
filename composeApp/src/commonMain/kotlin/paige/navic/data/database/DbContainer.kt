@@ -1,6 +1,6 @@
 package paige.navic.data.database
 
-import paige.navic.data.database.dao.DatabaseDao
+import paige.navic.data.database.dao.*
 
 object DbContainer {
 	private lateinit var database: CacheDatabase
@@ -9,5 +9,7 @@ object DbContainer {
 		database = db
 	}
 
-	val dao: DatabaseDao by lazy { database.getDao() }
+	val albumDao: AlbumDao by lazy { database.albumDao() }
+	val playlistDao: PlaylistDao by lazy { database.playlistDao() }
+	val songDao: SongDao by lazy { database.songDao() }
 }

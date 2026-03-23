@@ -4,6 +4,7 @@ import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient
 import kotlinx.coroutines.Dispatchers
+// do not remove this import
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -11,15 +12,19 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
-import paige.navic.data.database.dao.DatabaseDao
 import paige.navic.data.database.DbContainer
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.toEntity
 import paige.navic.data.session.SessionManager
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
-	private val dao: DatabaseDao = DbContainer.dao,
+	private val albumDao: AlbumDao = DbContainer.albumDao,
+	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
+	private val songDao: SongDao = DbContainer.songDao,
 	private val api: SubsonicClient = SessionManager.api
 ) {
 	private val concurrentRequestLimit = Semaphore(20)
@@ -34,9 +39,9 @@ class DbRepository(
 	}
 
 	suspend fun removeEverything(): Result<Unit> = runDbOp {
-		dao.clearAllSongs()
-		dao.clearAllAlbums()
-		dao.clearAllPlaylists()
+		albumDao.clearAllAlbums()
+		playlistDao.clearAllPlaylists()
+		songDao.clearAllSongs()
 		println("Database wiped completely.")
 	}
 
@@ -102,8 +107,8 @@ class DbRepository(
 			album.songs.map { it.toEntity(playlistId = "__library__") }
 		}
 
-		dao.insertAlbums(albumEntities)
-		dao.insertSongs(songEntities)
+		albumDao.insertAlbums(albumEntities)
+		songDao.insertSongs(songEntities)
 
 		if (songEntities.isNotEmpty() || albumEntities.isNotEmpty()) {
 			println("Sync Completed: ${albumEntities.size} albums, ${songEntities.size} songs")
@@ -115,22 +120,22 @@ class DbRepository(
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
 		val remotePlaylists = api.getPlaylists()
 
-		if (remotePlaylists.isEmpty() && dao.getPlaylistCount() > 0) {
+		if (remotePlaylists.isEmpty() && playlistDao.getPlaylistCount() > 0) {
 			return@runDbOp emptyList()
 		}
 
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
 		val remoteIds = playlistEntities.map { it.id }.toSet()
-		val localPlaylists = dao.getAllPlaylistsList()
+		val localPlaylists = playlistDao.getAllPlaylistsList()
 
 		localPlaylists.forEach { local ->
 			if (local.id !in remoteIds) {
-				dao.deletePlaylist(local.id)
-				dao.deleteSongsByPlaylist(local.id)
+				playlistDao.deletePlaylist(local.id)
+				songDao.deleteSongsByPlaylist(local.id)
 			}
 		}
 
-		dao.insertPlaylists(playlistEntities)
+		playlistDao.insertPlaylists(playlistEntities)
 		println("Playlists Synced: ${playlistEntities.size} playlists found")
 
 		playlistEntities
@@ -142,8 +147,8 @@ class DbRepository(
 		val songEntities = songs.map { it.toEntity(playlistId = playlistId) }
 
 		if (songEntities.isNotEmpty()) {
-			dao.deleteSongsByPlaylist(playlistId)
-			dao.insertSongs(songEntities)
+			songDao.deleteSongsByPlaylist(playlistId)
+			songDao.insertSongs(songEntities)
 		}
 
 		println("Playlist [$playlistId] synced: ${songEntities.size} songs")

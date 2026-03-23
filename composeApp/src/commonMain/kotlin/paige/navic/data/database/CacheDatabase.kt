@@ -7,8 +7,11 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
+// do not remove this import
 import kotlinx.coroutines.IO
-import paige.navic.data.database.dao.DatabaseDao
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.SongEntity
@@ -24,7 +27,9 @@ import paige.navic.data.database.entities.SongEntity
 @TypeConverters(Converters::class)
 @ConstructedBy(CacheDatabaseConstructor::class)
 abstract class CacheDatabase : RoomDatabase() {
-	abstract fun getDao(): DatabaseDao
+	abstract fun albumDao(): AlbumDao
+	abstract fun playlistDao(): PlaylistDao
+	abstract fun songDao(): SongDao
 }
 
 expect fun getDatabaseBuilder(): RoomDatabase.Builder<CacheDatabase>
