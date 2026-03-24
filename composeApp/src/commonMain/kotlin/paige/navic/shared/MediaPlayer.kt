@@ -13,6 +13,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
 
 @Serializable
 data class PlayerUiState(
@@ -81,7 +85,11 @@ abstract class MediaPlayerViewModel(
 		val savedJson = storage.loadState()
 		if (!savedJson.isNullOrBlank()) {
 			try {
-				val restoredState = Json.decodeFromString<PlayerUiState>(savedJson)
+				val restoredState = Json.decodeFromJsonElement<PlayerUiState>(
+					Json
+						.parseToJsonElement(savedJson)
+						.filterKeys("genres")
+				)
 				val stateToApply = restoredState.copy(isPaused = true, isLoading = false)
 
 				_uiState.value = stateToApply
@@ -89,9 +97,26 @@ abstract class MediaPlayerViewModel(
 				syncPlayerWithState(stateToApply)
 
 			} catch (e: Exception) {
+				e.printStackTrace()
 				println("Failed to restore state: ${e.message}")
 				_uiState.value = PlayerUiState()
 			}
+		}
+	}
+
+	// TODO: shitty temporary workaround for bug in subsonic-kotlin, remove when fixed upstream
+	// see https://canary.discord.com/channels/1468073950016835709/1468074620631519232/1486078368494522621
+	private fun JsonElement.filterKeys(targetKey: String): JsonElement {
+		return when (this) {
+			is JsonObject -> {
+				val filteredMap = this.filter { it.key != targetKey }
+					.mapValues { it.value.filterKeys(targetKey) }
+				JsonObject(filteredMap)
+			}
+			is JsonArray -> {
+				JsonArray(this.map { it.filterKeys(targetKey) })
+			}
+			else -> this
 		}
 	}
 
@@ -105,6 +130,7 @@ abstract class MediaPlayerViewModel(
 						val jsonString = Json.encodeToString(state)
 						storage.saveState(jsonString)
 					} catch (e: Exception) {
+						e.printStackTrace()
 						println("Failed to save state: ${e.message}")
 					}
 				}

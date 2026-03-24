@@ -1,5 +1,6 @@
 package paige.navic.shared
 
+import android.app.Activity
 import android.os.Build
 import android.view.SoundEffectConstants
 import androidx.activity.compose.LocalActivity
@@ -13,10 +14,12 @@ import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
 
@@ -37,6 +40,12 @@ actual fun rememberCtx(): Ctx {
 		}
 	}
 	val sizeClass = calculateWindowSizeClass(LocalActivity.current!!)
+	SideEffect {
+		(view.context as? Activity)?.window?.let { window ->
+			WindowCompat.getInsetsController(window, view)
+				.isAppearanceLightStatusBars = !isDark
+		}
+	}
 	return remember(isDark, sizeClass) {
 		object : Ctx {
 			override fun clickSound() {

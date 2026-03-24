@@ -2,8 +2,10 @@ package paige.navic.data.session
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
+import dev.zt64.subsonic.api.SubsonicApi
 import dev.zt64.subsonic.client.SubsonicAuth
 import dev.zt64.subsonic.client.SubsonicClient
+import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.cache.storage.CacheStorage
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -44,8 +46,15 @@ object SessionManager {
 					publicStorage(it)
 				}
 			}
+			install(UserAgent) {
+				agent = "Navic"
+			}
 		}
 	)
+
+	fun SubsonicApi.getCoverArtUrl(coverArtId: String?): String? {
+		return coverArtId?.let { this.getCoverArtUrl(id = coverArtId) }
+	}
 
 	val currentUser: User?
 		get() {
