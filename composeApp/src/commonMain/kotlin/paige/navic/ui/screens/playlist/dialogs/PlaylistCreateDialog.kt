@@ -25,6 +25,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.ui.components.common.FormButton
@@ -35,7 +36,7 @@ import paige.navic.utils.UiState
 @Composable
 fun PlaylistCreateDialog(
 	onDismissRequest: () -> Unit,
-	tracks: List<SongEntity> = emptyList(),
+	tracks: List<DomainSong> = emptyList(),
 	navigateAfterwards: Boolean = true,
 	viewModel: PlaylistCreateDialogViewModel = viewModel(key = tracks.joinToString()) {
 		PlaylistCreateDialogViewModel(tracks)
@@ -54,8 +55,7 @@ fun PlaylistCreateDialog(
 						if (backStack.contains(Screen.NowPlaying)) {
 							backStack.remove(Screen.NowPlaying)
 						}
-						// TODO
-						//backStack.add(Screen.TrackList(event.playlist, "playlists"))
+						backStack.add(Screen.TrackList(event.playlist, "playlists"))
 					}
 				}
 			}

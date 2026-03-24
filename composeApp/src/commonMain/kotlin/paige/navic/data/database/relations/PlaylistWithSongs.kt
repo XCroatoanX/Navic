@@ -12,8 +12,7 @@ data class PlaylistWithSongs(
 	@Relation(
 		parentColumn = "playlistId",
 		entityColumn = "songId",
-		associateBy = Junction(PlaylistSongCrossRef::class),
-		entity = SongEntity::class
+		associateBy = Junction(PlaylistSongCrossRef::class)
 	)
-	val songs: List<SongWithExtras>
+	val songs: List<SongEntity>
 )

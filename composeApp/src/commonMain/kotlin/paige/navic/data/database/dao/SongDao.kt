@@ -5,13 +5,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.data.database.relations.SongWithExtras
 
 @Dao
 @Suppress("unused")
 interface SongDao {
 	@Query("SELECT * FROM SongEntity WHERE songId = :songId LIMIT 1")
-	suspend fun getSongById(songId: String): SongWithExtras?
+	suspend fun getSongById(songId: String): SongEntity?
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertSong(song: SongEntity)

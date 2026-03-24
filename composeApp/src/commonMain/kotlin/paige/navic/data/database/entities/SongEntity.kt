@@ -3,6 +3,8 @@ package paige.navic.data.database.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -19,14 +21,14 @@ data class SongEntity(
 	val comment: String?,
 	val trackNumber: Int?,
 	val discNumber: Int?,
-	val isrc: List<String> = emptyList(),
+	val isrc: List<String>,
 	val year: Int?,
 	val genre: String?,
-	val genres: List<String> = emptyList(),
-	val moods: List<String> = emptyList(),
+	val genres: List<String>,
+	val moods: List<String>,
 	val duration: Duration,
 	val bpm: Int?,
-	//val contributors: List<DomainContributor> = emptyList(),
+	val contributors: List<DomainContributor>,
 	val playCount: Int = 0,
 	val userRating: Int?,
 	val averageRating: Float?,
@@ -34,8 +36,7 @@ data class SongEntity(
 	val bitDepth: Int?,
 	val sampleRate: Int?,
 	val audioChannelCount: Int?,
-	//val replayGain: ReplayGain?,
-	//val explicitStatus: ExplicitStatus?,
+	val replayGain: DomainReplayGain?,
 	val fileSize: Long,
 	val fileExtension: String,
 	val mimeType: String,

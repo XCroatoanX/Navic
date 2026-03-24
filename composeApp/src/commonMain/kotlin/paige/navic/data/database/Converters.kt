@@ -40,4 +40,49 @@ class Converters {
 	fun toStringList(data: String?): List<String>? {
 		return data?.split("||")?.filter { it.isNotEmpty() }
 	}
+
+	// List<Contributor>
+	@TypeConverter
+	fun fromContributorList(list: List<DomainContributor>?): String? {
+		return list?.joinToString(separator = ";") { c ->
+			"${c.role}^${c.subRole ?: ""}^${c.artistId}^${c.artistName}"
+		}
+	}
+
+	@TypeConverter
+	fun toContributorList(data: String?): List<DomainContributor>? {
+		if (data == null) return null
+		return data.split(";").filter { it.isNotEmpty() }.map { item ->
+			val parts = item.split("^")
+			DomainContributor(
+				role = parts[0],
+				subRole = parts[1].ifEmpty { null },
+				artistId = parts[2],
+				artistName = parts[3]
+			)
+		}
+	}
+
+	// ReplayGain
+	@TypeConverter
+	fun fromReplayGain(rg: DomainReplayGain?): String? {
+		if (rg == null) return null
+		return "${rg.albumGain ?: ""},${rg.albumPeak ?: ""},${rg.trackGain ?: ""},${rg.trackPeak ?: ""},${rg.baseGain ?: ""},${rg.fallbackGain ?: ""}"
+	}
+
+	@TypeConverter
+	fun toReplayGain(data: String?): DomainReplayGain? {
+		if (data.isNullOrEmpty()) return null
+		val parts = data.split(",")
+		if (parts.size < 6) return null
+
+		return DomainReplayGain(
+			albumGain = parts[0].toFloatOrNull(),
+			albumPeak = parts[1].toFloatOrNull(),
+			trackGain = parts[2].toFloatOrNull(),
+			trackPeak = parts[3].toFloatOrNull(),
+			baseGain = parts[4].toFloatOrNull(),
+			fallbackGain = parts[5].toFloatOrNull()
+		)
+	}
 }
