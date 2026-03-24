@@ -15,7 +15,7 @@ import paige.navic.utils.UiState
 class ArtistListViewModel(
 	private val repository: ArtistsRepository = ArtistsRepository()
 ) : ViewModel() {
-	private val _artistsState = MutableStateFlow<UiState<List<Artist>>>(UiState.Loading)
+	private val _artistsState = MutableStateFlow<UiState<List<Artist>>>(UiState.Loading())
 	val artistsState = _artistsState.asStateFlow()
 
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
@@ -36,7 +36,7 @@ class ArtistListViewModel(
 
 	fun refreshArtists() {
 		viewModelScope.launch {
-			_artistsState.value = UiState.Loading
+			_artistsState.value = UiState.Loading()
 			try {
 				val artists = repository.getArtists()
 				_artistsState.value = UiState.Success(artists)
@@ -49,7 +49,7 @@ class ArtistListViewModel(
 	fun selectArtist(artist: Artist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
-			_starredState.value = UiState.Loading
+			_starredState.value = UiState.Loading()
 			try {
 				val isStarred = repository.isArtistStarred(artist)
 				_starredState.value = UiState.Success(isStarred)

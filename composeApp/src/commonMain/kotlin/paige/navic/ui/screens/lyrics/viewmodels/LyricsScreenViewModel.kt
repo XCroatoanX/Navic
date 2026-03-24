@@ -15,7 +15,7 @@ class LyricsScreenViewModel(
     private val track: Song?,
     private val repository: LyricsRepository = LyricsRepository()
 ) : ViewModel() {
-	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading)
+	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
 	val lyricsState = _lyricsState.asStateFlow()
 
 	val listState = LazyListState()
@@ -30,7 +30,7 @@ class LyricsScreenViewModel(
 				_lyricsState.value = UiState.Success(null)
 				return@launch
 			}
-			_lyricsState.value = UiState.Loading
+			_lyricsState.value = UiState.Loading()
 			try {
 				_lyricsState.value = UiState.Success(
 					repository.fetchLyrics(track)

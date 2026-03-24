@@ -45,7 +45,7 @@ class SearchViewModel(
 		if (currentQuery.isBlank()) return
 
 		viewModelScope.launch {
-			_searchState.value = UiState.Loading
+			_searchState.value = UiState.Loading()
 			try {
 				val results = repository.search(currentQuery)
 				_searchState.value = UiState.Success(results)

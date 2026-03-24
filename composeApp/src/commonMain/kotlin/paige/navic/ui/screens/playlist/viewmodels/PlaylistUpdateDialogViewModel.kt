@@ -16,7 +16,7 @@ class PlaylistUpdateDialogViewModel(
 	private val tracks: List<DomainSong>,
 	private val playlistToExclude: String?
 ) : ViewModel() {
-	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading)
+	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()
 
 	private val _confirmState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
@@ -35,7 +35,7 @@ class PlaylistUpdateDialogViewModel(
 	fun refreshResults() {
 		viewModelScope.launch {
 			_selectedPlaylist.value = null
-			_playlistsState.value = UiState.Loading
+			_playlistsState.value = UiState.Loading()
 			try {
 				val results =
 					SessionManager.api.getPlaylists()
@@ -52,7 +52,7 @@ class PlaylistUpdateDialogViewModel(
 
 	fun confirm() {
 		viewModelScope.launch {
-			_confirmState.value = UiState.Loading
+			_confirmState.value = UiState.Loading()
 			try {
 				SessionManager.api.updatePlaylist(
 					_selectedPlaylist.value!!.id,

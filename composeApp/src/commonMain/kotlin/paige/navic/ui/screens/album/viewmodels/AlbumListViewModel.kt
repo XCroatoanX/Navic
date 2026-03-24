@@ -22,7 +22,7 @@ open class AlbumListViewModel(
     initialListType: AlbumListType?,
     private val repository: AlbumsRepository = AlbumsRepository()
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading)
+	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
 	private val _isRefreshing = MutableStateFlow(false)
@@ -68,7 +68,7 @@ open class AlbumListViewModel(
 			_offset.value = 0
 			val hasData = (_albumsState.value as? UiState.Success)?.data?.isNotEmpty() == true
 
-			if (hasData) _isRefreshing.value = true else _albumsState.value = UiState.Loading
+			if (hasData) _isRefreshing.value = true else _albumsState.value = UiState.Loading()
 
 			try {
 				repository.syncAlbums(_listType.value, _offset.value)
@@ -96,7 +96,7 @@ open class AlbumListViewModel(
 		viewModelScope.launch {
 			_selectedAlbum.value = album
 			if (album == null) return@launch
-			_starredState.value = UiState.Loading
+			_starredState.value = UiState.Loading()
 			try {
 				val isStarred = repository.isAlbumStarred(album)
 				_starredState.value = UiState.Success(isStarred)

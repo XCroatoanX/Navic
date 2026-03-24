@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -80,7 +81,6 @@ fun PlaylistListScreen(
 	val ctx = LocalCtx.current
 
 	val playlistsState by viewModel.playlistsState.collectAsState()
-	val isRefreshing by viewModel.isRefreshing.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -92,6 +92,8 @@ fun PlaylistListScreen(
 	val scaleInSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
 
 	var createDialogShown by rememberSaveable { mutableStateOf(false) }
+
+	val gridState = rememberLazyGridState()
 
 	Scaffold(
 		topBar = {
@@ -111,7 +113,7 @@ fun PlaylistListScreen(
 		floatingActionButton = {
 			if (!isLoggedIn) return@Scaffold
 			AnimatedContent(
-				!viewModel.gridState.lastScrolledForward
+				!gridState.lastScrolledForward
 					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
@@ -153,7 +155,7 @@ fun PlaylistListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
+			isRefreshing = playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
 		) {
 			if (!isLoggedIn) {
@@ -167,38 +169,38 @@ fun PlaylistListScreen(
 			Crossfade(playlistsState) { state ->
 				ArtGrid(
 					modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-					state = viewModel.gridState,
+					state = gridState,
 					contentPadding = innerPadding.withoutTop(),
 					verticalArrangement = if ((state as? UiState.Success)?.data?.isEmpty() == true)
 						Arrangement.Center
 					else Arrangement.spacedBy(12.dp)
 				) {
-					when (state) {
-						is UiState.Loading -> artGridPlaceholder()
-						is UiState.Error -> artGridError(state)
-						is UiState.Success -> {
-							items(state.data, { it.id }) { playlist ->
-								PlaylistListScreenItem(
-									modifier = Modifier.animateItem(fadeInSpec = null),
-									playlist = playlist,
-									tab = "playlists",
-									viewModel = viewModel,
-									onSetShareId = { newShareId ->
-										shareId = newShareId
-									},
-									onSetDeletionId = { newDeletionId ->
-										deletionId = newDeletionId
-									}
-								)
+					if (state is UiState.Loading) {
+						artGridPlaceholder()
+					} else if (state is UiState.Error) {
+						artGridError(state)
+					}
+					val data = state.data ?: return@ArtGrid
+					items(data, { it.id }) { playlist ->
+						PlaylistListScreenItem(
+							modifier = Modifier.animateItem(fadeInSpec = null),
+							playlist = playlist,
+							tab = "playlists",
+							viewModel = viewModel,
+							onSetShareId = { newShareId ->
+								shareId = newShareId
+							},
+							onSetDeletionId = { newDeletionId ->
+								deletionId = newDeletionId
 							}
-							if (state.data.isEmpty()) {
-								item(span = { GridItemSpan(maxLineSpan) }) {
-									ContentUnavailable(
-										icon = Icons.Outlined.PlaylistRemove,
-										label = stringResource(Res.string.info_no_playlists_short)
-									)
-								}
-							}
+						)
+					}
+					if (data.isEmpty()) {
+						item(span = { GridItemSpan(maxLineSpan) }) {
+							ContentUnavailable(
+								icon = Icons.Outlined.PlaylistRemove,
+								label = stringResource(Res.string.info_no_playlists_short)
+							)
 						}
 					}
 				}

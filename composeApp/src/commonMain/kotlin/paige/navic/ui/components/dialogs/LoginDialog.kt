@@ -131,7 +131,7 @@ fun LoginDialog(
 			) {
 				if (it != null) {
 					ErrorBox(
-						UiState.Error(it.error),
+						UiState.Error(it.error, null),
 						padding = PaddingValues(0.dp),
 						modifier = Modifier.fillMaxWidth()
 					)

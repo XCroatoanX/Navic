@@ -25,7 +25,7 @@ class GenreListViewModel : ViewModel() {
 	private val _isRefreshing = MutableStateFlow(false)
 	val isRefreshing = _isRefreshing.asStateFlow()
 
-	private val _genresState = MutableStateFlow<UiState<List<GenreWithAlbums>>>(UiState.Loading)
+	private val _genresState = MutableStateFlow<UiState<List<GenreWithAlbums>>>(UiState.Loading())
 	val genresState = _genresState.asStateFlow()
 
 	val gridState = LazyGridState()
@@ -46,7 +46,7 @@ class GenreListViewModel : ViewModel() {
 			if (hasExistingData) {
 				_isRefreshing.value = true
 			} else {
-				_genresState.value = UiState.Loading
+				_genresState.value = UiState.Loading()
 			}
 
 			try {

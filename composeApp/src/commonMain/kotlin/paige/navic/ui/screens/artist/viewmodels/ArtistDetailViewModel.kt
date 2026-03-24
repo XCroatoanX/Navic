@@ -3,10 +3,8 @@ package paige.navic.ui.screens.artist.viewmodels
 import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.Artist
 import dev.zt64.subsonic.api.model.ArtistInfo
-import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +15,6 @@ import paige.navic.data.database.DbContainer
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainSong
@@ -37,7 +34,7 @@ class ArtistDetailViewModel(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
 	private val songDao: SongDao = DbContainer.songDao
 ) : ViewModel() {
-	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading)
+	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
 
 	val scrollState = ScrollState(initial = 0)

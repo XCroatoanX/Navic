@@ -84,7 +84,7 @@ fun LibraryScreen(
 	val flatArtistsState = remember(artistsState) {
 		when (val s = artistsState) {
 			is UiState.Success -> UiState.Success(s.data)
-			is UiState.Loading -> UiState.Loading
+			is UiState.Loading -> UiState.Loading()
 			is UiState.Error -> UiState.Error(s.error)
 		}
 	}

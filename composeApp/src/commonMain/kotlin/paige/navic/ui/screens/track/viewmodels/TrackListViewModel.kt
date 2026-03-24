@@ -20,7 +20,7 @@ class TrackListViewModel(
     private val partialCollection: DomainSongCollection,
     private val repository: TracksRepository = TracksRepository()
 ) : ViewModel() {
-	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading)
+	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
 	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()
 
 	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
@@ -29,13 +29,13 @@ class TrackListViewModel(
 	private val _selectedIndex = MutableStateFlow<Int?>(null)
 	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
 
-	private val _albumInfoState = MutableStateFlow<UiState<AlbumInfo>>(UiState.Loading)
+	private val _albumInfoState = MutableStateFlow<UiState<AlbumInfo>>(UiState.Loading())
 	val albumInfoState = _albumInfoState.asStateFlow()
 
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
-	private val _artistState = MutableStateFlow<UiState<Artist>>(UiState.Loading)
+	private val _artistState = MutableStateFlow<UiState<Artist>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
 
 	val listState = LazyListState()
@@ -51,7 +51,7 @@ class TrackListViewModel(
 
 	fun refreshTracks() {
 		viewModelScope.launch {
-			_tracksState.value = UiState.Loading
+			_tracksState.value = UiState.Loading()
 			try {
 				val localCollection = repository.fetchWithAllTracks(partialCollection)
 				_tracksState.value = UiState.Success(localCollection)
@@ -75,7 +75,7 @@ class TrackListViewModel(
 	fun refreshArtist() {
 		if (partialCollection is DomainAlbum) {
 			viewModelScope.launch {
-				_artistState.value = UiState.Loading
+				_artistState.value = UiState.Loading()
 				try {
 					_artistState.value = UiState.Success(SessionManager.api.getArtist(partialCollection.id))
 				} catch (e: Exception) {
@@ -92,8 +92,8 @@ class TrackListViewModel(
 		viewModelScope.launch {
 			_selectedTrack.value = track
 			_selectedIndex.value = index
-			_starredState.value = UiState.Loading
-			_albumInfoState.value = UiState.Loading
+			_starredState.value = UiState.Loading()
+			_albumInfoState.value = UiState.Loading()
 			try {
 				val isStarred = repository.isTrackStarred(track.id)
 				_starredState.value = UiState.Success(isStarred)

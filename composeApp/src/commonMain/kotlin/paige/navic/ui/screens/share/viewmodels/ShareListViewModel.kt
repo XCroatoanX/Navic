@@ -14,7 +14,7 @@ import paige.navic.utils.UiState
 class ShareListViewModel(
 	private val repository: SharesRepository = SharesRepository()
 ) : ViewModel() {
-	private val _sharesState = MutableStateFlow<UiState<List<Share>>>(UiState.Loading)
+	private val _sharesState = MutableStateFlow<UiState<List<Share>>>(UiState.Loading())
 	val sharesState = _sharesState.asStateFlow()
 
 	private val _isRefreshing = MutableStateFlow(false)
@@ -38,7 +38,7 @@ class ShareListViewModel(
 			if (hasData) {
 				_isRefreshing.value = true
 			} else {
-				_sharesState.value = UiState.Loading
+				_sharesState.value = UiState.Loading()
 			}
 
 			try {

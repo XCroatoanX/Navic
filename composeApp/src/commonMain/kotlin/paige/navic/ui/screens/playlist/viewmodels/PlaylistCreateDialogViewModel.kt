@@ -31,7 +31,7 @@ class PlaylistCreateDialogViewModel(
 
 	fun create() {
 		viewModelScope.launch {
-			_creationState.value = UiState.Loading
+			_creationState.value = UiState.Loading()
 			try {
 				val playlist = SessionManager.api.createPlaylist(
 					name = name.text.toString(),

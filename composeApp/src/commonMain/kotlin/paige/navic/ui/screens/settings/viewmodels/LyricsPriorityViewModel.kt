@@ -13,7 +13,7 @@ class LyricsPriorityViewModel(
     private val settings: Settings = Settings(),
     private val json: Json = Json.Default
 ) : ViewModel() {
-	private val _state = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading)
+	private val _state = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading())
 	val state = _state.asStateFlow()
 
 	companion object {

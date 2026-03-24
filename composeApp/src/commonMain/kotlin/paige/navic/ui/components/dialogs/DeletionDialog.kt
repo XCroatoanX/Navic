@@ -56,15 +56,15 @@ class DeletionViewModel : ViewModel() {
 		id: String
 	) {
 		viewModelScope.launch {
-			_state.value = UiState.Loading
+			_state.value = UiState.Loading()
 			try {
 				when (endpoint) {
 					DeletionEndpoint.PLAYLIST -> SessionManager.api.deletePlaylist(id)
 					DeletionEndpoint.SHARE -> SessionManager.api.deleteShare(id)
 				}
 				_state.value = UiState.Success(null)
-			} catch (e: Exception) {
-				_state.value = UiState.Error(e)
+			} catch (error: Exception) {
+				_state.value = UiState.Error(error = error)
 			}
 		}
 	}
