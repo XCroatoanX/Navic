@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
-import paige.navic.data.database.entities.SongEntity
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -150,7 +150,7 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(trackToPlay)
 	}
 
-	override fun addToQueueSingle(track: SongEntity) {
+	override fun addToQueueSingle(track: DomainSong) {
 		_uiState.update { state ->
 			val newQueue = state.queue + track
 			val newIndex = newQueue.indexOf(state.currentTrack)
@@ -291,7 +291,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	private fun updateNowPlayingInfo(track: SongEntity?) {
+	private fun updateNowPlayingInfo(track: DomainSong?) {
 		if (track == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
 			return
@@ -300,7 +300,7 @@ class IOSMediaPlayerViewModel(
 		val info = mutableMapOf<Any?, Any?>()
 		info[MPMediaItemPropertyTitle] = track.title
 		info[MPMediaItemPropertyArtist] = track.artistName
-		info[MPMediaItemPropertyAlbumTitle] = track.album
+		info[MPMediaItemPropertyAlbumTitle] = track.albumTitle
 
 		val duration = player.currentItem?.duration
 		if (duration != null) {
