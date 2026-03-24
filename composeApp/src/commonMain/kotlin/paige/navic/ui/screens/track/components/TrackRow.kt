@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalTextStyle
@@ -47,14 +48,14 @@ fun TracksScreenTrackRow(
 		),
 		leadingContent = {
 			Text(
-				"${index + 1}",
+				text = "${index + 1}",
 				modifier = Modifier.width(25.dp),
 				style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
 				fontWeight = FontWeight(400),
-				fontSize = 13.sp,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 				maxLines = 1,
-				textAlign = TextAlign.Center
+				textAlign = TextAlign.Center,
+				autoSize = TextAutoSize.StepBased(6.sp, 13.sp)
 			)
 		},
 		content = {
