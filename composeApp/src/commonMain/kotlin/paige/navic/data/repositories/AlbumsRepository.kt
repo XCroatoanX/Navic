@@ -29,7 +29,6 @@ open class AlbumsRepository(
 		}
 	}
 
-	// TODO: is this even necessary?
 	suspend fun syncAlbums(listType: AlbumListType, offset: Int) {
 		val remote = SessionManager.api.getAlbums(
 			type = listType,

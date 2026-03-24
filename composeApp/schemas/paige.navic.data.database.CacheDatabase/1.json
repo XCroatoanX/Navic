@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a932d5973f82408c19af184ea492131e",
+    "identityHash": "14e9513e30cb375d30c1d493f1841d08",
     "entities": [
       {
         "tableName": "AlbumEntity",
@@ -107,6 +107,36 @@
           "autoGenerate": false,
           "columnNames": [
             "albumId"
+          ]
+        }
+      },
+      {
+        "tableName": "GenreEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genreName` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `songCount` INTEGER NOT NULL, PRIMARY KEY(`genreName`))",
+        "fields": [
+          {
+            "fieldPath": "genreName",
+            "columnName": "genreName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "albumCount",
+            "columnName": "albumCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "songCount",
+            "columnName": "songCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "genreName"
           ]
         }
       },
@@ -437,7 +467,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a932d5973f82408c19af184ea492131e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '14e9513e30cb375d30c1d493f1841d08')"
     ]
   }
 }

@@ -60,6 +60,10 @@ interface AlbumDao {
 	fun getAlbumsByArtist(artistId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE genre = :genreName ORDER BY year DESC")
+	fun getAlbumsByGenre(genreName: String): Flow<List<AlbumWithSongs>>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%'")
 	fun searchAlbums(query: String): Flow<List<AlbumWithSongs>>
 
