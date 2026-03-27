@@ -19,6 +19,7 @@ import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
@@ -48,40 +49,36 @@ class DbRepository(
 	suspend fun syncEverything(
 		onProgress: (Float, String) -> Unit = { _, _ -> }
 	): Result<Unit> = runDbOp {
-		coroutineScope {
-			onProgress(0.1f, "Fetching library songs...")
-			val libraryDeferred = async { syncLibrarySongs() }
+		onProgress(0.0f, "Starting sync...")
 
-			val playlistsDeferred = async { syncPlaylists() }
+		onProgress(0.05f, "Fetching playlists...")
+		val playlists = syncPlaylists().getOrThrow()
 
-			val libraryResult = libraryDeferred.await()
-			if (libraryResult.isFailure) throw libraryResult.exceptionOrNull()!!
-			onProgress(0.5f, "Library synced. Fetching playlists...")
+		syncLibrarySongs { localProgress, message ->
+			val globalProgress = 0.05f + (localProgress * 0.70f)
+			onProgress(globalProgress, message)
+		}.getOrThrow()
 
-			val playlistsResult = playlistsDeferred.await()
-			if (playlistsResult.isFailure) throw playlistsResult.exceptionOrNull()!!
-			onProgress(0.7f, "Syncing playlist tracks...")
-
-			val playlists = playlistsResult.getOrNull() ?: emptyList()
-			val totalPlaylists = playlists.size
-
-			if (totalPlaylists > 0) {
-				playlists.forEachIndexed { index, playlist ->
-					syncPlaylistSongs(playlist.playlistId)
-					val currentProgress = 0.7f + (0.3f * ((index + 1).toFloat() / totalPlaylists))
-					onProgress(currentProgress, "Syncing playlist: ${playlist.name}...")
-				}
+		val totalPlaylists = playlists.size
+		if (totalPlaylists > 0) {
+			playlists.forEachIndexed { index, playlist ->
+				val globalProgress = 0.75f + (0.25f * ((index + 1).toFloat() / totalPlaylists))
+				onProgress(globalProgress, "Syncing playlist: ${playlist.name}...")
+				syncPlaylistSongs(playlist.playlistId).getOrThrow()
 			}
-
-			onProgress(1.0f, "Sync complete!")
 		}
+
+		onProgress(1.0f, "Sync complete!")
 	}
 
-	suspend fun syncLibrarySongs(): Result<Int> = runDbOp {
+	suspend fun syncLibrarySongs(
+		onProgress: (Float, String) -> Unit = { _, _ -> }
+	): Result<Int> = runDbOp {
 		val pageSize = 500
 		var offset = 0
 		val allAlbumSummaries = mutableListOf<Album>()
 
+		onProgress(0.0f, "Fetching album list...")
 		while (true) {
 			val batch = api.getAlbums(AlbumListType.AlphabeticalByName, pageSize, offset)
 			if (batch.isEmpty()) break
@@ -92,15 +89,29 @@ class DbRepository(
 
 		if (allAlbumSummaries.isEmpty()) return@runDbOp 0
 
+		val totalAlbums = allAlbumSummaries.size
+		val completedAlbums = AtomicInteger(0)
+
+		onProgress(0.1f, "Fetching 0/$totalAlbums albums...")
+
 		val fullAlbums = coroutineScope {
 			allAlbumSummaries.map { summary ->
 				async {
 					concurrentRequestLimit.withPermit {
-						api.getAlbum(summary.id)
+						val album = api.getAlbum(summary.id)
+						val done = completedAlbums.incrementAndGet()
+
+						if (done % 5 == 0 || done == totalAlbums) {
+							val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
+							onProgress(fetchProgress, "Fetching $done/$totalAlbums albums...")
+						}
+						album
 					}
 				}
 			}.awaitAll()
 		}
+
+		onProgress(0.9f, "Saving library to database...")
 
 		val albumEntities = fullAlbums.map { it.toEntity() }
 		val songEntities = fullAlbums.flatMap { album ->
@@ -114,6 +125,7 @@ class DbRepository(
 			println("Sync Completed: ${albumEntities.size} albums, ${songEntities.size} songs")
 		}
 
+		onProgress(1.0f, "Library saved.")
 		songEntities.size
 	}
 

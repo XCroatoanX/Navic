@@ -64,7 +64,7 @@ class LoginViewModel(
 				}
 
 			} catch (e: Exception) {
-				LoginState.Error(e)
+				_loginState.value = LoginState.Error(e)
 			}
 		}
 	}
