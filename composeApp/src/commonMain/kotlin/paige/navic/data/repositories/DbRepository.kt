@@ -1,5 +1,6 @@
 package paige.navic.data.repositories
 
+import androidx.room.concurrent.AtomicInt
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient
@@ -19,15 +20,14 @@ import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
 	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
 	private val songDao: SongDao = DbContainer.songDao,
-	private val api: SubsonicClient = SessionManager.api
 ) {
+	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
 
 	private suspend fun <T> runDbOp(block: suspend () -> T): Result<T> = withContext(Dispatchers.IO) {
@@ -90,7 +90,7 @@ class DbRepository(
 		if (allAlbumSummaries.isEmpty()) return@runDbOp 0
 
 		val totalAlbums = allAlbumSummaries.size
-		val completedAlbums = AtomicInteger(0)
+		val completedAlbums = AtomicInt(0)
 
 		onProgress(0.1f, "Fetching 0/$totalAlbums albums...")
 
