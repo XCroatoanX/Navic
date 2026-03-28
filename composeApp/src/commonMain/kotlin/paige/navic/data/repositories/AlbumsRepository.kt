@@ -25,6 +25,7 @@ open class AlbumsRepository(
 			is AlbumListType.Starred -> albumDao.getAlbumsStarred(totalToLoad)
 			is AlbumListType.Frequent -> albumDao.getAlbumsFrequent(totalToLoad)
 			is AlbumListType.Recent -> albumDao.getAlbumsRecent(totalToLoad)
+			is AlbumListType.ByGenre -> albumDao.getAlbumsByGenre(listType.genre)
 			else -> albumDao.getAlbumsAlphabeticalByName(totalToLoad)
 		}
 	}

@@ -41,6 +41,10 @@ interface AlbumDao {
 	fun getAlbumsFrequent(limit: Int): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query(" SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year DESC, name COLLATE NOCASE ASC")
+	fun getAlbumsByGenre(genreName: String): Flow<List<AlbumWithSongs>>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
 	fun getAllAlbums(): Flow<List<AlbumWithSongs>>
 
@@ -58,10 +62,6 @@ interface AlbumDao {
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId ORDER BY year DESC")
 	fun getAlbumsByArtist(artistId: String): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE genre = :genreName ORDER BY year DESC")
-	fun getAlbumsByGenre(genreName: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%'")
