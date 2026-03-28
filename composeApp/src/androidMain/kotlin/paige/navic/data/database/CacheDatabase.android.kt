@@ -11,7 +11,7 @@ fun initAndroidContext(context: Context) {
 }
 
 actual fun provideCacheDatabase(): CacheDatabase {
-	applicationContext.deleteDatabase("cache.db")
+	//applicationContext.deleteDatabase("cache.db")???
 	val dbPath = applicationContext.getDatabasePath("cache.db").absolutePath
 
 	return Room
