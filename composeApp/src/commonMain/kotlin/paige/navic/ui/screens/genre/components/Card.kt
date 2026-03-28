@@ -18,9 +18,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
 import com.materialkolor.rememberDynamicColorScheme
 import dev.zt64.compose.pipette.HsvColor
 import dev.zt64.subsonic.api.model.AlbumListType
@@ -29,12 +26,12 @@ import navic.composeapp.generated.resources.count_albums
 import org.jetbrains.compose.resources.pluralStringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.relations.GenreWithAlbums
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
-import paige.navic.ui.screens.genre.viewmodels.GenreWithAlbums
 import kotlin.math.abs
 
 @Composable
@@ -52,9 +49,9 @@ fun GenreListScreenCard(
 			ThemeMode.Light -> false
 		}
 	}
-	val seedColor = remember(genre.genre.name) {
+	val seedColor = remember(genre.genre.genreName) {
 		HsvColor(
-			hue = abs(genre.genre.name.hashCode() % 360).toFloat(),
+			hue = abs(genre.genre.genreName.hashCode() % 360).toFloat(),
 			saturation = 0.6f,
 			value = 0.5f
 		).toColor()
@@ -75,7 +72,7 @@ fun GenreListScreenCard(
 			ctx.clickSound()
 			backStack.add(Screen.AlbumList(
 				nested = true,
-				listType = AlbumListType.ByGenre(genre.genre.name)
+				listType = AlbumListType.ByGenre(genre.genre.genreName)
 			))
 		}
 	) {
@@ -115,7 +112,7 @@ fun GenreListScreenCard(
 				).align(Alignment.TopStart)
 			) {
 				Text(
-					genre.genre.name,
+					genre.genre.genreName,
 					style = MaterialTheme.typography.titleMedium,
 					fontWeight = FontWeight(600),
 					fontFamily = defaultFont(round = 100f),

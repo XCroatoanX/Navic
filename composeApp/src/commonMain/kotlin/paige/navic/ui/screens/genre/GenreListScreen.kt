@@ -99,7 +99,7 @@ fun GenreListScreen(
 						is UiState.Error -> artGridError(state)
 						is UiState.Loading -> items(10) { GenreListScreenCardPlaceholder() }
 						is UiState.Success -> {
-							items(state.data, { it.genre.name }) { genre ->
+							items(state.data, { it.genre.genreName }) { genre ->
 								GenreListScreenCard(genre = genre)
 							}
 							if (state.data.isEmpty()) {

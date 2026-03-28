@@ -210,10 +210,10 @@ fun LibraryScreen(
 						title = Res.string.title_genres,
 						destination = Screen.GenreList(true),
 						state = genresState,
-						key = { it.genre.name },
+						key = { it.genre.genreName },
 						seeAll = true
-					) { genre ->
-						GenreListScreenCard(genre = genre)
+					) { genreWithAlbums ->
+						GenreListScreenCard(genre = genreWithAlbums)
 					}
 				}
 			}

@@ -42,12 +42,32 @@ open class AlbumsRepository(
 		return albumDao.isAlbumStarred(album.id)
 	}
 	suspend fun starAlbum(album: DomainAlbum) {
-		SessionManager.api.star(album.id)
-		albumDao.insertAlbum(album.toEntity().copy(starredAt = Clock.System.now()))
+		val starredEntity = album.toEntity().copy(
+			starredAt = Clock.System.now(),
+			isPendingSync = true
+		)
+		albumDao.insertAlbum(starredEntity)
+
+		try {
+			SessionManager.api.star(album.id)
+			albumDao.insertAlbum(starredEntity.copy(isPendingSync = false))
+		} catch (e: Exception) {
+			//scheduleSyncJob(album.id, isStarring = true) To implement
+		}
 	}
 
 	suspend fun unstarAlbum(album: DomainAlbum) {
-		SessionManager.api.unstar(album.id)
-		albumDao.insertAlbum(album.toEntity().copy(starredAt = null))
+		val unstarredEntity = album.toEntity().copy(
+			starredAt = null,
+			isPendingSync = true
+		)
+		albumDao.insertAlbum(unstarredEntity)
+
+		try {
+			SessionManager.api.unstar(album.id)
+			albumDao.insertAlbum(unstarredEntity.copy(isPendingSync = false))
+		} catch (e: Exception) {
+			//scheduleSyncJob(album.id, isStarring = false)
+		}
 	}
 }

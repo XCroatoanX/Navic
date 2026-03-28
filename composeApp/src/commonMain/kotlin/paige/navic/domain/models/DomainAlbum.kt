@@ -18,6 +18,7 @@ data class DomainAlbum(
 	override val duration: Duration?,
 	val createdAt: Instant,
 	val starredAt: Instant?,
+	val isPendingSync: Boolean = false,
 	val lastPlayedAt: Instant?,
 	val playCount: Int = 0,
 	val userRating: Int?,

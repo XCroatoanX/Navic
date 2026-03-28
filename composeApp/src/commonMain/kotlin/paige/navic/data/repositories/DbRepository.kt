@@ -15,6 +15,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import paige.navic.data.database.DbContainer
 import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.PlaylistEntity
@@ -26,6 +27,7 @@ class DbRepository(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
 	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
 	private val songDao: SongDao = DbContainer.songDao,
+	private val genreDao: GenreDao = DbContainer.genreDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
@@ -43,6 +45,7 @@ class DbRepository(
 		albumDao.clearAllAlbums()
 		playlistDao.clearAllPlaylists()
 		songDao.clearAllSongs()
+		genreDao.clearAllGenres()
 		println("Database wiped completely.")
 	}
 
@@ -50,6 +53,9 @@ class DbRepository(
 		onProgress: (Float, String) -> Unit = { _, _ -> }
 	): Result<Unit> = runDbOp {
 		onProgress(0.0f, "Starting sync...")
+
+		onProgress(0.02f, "Fetching genres...")
+		syncGenres().getOrThrow()
 
 		onProgress(0.05f, "Fetching playlists...")
 		val playlists = syncPlaylists().getOrThrow()
@@ -163,5 +169,12 @@ class DbRepository(
 
 		println("Playlist [$playlistId] synced: ${songEntities.size} songs")
 		songEntities.size
+	}
+
+	suspend fun syncGenres(): Result<Unit> = runDbOp {
+		val remoteGenres = api.getGenres()
+		val entities = remoteGenres.map {it.toEntity() }
+		genreDao.insertGenres(entities)
+		println("Genres Synced: ${entities.size} genres found")
 	}
 }
