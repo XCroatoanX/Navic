@@ -41,7 +41,7 @@ fun TracksScreenHeadingRowButtons(
 			modifier = Modifier.weight(1f),
 			onClick = {
 				player.clearQueue()
-//				player.addToQueue(tracks)TODO
+				player.addToQueue(tracks)
 				player.playAt(0)
 			},
 			shape = shape
@@ -59,7 +59,7 @@ fun TracksScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.weight(1f),
 			onClick = {
-//				player.shufflePlay(tracks)TODO
+				player.shufflePlay(tracks)
 			},
 			shape = shape
 		) {

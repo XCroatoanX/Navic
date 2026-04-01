@@ -55,12 +55,35 @@ class TracksRepository(
 	}
 
 	suspend fun starTrack(track: DomainSong) {
-		SessionManager.api.star(track.id)
-		songDao.insertSong(track.toEntity().copy(starredAt = Clock.System.now()))
+		val starredEntity = track.toEntity().copy(
+			starredAt = Clock.System.now(),
+			isPendingSync = true
+		)
+		songDao.insertSong(starredEntity)
+
+		try {
+			SessionManager.api.star(track.id)
+
+			songDao.insertSong(starredEntity.copy(isPendingSync = false))
+			println("Track ${track.title} synced with server.")
+		} catch (e: Exception) {
+			//scheduleSyncJob(album.id, isStarring = true) TODO implement
+		}
 	}
 
 	suspend fun unstarTrack(track: DomainSong) {
-		SessionManager.api.unstar(track.id)
-		songDao.insertSong(track.toEntity().copy(starredAt = null))
+		val unstarredEntity = track.toEntity().copy(
+			starredAt = null,
+			isPendingSync = true
+		)
+		songDao.insertSong(unstarredEntity)
+
+		try {
+			SessionManager.api.unstar(track.id)
+
+			songDao.insertSong(unstarredEntity.copy(isPendingSync = false))
+		} catch (e: Exception) {
+			//scheduleSyncJob(album.id, isStarring = false) TODO implement
+		}
 	}
 }

@@ -53,7 +53,7 @@ open class AlbumsRepository(
 			SessionManager.api.star(album.id)
 			albumDao.insertAlbum(starredEntity.copy(isPendingSync = false))
 		} catch (e: Exception) {
-			//scheduleSyncJob(album.id, isStarring = true) To implement
+			//scheduleSyncJob(album.id, isStarring = true) TODO implement
 		}
 	}
 

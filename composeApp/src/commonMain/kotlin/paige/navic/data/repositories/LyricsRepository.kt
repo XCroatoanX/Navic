@@ -1,6 +1,5 @@
 package paige.navic.data.repositories
 
-import dev.zt64.subsonic.api.model.Song
 import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
@@ -15,6 +14,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -177,7 +177,7 @@ class LyricsRepository(
 		}
 	}
 
-	suspend fun fetchLyrics(track: Song): LyricsResult? {
+	suspend fun fetchLyrics(track: DomainSong): LyricsResult? {
 		val currentConfig = getConfig()
 		for (provider in currentConfig.priority) {
 			try {
@@ -187,7 +187,7 @@ class LyricsRepository(
 					else -> null
 				}
 				val parsedLyrics = rawContent?.let { LyricsContentParser.parse(it) }
-					?: SessionManager.api.getLyrics(track).firstOrNull()?.lines?.map { line ->
+					?: SessionManager.api.getLyrics(track.id).firstOrNull()?.lines?.map { line ->
 						LyricLine(
 							time = line.start.milliseconds,
 							text = line.value
@@ -207,7 +207,7 @@ class LyricsRepository(
 		return null
 	}
 
-	private suspend fun fetchRawLrcLib(track: Song, config: LyricsConfig): String? {
+	private suspend fun fetchRawLrcLib(track: DomainSong, config: LyricsConfig): String? {
 		return try {
 			val response = client.get(config.lrcLibBaseUrl) {
 				parameter("track_name", track.title)
@@ -222,7 +222,7 @@ class LyricsRepository(
 		}
 	}
 
-	private suspend fun fetchRawLyricsPlus(track: Song, config: LyricsConfig): String? {
+	private suspend fun fetchRawLyricsPlus(track: DomainSong, config: LyricsConfig): String? {
 		for (baseUrl in config.lyricsPlusMirrors) {
 			try {
 				val response = client.get("$baseUrl/v2/lyrics/get") {

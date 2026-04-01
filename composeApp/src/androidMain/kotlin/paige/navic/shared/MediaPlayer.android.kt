@@ -34,6 +34,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
+import paige.navic.data.database.DbContainer
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
@@ -136,7 +139,8 @@ class PlaybackService : MediaSessionService() {
 }
 
 class AndroidMediaPlayerViewModel(
-	private val application: Application, storage: PlayerStateStorage
+	private val application: Application, storage: PlayerStateStorage,
+	private val albumDao: AlbumDao = DbContainer.albumDao,
 ) : MediaPlayerViewModel(storage) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -209,9 +213,9 @@ class AndroidMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			runCatching {
-				val album = SessionManager.api.getAlbum(albumId)
+				val album = albumDao.getAlbumById(albumId)
 
-//				_uiState.update { it.copy(currentCollection = album) }TODO
+				_uiState.update { it.copy(currentCollection = album?.toDomainModel()) }
 			}.onFailure {
 				loadingCollectionId = null
 			}

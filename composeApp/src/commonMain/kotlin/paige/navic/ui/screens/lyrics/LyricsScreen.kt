@@ -41,7 +41,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,7 +52,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -63,6 +61,7 @@ import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
@@ -84,7 +83,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LyricsScreen(
-	track: Song?,
+	track: DomainSong?,
 	viewModel: LyricsScreenViewModel = viewModel(key = track?.id) {
 		LyricsScreenViewModel(track)
 	}

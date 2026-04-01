@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.sp
 import com.materialkolor.utils.ColorUtils.calculateLuminance
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
-import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_share_lyrics
@@ -65,6 +64,7 @@ import navic.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalShareManager
 import paige.navic.LocalSnackbarState
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.desktop.Navic
 import paige.navic.icons.outlined.Check
@@ -76,7 +76,7 @@ import paige.navic.ui.components.common.FormRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LyricsShareSheet(
-	track: Song,
+	track: DomainSong,
 	selectedLyrics: List<String>,
 	sharedPainter: Painter,
 	onDismiss: () -> Unit,

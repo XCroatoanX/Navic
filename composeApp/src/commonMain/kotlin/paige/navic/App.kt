@@ -257,7 +257,7 @@ private fun entryProvider(
 			val player = LocalMediaPlayer.current
 			val playerState by player.uiState.collectAsState()
 			val track = playerState.currentTrack
-//			LyricsScreen(track)TODO
+			LyricsScreen(track)
 		}
 		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			QueueScreen()

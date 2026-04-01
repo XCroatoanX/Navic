@@ -17,6 +17,8 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
+import paige.navic.data.repositories.TracksRepository
+import kotlin.time.Clock
 
 @Serializable
 data class PlayerUiState(
@@ -36,6 +38,7 @@ abstract class MediaPlayerViewModel(
 ) : ViewModel() {
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+	private val tracksRepository: TracksRepository = TracksRepository()
 
 	init {
 		viewModelScope.launch {
@@ -67,17 +70,29 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-//	suspend fun starTrack() {
-//		_uiState.value.currentTrack?.let {
-//			SessionManager.api.star(it)
-//		}
-//	}
-//
-//	suspend fun unstarTrack() {
-//		_uiState.value.currentTrack?.let {
-//			SessionManager.api.unstar(it)
-//		}
-//	}TODO
+	fun starTrack() {
+		val track = _uiState.value.currentTrack ?: return
+
+		viewModelScope.launch {
+			_uiState.value = _uiState.value.copy(
+				currentTrack = track.copy(starredAt = Clock.System.now())
+			)
+
+			tracksRepository.starTrack(track)
+		}
+	}
+
+	fun unstarTrack() {
+		val track = _uiState.value.currentTrack ?: return
+
+		viewModelScope.launch {
+			_uiState.value = _uiState.value.copy(
+				currentTrack = track.copy(starredAt = null)
+			)
+
+			tracksRepository.unstarTrack(track)
+		}
+	}
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
 
