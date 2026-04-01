@@ -144,8 +144,8 @@ fun ArtistDetailScreen(
 						ArtistDetailScreenHeading(
 							artistName = state.artist.name,
 							coverArtId = state.artist.coverArtId,
-							subtitle = (artistState as? UiState.Success)?.data?.info?.biography,
-							lastfm = (artistState as? UiState.Success)?.data?.info?.lastFmUrl,
+							subtitle = state.artist.biography,
+							lastfm = state.artist.lastFmUrl,
 							innerPadding = contentPadding,
 							onPlay = { viewModel.playArtistAlbums(player) },
 							playEnabled = state.albums.isNotEmpty(),

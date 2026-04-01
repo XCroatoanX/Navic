@@ -5,7 +5,6 @@ import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient
 import kotlinx.coroutines.Dispatchers
-// do not remove this import
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -15,19 +14,23 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import paige.navic.data.database.DbContainer
 import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainArtist
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
 	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
 	private val songDao: SongDao = DbContainer.songDao,
-	private val genreDao: GenreDao = DbContainer.genreDao
+	private val genreDao: GenreDao = DbContainer.genreDao,
+	private val artistDao: ArtistDao = DbContainer.artistDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
@@ -46,6 +49,7 @@ class DbRepository(
 		playlistDao.clearAllPlaylists()
 		songDao.clearAllSongs()
 		genreDao.clearAllGenres()
+		artistDao.clearAllArtists()
 		println("Database wiped completely.")
 	}
 
@@ -57,11 +61,14 @@ class DbRepository(
 		onProgress(0.02f, "Fetching genres...")
 		syncGenres().getOrThrow()
 
-		onProgress(0.05f, "Fetching playlists...")
+		onProgress(0.04f, "Fetching artists...")
+		syncArtists().getOrThrow()
+
+		onProgress(0.07f, "Fetching playlists...")
 		val playlists = syncPlaylists().getOrThrow()
 
 		syncLibrarySongs { localProgress, message ->
-			val globalProgress = 0.05f + (localProgress * 0.70f)
+			val globalProgress = 0.10f + (localProgress * 0.65f)
 			onProgress(globalProgress, message)
 		}.getOrThrow()
 
@@ -173,8 +180,37 @@ class DbRepository(
 
 	suspend fun syncGenres(): Result<Unit> = runDbOp {
 		val remoteGenres = api.getGenres()
-		val entities = remoteGenres.map {it.toEntity() }
+		val entities = remoteGenres.map { it.toEntity() }
 		genreDao.insertGenres(entities)
 		println("Genres Synced: ${entities.size} genres found")
+	}
+
+	suspend fun syncArtists(): Result<Unit> = runDbOp {
+		val remoteArtistsWrapper = api.getArtists()
+		val flatArtists = remoteArtistsWrapper.flatMap { indexGroup ->
+			indexGroup.artists
+		}
+		val entities = flatArtists.map { it.toEntity() }
+
+		artistDao.insertArtists(entities)
+		println("Artists Synced: ${entities.size} artists found")
+	}
+
+	suspend fun fetchArtistMetadata(artistId: String): Result<DomainArtist> = runDbOp {
+		val artistInfo = api.getArtistInfo(artistId)
+		val simIds = artistInfo.similarArtists.map { it.id }
+
+		val currentEntity = artistDao.getArtistById(artistId)
+			?: throw Exception("Artist not found in local DB")
+
+		val updatedEntity = currentEntity.copy(
+			biography = artistInfo.biography,
+			similarArtistIds = simIds,
+			lastFmUrl = artistInfo.lastFmUrl
+		)
+
+		artistDao.insertArtists(listOf(updatedEntity))
+
+		updatedEntity.toDomainModel()
 	}
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4ef1aaae69c1ee15fcb8db52c5142eb5",
+    "identityHash": "5782518d94e75f052077b8d4b37b7e08",
     "entities": [
       {
         "tableName": "AlbumEntity",
@@ -469,11 +469,99 @@
             "songId"
           ]
         }
+      },
+      {
+        "tableName": "ArtistEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artistId` TEXT NOT NULL, `name` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `coverArtId` TEXT, `artistImageUrl` TEXT, `starredAt` INTEGER, `isPendingSync` INTEGER NOT NULL, `userRating` INTEGER, `sortName` TEXT, `musicBrainzId` TEXT, `lastFmUrl` TEXT, `roles` TEXT NOT NULL, `biography` TEXT, `similarArtistIds` TEXT NOT NULL, PRIMARY KEY(`artistId`))",
+        "fields": [
+          {
+            "fieldPath": "artistId",
+            "columnName": "artistId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "albumCount",
+            "columnName": "albumCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverArtId",
+            "columnName": "coverArtId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "artistImageUrl",
+            "columnName": "artistImageUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "starredAt",
+            "columnName": "starredAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "isPendingSync",
+            "columnName": "isPendingSync",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userRating",
+            "columnName": "userRating",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sortName",
+            "columnName": "sortName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "musicBrainzId",
+            "columnName": "musicBrainzId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastFmUrl",
+            "columnName": "lastFmUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "roles",
+            "columnName": "roles",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "biography",
+            "columnName": "biography",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "similarArtistIds",
+            "columnName": "similarArtistIds",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "artistId"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4ef1aaae69c1ee15fcb8db52c5142eb5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5782518d94e75f052077b8d4b37b7e08')"
     ]
   }
 }

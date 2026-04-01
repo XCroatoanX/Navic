@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Artist
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -41,6 +40,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.models.DomainArtist
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Artist
@@ -92,7 +92,7 @@ fun ArtistListScreen(
 			isRefreshing = artistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshArtists() }
 		) {
-			Crossfade(artistsState) {
+			Crossfade(artistsState) { it ->
 				when (it) {
 					is UiState.Loading -> ArtGrid(
 						Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -189,7 +189,7 @@ fun ArtistListScreen(
 @Composable
 fun ArtistsScreenItem(
 	modifier: Modifier = Modifier,
-	artist: Artist,
+	artist: DomainArtist,
 	tab: String,
 	viewModel: ArtistListViewModel
 ) {
@@ -245,7 +245,7 @@ fun ArtistsScreenItem(
 }
 
 fun LazyGridScope.artistsScreenItems(
-	data: List<Artist>,
+	data: List<DomainArtist>,
 	viewModel: ArtistListViewModel,
 	tab: String
 ) {

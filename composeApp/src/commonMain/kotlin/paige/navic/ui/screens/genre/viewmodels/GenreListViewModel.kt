@@ -41,8 +41,6 @@ class GenreListViewModel(
 		viewModelScope.launch {
 			val hasData = (_genresState.value as? UiState.Success)?.data?.isNotEmpty() == true
 
-			println(hasData)
-
 			if (hasData) {
 				_isRefreshing.value = true
 			} else {

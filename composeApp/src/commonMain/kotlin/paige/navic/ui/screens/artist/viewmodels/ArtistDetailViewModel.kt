@@ -3,36 +3,29 @@ package paige.navic.ui.screens.artist.viewmodels
 import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Artist
-import dev.zt64.subsonic.api.model.ArtistInfo
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import paige.navic.data.database.DbContainer
-import paige.navic.data.database.dao.AlbumDao
-import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.session.SessionManager
+import paige.navic.data.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.UiState
 
 data class ArtistState(
-	val artist: Artist,
+	val artist: DomainArtist,
 	val albums: List<DomainAlbum>,
 	val topSongs: List<DomainSong>,
-	val info: ArtistInfo,
-	val similarArtists: List<Artist>
+	val similarArtists: List<DomainArtist> = emptyList()
 )
 
 class ArtistDetailViewModel(
 	private val artistId: String,
-	private val albumDao: AlbumDao = DbContainer.albumDao,
-	private val songDao: SongDao = DbContainer.songDao
+	private val repository: DbRepository = DbRepository()
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
@@ -40,39 +33,57 @@ class ArtistDetailViewModel(
 	val scrollState = ScrollState(initial = 0)
 
 	init {
+		loadArtistData()
+	}
+
+	private fun loadArtistData() {
 		viewModelScope.launch {
 			try {
-				val artist = SessionManager.api.getArtist(artistId)
+				val artistEntity = DbContainer.artistDao.getArtistById(artistId)
+					?: throw Exception("Artist not found in database")
+				val domainArtist = artistEntity.toDomainModel()
 
-				coroutineScope {
-					val albumsDeferred = artist.album.sortedByDescending { it.playCount }.map { album ->
-						async { SessionManager.api.getAlbum(album.id) }
-					}
+				val albumsWithSongs = DbContainer.albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
+				val domainAlbums = albumsWithSongs.map { it.toDomainModel() }
 
-					val artistInfoDeferred = async { SessionManager.api.getArtistInfo(artist) }
+				val domainSongs = albumsWithSongs.flatMap { it.songs }
+					.map { it.toDomainModel() }
+					.sortedByDescending { it.playCount }
+					.take(10)
 
-					val albums = albumsDeferred.awaitAll()
-
-					val topSongs = albums.flatMap { album ->
-						album.songs
-							.sortedByDescending { it.playCount }
-							.filter { it.playCount > 0 }
-					}
-
-					val artistInfo = artistInfoDeferred.await()
-
-					val similarArtists = artistInfo.similarArtists.map {
-						async { SessionManager.api.getArtist(it.id) }
-					}.awaitAll()
-
-					_artistState.value = UiState.Success(ArtistState(
-						artist,
-						albums.mapNotNull { albumDao.getAlbumById(it.id)?.toDomainModel() },
-						topSongs.mapNotNull { songDao.getSongById(it.id)?.toDomainModel() },
-						artistInfo,
-						similarArtists
-					))
+				val initialSimilarArtists = domainArtist.similarArtistIds.mapNotNull { id ->
+					DbContainer.artistDao.getArtistById(id)?.toDomainModel()
 				}
+
+				_artistState.value = UiState.Success(
+					ArtistState(
+						artist = domainArtist,
+						albums = domainAlbums,
+						topSongs = domainSongs,
+						similarArtists = initialSimilarArtists
+					)
+				)
+
+				repository.fetchArtistMetadata(artistId)
+					.onSuccess { updatedArtist ->
+						val currentState = (_artistState.value as? UiState.Success)?.data
+						if (currentState != null) {
+
+							val updatedSimilarArtists = updatedArtist.similarArtistIds.mapNotNull { id ->
+								DbContainer.artistDao.getArtistById(id)?.toDomainModel()
+							}
+
+							_artistState.value = UiState.Success(
+								currentState.copy(
+									artist = updatedArtist,
+									similarArtists = updatedSimilarArtists
+								)
+							)
+						}
+					}
+					.onFailure { error ->
+						println("Failed to fetch artist metadata: ${error.message}")
+					}
 			} catch (e: Exception) {
 				_artistState.value = UiState.Error(e)
 			}

@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.AlbumListType
-import dev.zt64.subsonic.api.model.Artist
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
@@ -48,11 +46,11 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
@@ -141,7 +139,7 @@ fun SearchScreen(
 					val albums =
 						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbum>() else emptyList()
 					val artists =
-						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance< DomainArtist>() else emptyList()
 					val tracks =
 						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
 
