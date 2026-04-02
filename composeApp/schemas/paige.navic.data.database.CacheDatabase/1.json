@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "df5470f8085833d3eaeb4d4705e6e043",
+    "identityHash": "9dee6ba16ffdbea461791954102314fd",
     "entities": [
       {
         "tableName": "AlbumEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`albumId` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `year` INTEGER, `coverArtId` TEXT NOT NULL, `genre` TEXT, `genres` TEXT NOT NULL, `songCount` INTEGER NOT NULL, `duration` INTEGER, `createdAt` INTEGER NOT NULL, `starredAt` INTEGER, `isPendingSync` INTEGER NOT NULL, `lastPlayedAt` INTEGER, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `version` TEXT, `musicBrainzId` TEXT, PRIMARY KEY(`albumId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`albumId` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `year` INTEGER, `coverArtId` TEXT NOT NULL, `genre` TEXT, `genres` TEXT NOT NULL, `songCount` INTEGER NOT NULL, `duration` INTEGER, `createdAt` INTEGER NOT NULL, `starredAt` INTEGER, `lastPlayedAt` INTEGER, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `version` TEXT, `musicBrainzId` TEXT, PRIMARY KEY(`albumId`))",
         "fields": [
           {
             "fieldPath": "albumId",
@@ -75,12 +75,6 @@
             "fieldPath": "starredAt",
             "columnName": "starredAt",
             "affinity": "INTEGER"
-          },
-          {
-            "fieldPath": "isPendingSync",
-            "columnName": "isPendingSync",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "lastPlayedAt",
@@ -282,7 +276,7 @@
       },
       {
         "tableName": "SongEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, `title` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `albumTitle` TEXT, `belongsToAlbumId` TEXT, `parentId` TEXT, `comment` TEXT, `trackNumber` INTEGER, `discNumber` INTEGER, `isrc` TEXT NOT NULL, `year` INTEGER, `genre` TEXT, `genres` TEXT NOT NULL, `moods` TEXT NOT NULL, `duration` INTEGER NOT NULL, `bpm` INTEGER, `contributors` TEXT NOT NULL, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `averageRating` REAL, `bitRate` INTEGER, `bitDepth` INTEGER, `sampleRate` INTEGER, `audioChannelCount` INTEGER, `replayGain` TEXT, `fileSize` INTEGER NOT NULL, `fileExtension` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `filePath` TEXT, `starredAt` INTEGER, `isPendingSync` INTEGER NOT NULL, `coverArtId` TEXT, `musicBrainzId` TEXT, PRIMARY KEY(`songId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, `title` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `albumTitle` TEXT, `belongsToAlbumId` TEXT, `parentId` TEXT, `comment` TEXT, `trackNumber` INTEGER, `discNumber` INTEGER, `isrc` TEXT NOT NULL, `year` INTEGER, `genre` TEXT, `genres` TEXT NOT NULL, `moods` TEXT NOT NULL, `duration` INTEGER NOT NULL, `bpm` INTEGER, `contributors` TEXT NOT NULL, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `averageRating` REAL, `bitRate` INTEGER, `bitDepth` INTEGER, `sampleRate` INTEGER, `audioChannelCount` INTEGER, `replayGain` TEXT, `fileSize` INTEGER NOT NULL, `fileExtension` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `filePath` TEXT, `starredAt` INTEGER, `coverArtId` TEXT, `musicBrainzId` TEXT, PRIMARY KEY(`songId`))",
         "fields": [
           {
             "fieldPath": "songId",
@@ -453,12 +447,6 @@
             "affinity": "INTEGER"
           },
           {
-            "fieldPath": "isPendingSync",
-            "columnName": "isPendingSync",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "coverArtId",
             "columnName": "coverArtId",
             "affinity": "TEXT"
@@ -478,7 +466,7 @@
       },
       {
         "tableName": "ArtistEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artistId` TEXT NOT NULL, `name` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `coverArtId` TEXT, `artistImageUrl` TEXT, `starredAt` INTEGER, `isPendingSync` INTEGER NOT NULL, `userRating` INTEGER, `sortName` TEXT, `musicBrainzId` TEXT, `lastFmUrl` TEXT, `roles` TEXT NOT NULL, `biography` TEXT, `similarArtistIds` TEXT NOT NULL, PRIMARY KEY(`artistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artistId` TEXT NOT NULL, `name` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `coverArtId` TEXT, `artistImageUrl` TEXT, `starredAt` INTEGER, `userRating` INTEGER, `sortName` TEXT, `musicBrainzId` TEXT, `lastFmUrl` TEXT, `roles` TEXT NOT NULL, `biography` TEXT, `similarArtistIds` TEXT NOT NULL, PRIMARY KEY(`artistId`))",
         "fields": [
           {
             "fieldPath": "artistId",
@@ -512,12 +500,6 @@
             "fieldPath": "starredAt",
             "columnName": "starredAt",
             "affinity": "INTEGER"
-          },
-          {
-            "fieldPath": "isPendingSync",
-            "columnName": "isPendingSync",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "userRating",
@@ -593,11 +575,41 @@
             "songId"
           ]
         }
+      },
+      {
+        "tableName": "SyncActionEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `actionType` TEXT NOT NULL, `itemId` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actionType",
+            "columnName": "actionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemId",
+            "columnName": "itemId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'df5470f8085833d3eaeb4d4705e6e043')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9dee6ba16ffdbea461791954102314fd')"
     ]
   }
 }

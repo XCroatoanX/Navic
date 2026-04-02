@@ -4,11 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import paige.navic.data.database.entities.LyricEntity
 
 @Suppress("unused")
 @Dao
 interface LyricDao {
+	@Transaction
 	@Query("SELECT * FROM LyricEntity WHERE songId = :songId")
 	suspend fun getLyrics(songId: String): LyricEntity?
 

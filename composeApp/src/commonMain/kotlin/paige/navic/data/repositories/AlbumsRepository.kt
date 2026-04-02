@@ -3,7 +3,9 @@ package paige.navic.data.repositories
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.DbContainer
+import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.database.relations.AlbumWithSongs
 import paige.navic.data.session.SessionManager
@@ -12,6 +14,7 @@ import kotlin.time.Clock
 
 open class AlbumsRepository(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
+	private val syncManager: SyncManager = SyncManager()
 ) {
 	fun getAlbumsFlow(
 		offset: Int,
@@ -44,31 +47,17 @@ open class AlbumsRepository(
 	}
 	suspend fun starAlbum(album: DomainAlbum) {
 		val starredEntity = album.toEntity().copy(
-			starredAt = Clock.System.now(),
-			isPendingSync = true
+			starredAt = Clock.System.now()
 		)
 		albumDao.insertAlbum(starredEntity)
-
-		try {
-			SessionManager.api.star(album.id)
-			albumDao.insertAlbum(starredEntity.copy(isPendingSync = false))
-		} catch (e: Exception) {
-			//scheduleSyncJob(album.id, isStarring = true) TODO implement
-		}
+		syncManager.enqueueAction(SyncActionType.STAR, album.id)
 	}
 
 	suspend fun unstarAlbum(album: DomainAlbum) {
 		val unstarredEntity = album.toEntity().copy(
-			starredAt = null,
-			isPendingSync = true
+			starredAt = null
 		)
 		albumDao.insertAlbum(unstarredEntity)
-
-		try {
-			SessionManager.api.unstar(album.id)
-			albumDao.insertAlbum(unstarredEntity.copy(isPendingSync = false))
-		} catch (e: Exception) {
-			//scheduleSyncJob(album.id, isStarring = false)
-		}
+		syncManager.enqueueAction(SyncActionType.UNSTAR, album.id)
 	}
 }

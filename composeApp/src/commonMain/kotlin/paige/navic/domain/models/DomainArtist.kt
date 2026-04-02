@@ -11,7 +11,6 @@ data class DomainArtist(
 	val coverArtId: String? = null,
 	val artistImageUrl: String? = null,
 	val starredAt: Instant? = null,
-	val isPendingSync: Boolean = false,
 	val userRating: Int? = null,
 	val sortName: String? = null,
 	val musicBrainzId: String? = null,

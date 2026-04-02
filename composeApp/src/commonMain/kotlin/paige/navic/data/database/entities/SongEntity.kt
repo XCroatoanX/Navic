@@ -42,7 +42,6 @@ data class SongEntity(
 	val mimeType: String,
 	val filePath: String?,
 	val starredAt: Instant?,
-	val isPendingSync: Boolean = false,
 	val coverArtId: String?,
 	val musicBrainzId: String?
 )

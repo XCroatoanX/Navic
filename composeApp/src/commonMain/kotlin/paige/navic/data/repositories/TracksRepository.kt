@@ -2,9 +2,11 @@ package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumInfo
 import paige.navic.data.database.DbContainer
+import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
+import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainSongCollection
@@ -18,6 +20,7 @@ class TracksRepository(
 	private val albumDao: AlbumDao = DbContainer.albumDao,
 	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
 	private val songDao: SongDao = DbContainer.songDao,
+	private val syncManager: SyncManager = SyncManager()
 ) {
 	suspend fun fetchWithAllTracks(collection: DomainSongCollection): DomainSongCollection {
 		if (collection.songs.isNotEmpty()) {
@@ -56,34 +59,17 @@ class TracksRepository(
 
 	suspend fun starTrack(track: DomainSong) {
 		val starredEntity = track.toEntity().copy(
-			starredAt = Clock.System.now(),
-			isPendingSync = true
+			starredAt = Clock.System.now()
 		)
 		songDao.insertSong(starredEntity)
-
-		try {
-			SessionManager.api.star(track.id)
-
-			songDao.insertSong(starredEntity.copy(isPendingSync = false))
-			println("Track ${track.title} synced with server.")
-		} catch (e: Exception) {
-			//scheduleSyncJob(album.id, isStarring = true) TODO implement
-		}
+		syncManager.enqueueAction(SyncActionType.STAR, track.id)
 	}
 
 	suspend fun unstarTrack(track: DomainSong) {
 		val unstarredEntity = track.toEntity().copy(
-			starredAt = null,
-			isPendingSync = true
+			starredAt = null
 		)
 		songDao.insertSong(unstarredEntity)
-
-		try {
-			SessionManager.api.unstar(track.id)
-
-			songDao.insertSong(unstarredEntity.copy(isPendingSync = false))
-		} catch (e: Exception) {
-			//scheduleSyncJob(album.id, isStarring = false) TODO implement
-		}
+		syncManager.enqueueAction(SyncActionType.UNSTAR, track.id)
 	}
 }

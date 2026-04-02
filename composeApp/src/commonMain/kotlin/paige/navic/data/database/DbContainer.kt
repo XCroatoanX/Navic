@@ -15,4 +15,5 @@ object DbContainer {
 	val songDao: SongDao by lazy { database.songDao() }
 	val artistDao: ArtistDao by lazy { database.artistDao() }
 	val lyricDao: LyricDao by lazy { database.lyricDao() }
+	val syncActionDao: SyncActionDao by lazy { database.syncActionDao() }
 }
