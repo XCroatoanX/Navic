@@ -1,6 +1,7 @@
 package paige.navic.data.database
 
 import androidx.room.TypeConverter
+import paige.navic.data.repositories.LyricsProvider
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Duration
@@ -84,5 +85,20 @@ class Converters {
 			baseGain = parts[4].toFloatOrNull(),
 			fallbackGain = parts[5].toFloatOrNull()
 		)
+	}
+
+	//Lyrics
+	@TypeConverter
+	fun fromLyricsProvider(provider: LyricsProvider): String {
+		return provider.name
+	}
+
+	@TypeConverter
+	fun toLyricsProvider(name: String): LyricsProvider {
+		return try {
+			LyricsProvider.valueOf(name)
+		} catch (e: Exception) {
+			LyricsProvider.SUBSONIC
+		}
 	}
 }

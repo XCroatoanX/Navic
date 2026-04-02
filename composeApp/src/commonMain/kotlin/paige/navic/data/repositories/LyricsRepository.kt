@@ -13,6 +13,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import paige.navic.data.database.DbContainer
+import paige.navic.data.database.dao.LyricDao
+import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import kotlin.time.Duration
@@ -111,6 +114,10 @@ object LyricsContentParser {
 				val syncedStr = jsonObject["syncedLyrics"]?.jsonPrimitive?.contentOrNull
 				if (!syncedStr.isNullOrEmpty()) parseLrc(syncedStr) else null
 			}
+			jsonObject.containsKey("plainLyrics") -> {
+				val plainStr = jsonObject["plainLyrics"]?.jsonPrimitive?.contentOrNull
+				plainStr?.lineSequence()?.map { LyricLine(text = it) }?.toList()
+			}
 			jsonObject.containsKey("lyrics") -> {
 				val youlyResponse = jsonParser.decodeFromString<YoulyResponse>(jsonString)
 				parseYoulyResponse(youlyResponse)
@@ -133,24 +140,35 @@ object LyricsContentParser {
 	}
 
 	private fun parseLrc(input: String): List<LyricLine> {
-		return input.lineSequence()
-			.filter { it.isNotBlank() && it.startsWith("[") && it.contains("]") }
+		val lines = input.lineSequence().toList()
+
+		if (!input.contains("[")) {
+			return lines.map { LyricLine(text = it.trim()) }
+		}
+
+		return lines
+			.filter { it.isNotBlank() }
 			.mapNotNull { line ->
 				try {
-					val close = line.indexOf(']')
-					val timestamp = line.substring(1, close)
-					val text = line.substring(close + 1).trim()
+					if (line.startsWith("[") && line.contains("]")) {
+						val close = line.indexOf(']')
+						val timestamp = line.substring(1, close)
+						val text = line.substring(close + 1).trim()
 
-					if (!timestamp.contains(':') || timestamp.any { it.isLetter() }) return@mapNotNull null
+						if (!timestamp.contains(':') || timestamp.any { it.isLetter() }) {
+							return@mapNotNull if (text.isNotEmpty()) LyricLine(text = text) else null
+						}
 
-					val parts = timestamp.split(':', '.')
-					val minutes = parts[0].toLong()
-					val seconds = parts[1].toLong()
-					val hundredths = parts.getOrNull(2)?.toLong() ?: 0L
+						val parts = timestamp.split(':', '.')
+						val minutes = parts[0].toLong()
+						val seconds = parts[1].toLong()
+						val hundredths = parts.getOrNull(2)?.toLong() ?: 0L
+						val duration = minutes.minutes + seconds.seconds + (hundredths * 10).milliseconds
 
-					val duration = minutes.minutes + seconds.seconds + (hundredths * 10).milliseconds
-
-					LyricLine(time = duration, text = text)
+						LyricLine(time = duration, text = text)
+					} else {
+						LyricLine(text = line.trim())
+					}
 				} catch (_: Exception) {
 					null
 				}
@@ -161,6 +179,7 @@ object LyricsContentParser {
 }
 
 class LyricsRepository(
+	private val lyricDao: LyricDao = DbContainer.lyricDao,
 	private val client: HttpClient = HttpClient(),
 	private val settings: Settings = Settings()
 ) {
@@ -178,26 +197,56 @@ class LyricsRepository(
 	}
 
 	suspend fun fetchLyrics(track: DomainSong): LyricsResult? {
+		try {
+			val cached = lyricDao.getLyrics(track.id)
+			if (cached != null) {
+				val parsed = LyricsContentParser.parse(cached.rawContent)
+				if (!parsed.isNullOrEmpty()) return LyricsResult(parsed, cached.provider)
+			}
+		} catch (_: Exception) {}
+
 		val currentConfig = getConfig()
 		for (provider in currentConfig.priority) {
 			try {
-				val rawContent = when (provider) {
-					LyricsProvider.LYRICS_PLUS -> fetchRawLyricsPlus(track, currentConfig)
-					LyricsProvider.LRCLIB -> fetchRawLrcLib(track, currentConfig)
-					else -> null
-				}
-				val parsedLyrics = rawContent?.let { LyricsContentParser.parse(it) }
-					?: SessionManager.api.getLyrics(track.id).firstOrNull()?.lines?.map { line ->
-						LyricLine(
-							time = line.start.milliseconds,
-							text = line.value
-						)
+				var rawContentToCache: String? = null
+
+				val parsedLyrics = when (provider) {
+					LyricsProvider.LYRICS_PLUS -> {
+						val raw = fetchRawLyricsPlus(track, currentConfig)
+						rawContentToCache = raw
+						raw?.let { LyricsContentParser.parse(it) }
 					}
+					LyricsProvider.LRCLIB -> {
+						val raw = fetchRawLrcLib(track, currentConfig)
+						rawContentToCache = raw
+						raw?.let { LyricsContentParser.parse(it) }
+					}
+					LyricsProvider.SUBSONIC -> {
+						val subsonicLyrics = SessionManager.api.getLyrics(track.id).firstOrNull()
+						val lines = subsonicLyrics?.lines?.map { line ->
+							LyricLine(time = line.start.milliseconds, text = line.value)
+						}
+
+						if (!lines.isNullOrEmpty()) {
+							rawContentToCache = lines.joinToString("\n") { l ->
+								val t = l.time
+								if (t != null && t.inWholeMilliseconds > 0) {
+									val m = t.inWholeMinutes.toString().padStart(2, '0')
+									val s = (t.inWholeSeconds % 60).toString().padStart(2, '0')
+									val ms = ((t.inWholeMilliseconds % 1000) / 10).toString().padStart(2, '0')
+									"[$m:$s.$ms]${l.text}"
+								} else l.text
+							}
+						}
+						lines
+					}
+				}
+
 				if (!parsedLyrics.isNullOrEmpty()) {
-					return LyricsResult(
-						lines = parsedLyrics,
-						provider = provider
-					)
+					if (rawContentToCache != null) {
+						lyricDao.insertLyrics(LyricEntity(track.id, rawContentToCache, provider))
+					}
+					return LyricsResult(parsedLyrics, provider)
 				}
 			} catch (e: Exception) {
 				println("Provider ${provider.name} failed: ${e.message}")

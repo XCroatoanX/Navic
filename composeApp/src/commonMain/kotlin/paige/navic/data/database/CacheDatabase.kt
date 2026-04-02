@@ -8,11 +8,13 @@ import androidx.room.TypeConverters
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
+import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.ArtistEntity
 import paige.navic.data.database.entities.GenreEntity
+import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.entities.SongEntity
@@ -25,7 +27,8 @@ import paige.navic.data.database.entities.SongEntity
 		PlaylistEntity::class,
 		PlaylistSongCrossRef::class,
 		SongEntity::class,
-		ArtistEntity::class
+		ArtistEntity::class,
+		LyricEntity::class
 	]
 )
 @TypeConverters(Converters::class)
@@ -36,6 +39,7 @@ abstract class CacheDatabase : RoomDatabase() {
 	abstract fun playlistDao(): PlaylistDao
 	abstract fun songDao(): SongDao
 	abstract fun artistDao(): ArtistDao
+	abstract fun lyricDao(): LyricDao
 }
 
 expect fun provideCacheDatabase(): CacheDatabase

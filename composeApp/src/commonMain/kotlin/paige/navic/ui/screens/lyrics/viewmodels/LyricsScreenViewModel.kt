@@ -33,7 +33,7 @@ class LyricsScreenViewModel(
 			_lyricsState.value = UiState.Loading()
 			try {
 				_lyricsState.value = UiState.Success(
-					repository.fetchLyrics(track)//TODO Sync Lyrics
+					repository.fetchLyrics(track)
 				)
 			} catch (e: Exception) {
 				_lyricsState.value = UiState.Error(e)
