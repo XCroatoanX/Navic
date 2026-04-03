@@ -52,8 +52,8 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -64,6 +64,7 @@ import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
 import paige.navic.icons.filled.SkipNext
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.utils.rememberTrackPainter
@@ -75,7 +76,7 @@ fun MiniPlayer(
 	enabled: Boolean = true
 ) {
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 	val haptics = LocalHapticFeedback.current
 

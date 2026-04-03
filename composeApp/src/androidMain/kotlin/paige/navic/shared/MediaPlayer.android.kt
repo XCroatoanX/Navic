@@ -6,7 +6,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.OptIn
-import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.AudioAttributes
@@ -30,7 +29,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.MainActivity
 import paige.navic.R
 import paige.navic.data.database.dao.AlbumDao
@@ -461,9 +459,4 @@ class AndroidMediaPlayerViewModel(
 			.setMediaMetadata(metadata)
 			.build()
 	}
-}
-
-@Composable
-actual fun rememberMediaPlayer(): MediaPlayerViewModel {
-	return koinViewModel<AndroidMediaPlayerViewModel>()
 }

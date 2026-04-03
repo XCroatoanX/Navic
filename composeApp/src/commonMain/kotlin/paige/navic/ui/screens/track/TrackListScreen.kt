@@ -27,13 +27,13 @@ import navic.composeapp.generated.resources.info_no_tracks
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalMediaPlayer
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Note
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.screens.share.dialogs.ShareDialog
@@ -64,7 +64,7 @@ fun TrackListScreen(
 		parameters = { parametersOf(partialTracks) }
 	)
 
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 
 	val tracksState by viewModel.tracksState.collectAsState()
 	val selection by viewModel.selectedTrack.collectAsState()

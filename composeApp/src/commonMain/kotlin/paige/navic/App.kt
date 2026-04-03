@@ -58,13 +58,13 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_update_app
 import navic.composeapp.generated.resources.info_update_app
 import org.jetbrains.compose.resources.getString
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.ShareManager
 import paige.navic.shared.rememberCtx
-import paige.navic.shared.rememberMediaPlayer
 import paige.navic.shared.rememberShareManager
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.navigation.Material3Transitions
@@ -106,7 +106,6 @@ private val config = SavedStateConfiguration {
 }
 
 val LocalCtx = staticCompositionLocalOf<Ctx> { error("no ctx") }
-val LocalMediaPlayer = staticCompositionLocalOf<MediaPlayerViewModel> { error("no media player") }
 val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no backstack") }
 val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> { error("no image builder") }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
@@ -121,7 +120,6 @@ fun App() {
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
-	val mediaPlayer = rememberMediaPlayer()
 	val backStack = rememberNavBackStack(config, Screen.Library())
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
@@ -148,7 +146,6 @@ fun App() {
 	SharedTransitionLayout {
 		CompositionLocalProvider(
 			LocalCtx provides ctx,
-			LocalMediaPlayer provides mediaPlayer,
 			LocalNavStack provides backStack,
 			LocalImageBuilder provides imageBuilder,
 			LocalSnackbarState provides snackbarState,
@@ -254,7 +251,7 @@ private fun entryProvider(
 			NowPlayingScreen()
 		}
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
-			val player = LocalMediaPlayer.current
+			val player = koinViewModel<MediaPlayerViewModel>()
 			val playerState by player.uiState.collectAsState()
 			val track = playerState.currentTrack
 			LyricsScreen(track)

@@ -2,11 +2,10 @@
 
 package paige.navic.shared
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
+import paige.navic.data.repositories.TracksRepository
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
@@ -30,12 +29,9 @@ import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
 import platform.Foundation.NSData
-import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
-import platform.Foundation.NSUserDomainMask
 import platform.Foundation.dataWithContentsOfURL
 import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
 import platform.MediaPlayer.MPMediaItemArtwork
@@ -53,8 +49,9 @@ import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
-	storage: PlayerStateStorage
-) : MediaPlayerViewModel(storage) {
+	storage: PlayerStateStorage,
+	tracksRepository: TracksRepository,
+) : MediaPlayerViewModel(storage, tracksRepository) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
 	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope)
@@ -338,27 +335,5 @@ class IOSMediaPlayerViewModel(
 		val url = NSURL.URLWithString(SessionManager.api.getStreamUrl(track.id)) ?: return
 		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
 		updateNowPlayingInfo(track)
-	}
-}
-
-
-@Composable
-actual fun rememberMediaPlayer(): MediaPlayerViewModel {
-	return viewModel {
-		val producePath = {
-			val directory = NSFileManager.defaultManager.URLForDirectory(
-				directory = NSDocumentDirectory,
-				inDomain = NSUserDomainMask,
-				appropriateForURL = null,
-				create = true,
-				error = null
-			)
-			directory?.path + "/$DATASTORE_FILE_NAME"
-		}
-
-		val dataStore = DataStoreSingleton.getInstance(producePath)
-		val storage = DataStorePlayerStorage(dataStore)
-
-		IOSMediaPlayerViewModel(storage)
 	}
 }

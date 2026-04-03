@@ -23,8 +23,8 @@ import navic.composeapp.generated.resources.action_view_album
 import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.action_view_playlist
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainPlaylist
@@ -34,6 +34,7 @@ import paige.navic.icons.outlined.Artist
 import paige.navic.icons.outlined.Info
 import paige.navic.icons.outlined.MoreHoriz
 import paige.navic.icons.outlined.PlaylistAdd
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
@@ -42,7 +43,7 @@ import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 fun NowPlayingMoreButton() {
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }

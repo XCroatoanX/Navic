@@ -20,12 +20,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingArtworkPager
 import paige.navic.ui.screens.nowPlaying.components.rows.NowPlayingControlsRow
@@ -35,7 +36,7 @@ import paige.navic.utils.rememberTrackPainter
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NowPlayingScreen() {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 
 	val currentScreen = backStack.lastOrNull()

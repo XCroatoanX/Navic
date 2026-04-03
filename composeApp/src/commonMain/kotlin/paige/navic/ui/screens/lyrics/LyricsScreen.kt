@@ -58,9 +58,9 @@ import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.info_lyrics_provider
 import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -68,6 +68,7 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Share
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
@@ -90,7 +91,7 @@ fun LyricsScreen(
 		key = track?.id,
 		parameters = { parametersOf(track) }
 	)
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
 

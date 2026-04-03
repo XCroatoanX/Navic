@@ -10,6 +10,7 @@ import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.DATASTORE_FILE_NAME
 import paige.navic.shared.DataStorePlayerStorage
 import paige.navic.shared.DataStoreSingleton
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlayerStateStorage
 
 actual val platformModule = module {
@@ -31,7 +32,7 @@ actual val platformModule = module {
 		DataStorePlayerStorage(DataStoreSingleton.getInstance(producePath))
 	}
 
-	viewModel {
+	viewModel<MediaPlayerViewModel> {
 		AndroidMediaPlayerViewModel(
 			application = androidApplication(),
 			storage = get(),

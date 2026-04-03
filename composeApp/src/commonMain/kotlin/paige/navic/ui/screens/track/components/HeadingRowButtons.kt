@@ -18,17 +18,18 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.Shuffle
+import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun TracksScreenHeadingRowButtons(
 	tracks: DomainSongCollection
 ) {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	Row(
 		modifier = Modifier.padding(horizontal = 31.dp, vertical = 10.dp),
 		horizontalArrangement = Arrangement.spacedBy(

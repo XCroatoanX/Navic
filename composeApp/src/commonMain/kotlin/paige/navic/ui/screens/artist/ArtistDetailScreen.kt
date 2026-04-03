@@ -51,14 +51,15 @@ import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_similar_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.TrackRow
 import paige.navic.ui.components.layouts.ArtCarousel
@@ -82,7 +83,7 @@ fun ArtistDetailScreen(
 		parameters = { parametersOf(artistId) }
 	)
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val density = LocalDensity.current
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current

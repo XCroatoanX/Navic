@@ -46,7 +46,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
@@ -56,6 +55,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
@@ -102,7 +102,7 @@ fun SearchScreen(
 	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
 
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 

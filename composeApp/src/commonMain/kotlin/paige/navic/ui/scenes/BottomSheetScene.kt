@@ -70,8 +70,8 @@ import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_queue
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -81,6 +81,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Queue
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.ui.theme.defaultFont
@@ -334,7 +335,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
 @Composable
 private fun colorSchemeForTrack(): ColorScheme {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 	val coverUri = remember(track?.coverArtId) {
