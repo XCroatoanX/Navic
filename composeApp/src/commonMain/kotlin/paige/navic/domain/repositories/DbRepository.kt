@@ -18,6 +18,7 @@ import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
+import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
@@ -32,7 +33,8 @@ class DbRepository(
 	private val songDao: SongDao,
 	private val genreDao: GenreDao,
 	private val artistDao: ArtistDao,
-	private val lyricDao: LyricDao
+	private val lyricDao: LyricDao,
+	private val syncDao: SyncActionDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
@@ -53,6 +55,7 @@ class DbRepository(
 		genreDao.clearAllGenres()
 		artistDao.clearAllArtists()
 		lyricDao.clearAllLyrics()
+		syncDao.clearAllActions()
 		Logger.i("DbRepository", "Database wiped completely.")
 	}
 

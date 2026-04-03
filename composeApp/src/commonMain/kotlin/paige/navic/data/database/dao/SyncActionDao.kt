@@ -18,4 +18,7 @@ interface SyncActionDao {
 
 	@Query("DELETE FROM SyncActionEntity WHERE id = :id")
 	suspend fun removeAction(id: Int)
+
+	@Query("DELETE FROM SyncActionEntity")
+	suspend fun clearAllActions()
 }

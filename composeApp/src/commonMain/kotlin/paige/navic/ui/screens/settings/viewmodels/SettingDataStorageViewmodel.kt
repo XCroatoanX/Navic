@@ -49,5 +49,13 @@ class SettingsDataStorageViewModel(
 			syncManager.stopPeriodicSync()
 			_pendingActionCount.value = 0
 		}
+		triggerManualSync()
+	}
+
+	fun removeAllActions() {
+		viewModelScope.launch(Dispatchers.IO) {
+			syncDao.clearAllActions()
+			_pendingActionCount.value = 0
+		}
 	}
 }

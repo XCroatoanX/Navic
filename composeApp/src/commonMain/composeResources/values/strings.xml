@@ -95,15 +95,15 @@
 	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
-	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
+	<string	name="option_enable_scrobbling">Enable scrobbling</string>
 	<string name="option_choose_theme">Application theme</string>
 	<string name="option_replay_gain">ReplayGain</string>
 	<string name="option_gapless_playback">Gapless playback</string>
 	<string name="option_audio_offload">Audio offload</string>
-	<string name="option_live_status">Live Status</string>
-	<string name="option_image_cache_size">Image Cache Size</string>
-	<string name="option_last_sync">Last Full Sync</string>
-	<string name="option_pending_actions">Pending Sync Actions</string>
+	<string name="option_live_status">Live status</string>
+	<string name="option_image_cache_size">Image cache size</string>
+	<string name="option_last_sync">Last full sync</string>
+	<string name="option_pending_actions">Pending sync actions</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_sync_never">Never</string>
@@ -211,9 +211,10 @@
 	<string name="action_remove_from_queue">Remove from queue</string>
 	<string name="action_search_history">Recent Searches</string>
 	<string name="action_remove_from_history">Remove from history</string>
-	<string name="action_clear_image_cache">Clear Image Cache</string>
-	<string name="action_rebuild_database">Rebuild Database</string>
-	<string name="action_trigger_sync">Trigger Manual Sync</string>
+	<string name="action_clear_image_cache">Clear image cache</string>
+	<string name="action_clear_pending_actions">Clear pending sync actions</string>
+	<string name="action_rebuild_database">Rebuild database</string>
+	<string name="action_trigger_sync">Trigger manual sync</string>
 	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>

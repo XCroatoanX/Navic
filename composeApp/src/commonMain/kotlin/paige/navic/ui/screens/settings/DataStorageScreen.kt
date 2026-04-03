@@ -20,6 +20,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_image_cache
+import navic.composeapp.generated.resources.action_clear_pending_actions
 import navic.composeapp.generated.resources.action_rebuild_database
 import navic.composeapp.generated.resources.action_trigger_sync
 import navic.composeapp.generated.resources.info_status_idle
@@ -52,9 +53,9 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Composable
-fun SettingsDataStorageScreen(
-	viewModel: SettingsDataStorageViewModel = koinViewModel<SettingsDataStorageViewModel>()
-) {
+fun SettingsDataStorageScreen() {
+	val viewModel = koinViewModel<SettingsDataStorageViewModel>()
+
 	val ctx = LocalCtx.current
 	val scope = rememberCoroutineScope()
 	val platformContext = LocalPlatformContext.current
@@ -192,6 +193,13 @@ fun SettingsDataStorageScreen(
 							stringResource(Res.string.action_clear_image_cache),
 							color = MaterialTheme.colorScheme.error,
 							modifier = Modifier.weight(1f)
+						)
+					}
+
+					FormRow(onClick = { viewModel.removeAllActions() }) {
+						Text(
+							stringResource(Res.string.action_clear_pending_actions),
+							color = MaterialTheme.colorScheme.error
 						)
 					}
 
