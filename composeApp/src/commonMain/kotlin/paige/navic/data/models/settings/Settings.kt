@@ -57,6 +57,9 @@ class Settings(
 	var accentColourS by preference(0f)
 	var accentColourV by preference(1f)
 
+	// sync related settings
+	var lastFullSyncTime by preference(0L)
+
 	companion object {
 		val shared = Settings(
 			Settings()

@@ -13,6 +13,7 @@ import kotlinx.coroutines.sync.withLock
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
+import paige.navic.data.models.settings.Settings
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.shared.Logger
@@ -24,8 +25,7 @@ import kotlin.time.Instant
 data class SyncState(
 	val isSyncing: Boolean = false,
 	val progress: Float = 0f,
-	val message: String = "",
-	val lastFullSyncTime: Instant = Instant.fromEpochMilliseconds(0)
+	val message: String = ""
 )
 
 class SyncManager(
@@ -36,7 +36,6 @@ class SyncManager(
 	private var syncJob: Job? = null
 	private val syncMutex = Mutex()
 
-	private var lastFullSyncTime: Instant = Instant.fromEpochMilliseconds(0)
 	private val fullSyncThreshold = 1.hours
 
 	private val _syncState = MutableStateFlow(SyncState())
@@ -55,7 +54,7 @@ class SyncManager(
 
 	fun triggerManualSync() {
 		scope.launch {
-			lastFullSyncTime = Instant.fromEpochMilliseconds(0)
+			Settings.shared.lastFullSyncTime = 0
 			runSyncCycle()
 		}
 	}
@@ -79,7 +78,7 @@ class SyncManager(
 			processQueue()
 
 			val currentTime = Clock.System.now()
-			if (currentTime - lastFullSyncTime > fullSyncThreshold) {
+			if (currentTime - Instant.fromEpochMilliseconds(Settings.shared.lastFullSyncTime) > fullSyncThreshold) {
 				Logger.i("SyncManager", "Starting full library pull...")
 
 				_syncState.update {
@@ -93,12 +92,12 @@ class SyncManager(
 				}
 
 				if (result.isSuccess) {
-					lastFullSyncTime = currentTime
+					Settings.shared.lastFullSyncTime = currentTime.toEpochMilliseconds()
 					Logger.i("SyncManager", "Full library sync complete.")
 				}
 
 				_syncState.update {
-					it.copy(isSyncing = false, lastFullSyncTime = lastFullSyncTime)
+					it.copy(isSyncing = false)
 				}
 			}
 		}

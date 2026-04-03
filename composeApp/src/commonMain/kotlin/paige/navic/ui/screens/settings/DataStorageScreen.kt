@@ -43,6 +43,7 @@ import navic.composeapp.generated.resources.title_sync_control
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
+import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
@@ -136,10 +137,12 @@ fun SettingsDataStorageScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_last_sync))
 							Text(
-								text = if (syncState.lastFullSyncTime.toEpochMilliseconds() == 0L) {
+								text = if (Settings.shared.lastFullSyncTime == 0L) {
 									stringResource(Res.string.info_sync_never)
 								} else {
-									syncState.lastFullSyncTime.toRelativeString(
+									Instant.fromEpochMilliseconds(
+										Settings.shared.lastFullSyncTime
+									).toRelativeString(
 										justNow = stringResource(Res.string.info_sync_just_now),
 										minsAgo = stringResource(Res.string.info_sync_mins_ago),
 										hoursAgo = stringResource(Res.string.info_sync_hours_ago),
