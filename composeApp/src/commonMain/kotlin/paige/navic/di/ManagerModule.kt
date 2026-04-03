@@ -1,9 +1,20 @@
 package paige.navic.di
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.module
+import paige.navic.data.database.SyncManager
 
 val managerModule = module {
-	// TODO
-	// singleOf(::provideCacheDatabase)
-	// single { get<CacheDatabase>().getDao() }
+	single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
+
+	single {
+		SyncManager(
+			repository = get(),
+			syncDao = get(),
+			scope = get()
+		)
+	}
 }

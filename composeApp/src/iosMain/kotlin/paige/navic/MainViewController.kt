@@ -3,7 +3,6 @@ package paige.navic
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
-import paige.navic.data.database.DbContainer
 import paige.navic.data.database.provideCacheDatabase
 
 private fun initDb() {

@@ -6,7 +6,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.window.application
-import paige.navic.data.database.DbContainer
 import paige.navic.data.database.provideCacheDatabase
 import paige.navic.di.initKoin
 

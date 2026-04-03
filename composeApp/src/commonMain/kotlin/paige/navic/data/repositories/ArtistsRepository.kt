@@ -1,7 +1,6 @@
 package paige.navic.data.repositories
 
 import kotlinx.coroutines.flow.Flow
-import paige.navic.data.database.DbContainer
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.entities.ArtistEntity
@@ -16,8 +15,8 @@ enum class ArtistListType {
 }
 
 open class ArtistsRepository(
-	private val artistDao: ArtistDao = DbContainer.artistDao,
-	private val syncManager: SyncManager = SyncManager()
+	private val artistDao: ArtistDao,
+	private val syncManager: SyncManager
 ) {
 
 	fun getArtistsFlow(

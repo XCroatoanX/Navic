@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import io.ktor.client.plugins.cache.storage.FileStorage
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import paige.navic.data.database.DbContainer
 import paige.navic.data.database.initAndroidContext
 import paige.navic.data.database.provideCacheDatabase
 import paige.navic.data.session.SessionManager

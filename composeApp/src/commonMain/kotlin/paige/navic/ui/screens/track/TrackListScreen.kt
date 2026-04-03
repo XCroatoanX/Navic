@@ -22,10 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_tracks
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalMediaPlayer
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
@@ -57,9 +58,10 @@ import kotlin.time.Duration
 fun TrackListScreen(
     partialTracks: DomainSongCollection,
     tab: String,
-    viewModel: TrackListViewModel = viewModel(key = partialTracks.toString()) {
-		TrackListViewModel(partialTracks)
-	}
+	viewModel: TrackListViewModel = koinViewModel(
+		key = partialTracks.toString(),
+		parameters = { parametersOf(partialTracks) }
+	)
 ) {
 	val player = LocalMediaPlayer.current
 

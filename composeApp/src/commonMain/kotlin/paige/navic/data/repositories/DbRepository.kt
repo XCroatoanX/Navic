@@ -12,8 +12,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
-import paige.navic.data.database.DbContainer
-import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
@@ -33,8 +31,7 @@ class DbRepository(
 	private val songDao: SongDao = DbContainer.songDao,
 	private val genreDao: GenreDao = DbContainer.genreDao,
 	private val artistDao: ArtistDao = DbContainer.artistDao,
-	private val lyricDao: LyricDao = DbContainer.lyricDao,
-	private val syncManager: SyncManager = SyncManager()
+	private val lyricDao: LyricDao = DbContainer.lyricDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
@@ -62,7 +59,6 @@ class DbRepository(
 		onProgress: (Float, String) -> Unit = { _, _ -> }
 	): Result<Unit> = runDbOp {
 		onProgress(0.0f, "Starting sync...")
-		syncManager.processQueue()
 
 		onProgress(0.02f, "Fetching genres...")
 		syncGenres().getOrThrow()

@@ -20,7 +20,7 @@ import paige.navic.utils.UiState
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
     initialListType: AlbumListType?,
-    private val repository: AlbumsRepository = AlbumsRepository()
+	private val repository: AlbumsRepository
 ) : ViewModel() {
 	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()

@@ -18,7 +18,7 @@ import paige.navic.utils.UiState
 
 class TrackListViewModel(
     private val partialCollection: DomainSongCollection,
-    private val repository: TracksRepository = TracksRepository()
+    private val repository: TracksRepository
 ) : ViewModel() {
 	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
 	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()

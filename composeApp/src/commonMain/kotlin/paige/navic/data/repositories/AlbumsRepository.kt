@@ -2,7 +2,6 @@ package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.flow.Flow
-import paige.navic.data.database.DbContainer
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.entities.SyncActionType
@@ -13,8 +12,8 @@ import paige.navic.domain.models.DomainAlbum
 import kotlin.time.Clock
 
 open class AlbumsRepository(
-	private val albumDao: AlbumDao = DbContainer.albumDao,
-	private val syncManager: SyncManager = SyncManager()
+	private val albumDao: AlbumDao,
+	private val syncManager: SyncManager
 ) {
 	fun getAlbumsFlow(
 		offset: Int,

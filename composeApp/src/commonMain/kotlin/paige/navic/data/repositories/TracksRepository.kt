@@ -1,7 +1,6 @@
 package paige.navic.data.repositories
 
 import dev.zt64.subsonic.api.model.AlbumInfo
-import paige.navic.data.database.DbContainer
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.PlaylistDao
@@ -17,10 +16,10 @@ import paige.navic.domain.models.DomainSong
 import kotlin.time.Clock
 
 class TracksRepository(
-	private val albumDao: AlbumDao = DbContainer.albumDao,
-	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
-	private val songDao: SongDao = DbContainer.songDao,
-	private val syncManager: SyncManager = SyncManager()
+	private val albumDao: AlbumDao,
+	private val playlistDao: PlaylistDao,
+	private val songDao: SongDao,
+	private val syncManager: SyncManager
 ) {
 	suspend fun fetchWithAllTracks(collection: DomainSongCollection): DomainSongCollection {
 		if (collection.songs.isNotEmpty()) {

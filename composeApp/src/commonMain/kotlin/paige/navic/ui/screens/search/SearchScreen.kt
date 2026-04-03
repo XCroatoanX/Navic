@@ -44,6 +44,8 @@ import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.Screen
@@ -93,7 +95,7 @@ fun SearchScreen(
 	val player = LocalMediaPlayer.current
 
 	val artistListViewModel = viewModel { ArtistListViewModel() }
-	val albumListViewModel = viewModel { AlbumListViewModel(AlbumListType.AlphabeticalByName) }
+	val albumListViewModel: AlbumListViewModel = koinInject { parametersOf(AlbumListType.AlphabeticalByName) }
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 
