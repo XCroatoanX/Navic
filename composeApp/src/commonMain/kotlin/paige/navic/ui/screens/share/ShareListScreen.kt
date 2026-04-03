@@ -113,6 +113,7 @@ fun ShareListScreen() {
 	DeletionDialog(
 		endpoint = DeletionEndpoint.SHARE,
 		id = deletionId,
-		onIdClear = { deletionId = null }
+		onIdClear = { deletionId = null },
+		onRefresh = { viewModel.refreshShares() }
 	)
 }

@@ -231,11 +231,15 @@ fun PlaylistListScreen(
 	DeletionDialog(
 		endpoint = DeletionEndpoint.PLAYLIST,
 		id = deletionId,
-		onIdClear = { deletionId = null }
+		onIdClear = { deletionId = null },
+		onRefresh = { viewModel.refreshPlaylists() }
 	)
 
 	if (createDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
-		PlaylistCreateDialog(onDismissRequest = { createDialogShown = false })
+		PlaylistCreateDialog(
+			onDismissRequest = { createDialogShown = false },
+			onRefresh = { viewModel.refreshPlaylists() }
+		)
 	}
 }

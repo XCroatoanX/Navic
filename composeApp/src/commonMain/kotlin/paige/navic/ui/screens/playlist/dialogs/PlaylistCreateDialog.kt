@@ -36,6 +36,7 @@ import paige.navic.utils.UiState
 @Composable
 fun PlaylistCreateDialog(
 	onDismissRequest: () -> Unit,
+	onRefresh: () -> Unit,
 	tracks: List<DomainSong> = emptyList(),
 	navigateAfterwards: Boolean = true
 ) {
@@ -52,6 +53,7 @@ fun PlaylistCreateDialog(
 			when (event) {
 				is PlaylistCreateDialogViewModel.Event.Dismiss -> {
 					onDismissRequest()
+					onRefresh()
 					if (navigateAfterwards) {
 						if (backStack.contains(Screen.NowPlaying)) {
 							backStack.remove(Screen.NowPlaying)

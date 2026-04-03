@@ -252,6 +252,7 @@ fun LibraryScreen() {
 	DeletionDialog(
 		endpoint = DeletionEndpoint.PLAYLIST,
 		id = deletionId,
-		onIdClear = { deletionId = null }
+		onIdClear = { deletionId = null },
+		onRefresh = { playlistListViewModel.refreshPlaylists() }
 	)
 }

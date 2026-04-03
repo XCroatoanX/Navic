@@ -205,12 +205,10 @@ fun PlaylistUpdateDialog(
 
 	if (createDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
-		(PlaylistCreateDialog(
+		PlaylistCreateDialog(
 			navigateAfterwards = false,
-			onDismissRequest = {
-				createDialogShown = false
-				viewModel.refreshResults()
-			}
-		))
+			onDismissRequest = { createDialogShown = false },
+			onRefresh = { viewModel.refreshResults() }
+		)
 	}
 }

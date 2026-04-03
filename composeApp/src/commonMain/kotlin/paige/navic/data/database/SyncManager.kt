@@ -104,6 +104,7 @@ class SyncManager(
 				when (action.actionType) {
 					SyncActionType.STAR -> SessionManager.api.star(action.itemId)
 					SyncActionType.UNSTAR -> SessionManager.api.unstar(action.itemId)
+					SyncActionType.DELETE_PLAYLIST -> SessionManager.api.deletePlaylist(action.itemId)
 				}
 
 				syncDao.removeAction(action.id)
