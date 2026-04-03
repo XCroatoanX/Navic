@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.managers
 
 import android.content.Context
 import android.content.Intent

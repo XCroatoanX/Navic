@@ -7,11 +7,8 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.shared.AndroidMediaPlayerViewModel
-import paige.navic.shared.DATASTORE_FILE_NAME
-import paige.navic.shared.DataStorePlayerStorage
-import paige.navic.shared.DataStoreSingleton
+import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.shared.PlayerStateStorage
 
 actual val platformModule = module {
 	single<CacheDatabase> {
@@ -24,19 +21,19 @@ actual val platformModule = module {
 			.build()
 	}
 
-	single<PlayerStateStorage> {
+	single<PlayerStateRepository> {
 		val context = androidApplication()
 		val producePath = {
-			context.filesDir.resolve(DATASTORE_FILE_NAME).absolutePath
+			context.filesDir.resolve(PlayerStateRepository.DATASTORE_FILE_NAME).absolutePath
 		}
-		DataStorePlayerStorage(DataStoreSingleton.getInstance(producePath))
+		PlayerStateRepository(PlayerStateRepository.getInstance(producePath))
 	}
 
 	viewModel<MediaPlayerViewModel> {
 		AndroidMediaPlayerViewModel(
 			application = androidApplication(),
-			storage = get(),
-			tracksRepository = get(),
+			stateRepository = get(),
+			trackRepository = get(),
 			albumDao = get()
 		)
 	}

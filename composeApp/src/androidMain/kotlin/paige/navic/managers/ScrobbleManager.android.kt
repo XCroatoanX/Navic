@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.managers
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player

@@ -9,6 +9,8 @@ import paige.navic.domain.repositories.TrackRepository
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.IOSScrobbleManager
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -49,9 +51,9 @@ import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
-	storage: PlayerStateStorage,
-	tracksRepository: TrackRepository,
-) : MediaPlayerViewModel(storage, tracksRepository) {
+	stateRepository: PlayerStateRepository,
+	trackRepository: TrackRepository,
+) : MediaPlayerViewModel(stateRepository, trackRepository) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
 	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope)

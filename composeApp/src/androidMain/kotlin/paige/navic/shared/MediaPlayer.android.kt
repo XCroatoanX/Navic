@@ -38,6 +38,8 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.utils.effectiveGain
 
 class PlaybackService : MediaSessionService() {
@@ -137,10 +139,10 @@ class PlaybackService : MediaSessionService() {
 
 class AndroidMediaPlayerViewModel(
 	private val application: Application,
-	storage: PlayerStateStorage,
-	tracksRepository: TrackRepository,
+	stateRepository: PlayerStateRepository,
+	trackRepository: TrackRepository,
 	private val albumDao: AlbumDao
-) : MediaPlayerViewModel(storage, tracksRepository) {
+) : MediaPlayerViewModel(stateRepository, trackRepository) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 

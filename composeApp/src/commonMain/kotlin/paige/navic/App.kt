@@ -63,9 +63,9 @@ import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.shared.ShareManager
+import paige.navic.managers.ShareManager
 import paige.navic.shared.rememberCtx
-import paige.navic.shared.rememberShareManager
+import paige.navic.managers.rememberShareManager
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy

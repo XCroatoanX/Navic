@@ -16,6 +16,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
+import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.domain.repositories.TrackRepository
 import kotlin.time.Clock
 
@@ -33,8 +34,8 @@ data class PlayerUiState(
 )
 
 abstract class MediaPlayerViewModel(
-	private val storage: PlayerStateStorage,
-	private val tracksRepository: TrackRepository
+	private val stateRepository: PlayerStateRepository,
+	private val trackRepository: TrackRepository
 ) : ViewModel() {
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
@@ -77,7 +78,7 @@ abstract class MediaPlayerViewModel(
 				currentTrack = track.copy(starredAt = Clock.System.now())
 			)
 
-			tracksRepository.starTrack(track)
+			trackRepository.starTrack(track)
 		}
 	}
 
@@ -89,14 +90,14 @@ abstract class MediaPlayerViewModel(
 				currentTrack = track.copy(starredAt = null)
 			)
 
-			tracksRepository.unstarTrack(track)
+			trackRepository.unstarTrack(track)
 		}
 	}
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
 
 	private suspend fun restoreState() {
-		val savedJson = storage.loadState()
+		val savedJson = stateRepository.loadState()
 		if (!savedJson.isNullOrBlank()) {
 			try {
 				val restoredState = Json.decodeFromJsonElement<PlayerUiState>(
@@ -142,7 +143,7 @@ abstract class MediaPlayerViewModel(
 				.collect { state ->
 					try {
 						val jsonString = Json.encodeToString(state)
-						storage.saveState(jsonString)
+						stateRepository.saveState(jsonString)
 					} catch (e: Exception) {
 						e.printStackTrace()
 						println("Failed to save state: ${e.message}")

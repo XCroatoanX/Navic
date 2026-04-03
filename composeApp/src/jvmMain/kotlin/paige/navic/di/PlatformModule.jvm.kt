@@ -5,12 +5,9 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
-import paige.navic.shared.DATASTORE_FILE_NAME
-import paige.navic.shared.DataStorePlayerStorage
-import paige.navic.shared.DataStoreSingleton
+import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.shared.JvmMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.shared.PlayerStateStorage
 import java.io.File
 
 actual val platformModule = module {
@@ -25,7 +22,7 @@ actual val platformModule = module {
 			.build()
 	}
 
-	single<PlayerStateStorage> {
+	single<PlayerStateRepository> {
 		val producePath = {
 			val home = System.getProperty("user.home")
 			val os = System.getProperty("os.name").lowercase()
@@ -43,15 +40,15 @@ actual val platformModule = module {
 				else -> File(home, ".navic")
 			}
 			if (!directory.exists()) directory.mkdirs()
-			File(directory, DATASTORE_FILE_NAME).absolutePath
+			File(directory, PlayerStateRepository.DATASTORE_FILE_NAME).absolutePath
 		}
-		DataStorePlayerStorage(DataStoreSingleton.getInstance(producePath))
+		PlayerStateRepository(PlayerStateRepository.getInstance(producePath))
 	}
 
 	viewModel<MediaPlayerViewModel> {
 		JvmMediaPlayerViewModel(
-			storage = get(),
-			tracksRepository = get()
+			stateRepository = get(),
+			trackRepository = get()
 		)
 	}
 }

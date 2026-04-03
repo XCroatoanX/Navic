@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.managers
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

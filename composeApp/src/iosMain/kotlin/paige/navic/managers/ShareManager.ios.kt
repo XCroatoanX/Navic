@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.managers
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

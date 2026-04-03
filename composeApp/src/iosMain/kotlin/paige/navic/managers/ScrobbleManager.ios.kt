@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.managers
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
