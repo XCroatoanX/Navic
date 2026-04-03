@@ -1,4 +1,4 @@
-package paige.navic.data.repositories
+package paige.navic.domain.repositories
 
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.SyncManager
@@ -14,11 +14,10 @@ enum class ArtistListType {
 	AlphabeticalByName, Random, Starred
 }
 
-open class ArtistsRepository(
+class ArtistRepository(
 	private val artistDao: ArtistDao,
 	private val syncManager: SyncManager
 ) {
-
 	fun getArtistsFlow(
 		offset: Int,
 		listType: ArtistListType

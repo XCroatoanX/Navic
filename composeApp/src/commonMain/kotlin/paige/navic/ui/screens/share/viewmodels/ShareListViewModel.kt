@@ -7,12 +7,12 @@ import dev.zt64.subsonic.api.model.Share
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.repositories.SharesRepository
+import paige.navic.domain.repositories.ShareRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 
 class ShareListViewModel(
-	private val repository: SharesRepository = SharesRepository()
+	private val repository: ShareRepository = ShareRepository()
 ) : ViewModel() {
 	private val _sharesState = MutableStateFlow<UiState<List<Share>>>(UiState.Loading())
 	val sharesState = _sharesState.asStateFlow()

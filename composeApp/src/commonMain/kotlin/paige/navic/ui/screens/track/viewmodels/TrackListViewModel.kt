@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.data.repositories.TracksRepository
+import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainSong
@@ -18,7 +18,7 @@ import paige.navic.utils.UiState
 
 class TrackListViewModel(
     private val partialCollection: DomainSongCollection,
-    private val repository: TracksRepository
+    private val repository: TrackRepository
 ) : ViewModel() {
 	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
 	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()

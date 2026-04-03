@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import paige.navic.data.repositories.SearchRepository
+import paige.navic.domain.repositories.SearchRepository
 import paige.navic.utils.UiState
 
 @OptIn(FlowPreview::class)

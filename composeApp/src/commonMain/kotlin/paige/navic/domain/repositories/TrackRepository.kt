@@ -1,4 +1,4 @@
-package paige.navic.data.repositories
+package paige.navic.domain.repositories
 
 import dev.zt64.subsonic.api.model.AlbumInfo
 import paige.navic.data.database.SyncManager
@@ -15,7 +15,7 @@ import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import kotlin.time.Clock
 
-class TracksRepository(
+class TrackRepository(
 	private val albumDao: AlbumDao,
 	private val playlistDao: PlaylistDao,
 	private val songDao: SongDao,

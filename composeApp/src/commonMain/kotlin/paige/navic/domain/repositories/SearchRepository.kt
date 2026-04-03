@@ -1,4 +1,4 @@
-package paige.navic.data.repositories
+package paige.navic.domain.repositories
 
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.SongDao

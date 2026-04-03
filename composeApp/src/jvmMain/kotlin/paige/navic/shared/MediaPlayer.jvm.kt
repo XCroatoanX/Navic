@@ -1,13 +1,13 @@
 package paige.navic.shared
 
-import paige.navic.data.repositories.TracksRepository
+import paige.navic.domain.repositories.TrackRepository
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 
 // TODO: implement this class
 class JvmMediaPlayerViewModel(
 	storage: PlayerStateStorage,
-	tracksRepository: TracksRepository
+	tracksRepository: TrackRepository
 ) : MediaPlayerViewModel(storage, tracksRepository) {
 	override fun addToQueueSingle(track: DomainSong) {
 	}

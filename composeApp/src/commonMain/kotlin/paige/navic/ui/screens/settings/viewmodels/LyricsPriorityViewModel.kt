@@ -6,7 +6,7 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
-import paige.navic.data.repositories.LyricsConfig
+import paige.navic.domain.repositories.LyricsConfig
 import paige.navic.utils.UiState
 
 class LyricsPriorityViewModel(

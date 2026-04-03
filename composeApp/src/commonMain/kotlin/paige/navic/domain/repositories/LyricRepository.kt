@@ -1,4 +1,4 @@
-package paige.navic.data.repositories
+package paige.navic.domain.repositories
 
 import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
@@ -177,7 +177,7 @@ object LyricsContentParser {
 	}
 }
 
-class LyricsRepository(
+class LyricRepository(
 	private val lyricDao: LyricDao,
 	private val client: HttpClient,
 	private val settings: Settings

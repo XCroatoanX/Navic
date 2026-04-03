@@ -12,15 +12,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.repositories.AlbumsRepository
+import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
-    initialListType: AlbumListType = AlbumListType.AlphabeticalByArtist,
-	private val repository: AlbumsRepository,
+	initialListType: AlbumListType = AlbumListType.AlphabeticalByArtist,
+	private val repository: AlbumRepository,
 ) : ViewModel() {
 	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()

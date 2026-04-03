@@ -1,8 +1,6 @@
 package paige.navic.data.database
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +12,7 @@ import kotlinx.coroutines.sync.withLock
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
-import paige.navic.data.repositories.DbRepository
+import paige.navic.domain.repositories.DbRepository
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours

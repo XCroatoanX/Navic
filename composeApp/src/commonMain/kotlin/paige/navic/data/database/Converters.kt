@@ -1,7 +1,7 @@
 package paige.navic.data.database
 
 import androidx.room.TypeConverter
-import paige.navic.data.repositories.LyricsProvider
+import paige.navic.domain.repositories.LyricsProvider
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Duration

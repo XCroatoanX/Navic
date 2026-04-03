@@ -35,7 +35,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.repositories.TracksRepository
+import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.utils.effectiveGain
@@ -138,7 +138,7 @@ class PlaybackService : MediaSessionService() {
 class AndroidMediaPlayerViewModel(
 	private val application: Application,
 	storage: PlayerStateStorage,
-	tracksRepository: TracksRepository,
+	tracksRepository: TrackRepository,
 	private val albumDao: AlbumDao
 ) : MediaPlayerViewModel(storage, tracksRepository) {
 	private var controller: MediaController? = null

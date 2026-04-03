@@ -16,7 +16,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
-import paige.navic.data.repositories.TracksRepository
+import paige.navic.domain.repositories.TrackRepository
 import kotlin.time.Clock
 
 @Serializable
@@ -34,7 +34,7 @@ data class PlayerUiState(
 
 abstract class MediaPlayerViewModel(
 	private val storage: PlayerStateStorage,
-	private val tracksRepository: TracksRepository
+	private val tracksRepository: TrackRepository
 ) : ViewModel() {
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()

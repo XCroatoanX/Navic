@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.database.relations.GenreWithAlbums
-import paige.navic.data.repositories.GenresRepository
+import paige.navic.domain.repositories.GenreRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 
 class GenreListViewModel(
-	private val repository: GenresRepository
+	private val repository: GenreRepository
 ) : ViewModel() {
 
 	private val _isRefreshing = MutableStateFlow(false)

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.models.User
-import paige.navic.data.repositories.DbRepository
+import paige.navic.domain.repositories.DbRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.LoginState
 import kotlin.onFailure

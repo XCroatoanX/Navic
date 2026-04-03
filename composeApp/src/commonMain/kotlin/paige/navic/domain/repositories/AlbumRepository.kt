@@ -1,4 +1,4 @@
-package paige.navic.data.repositories
+package paige.navic.domain.repositories
 
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import kotlin.time.Clock
 
-open class AlbumsRepository(
+class AlbumRepository(
 	private val albumDao: AlbumDao,
 	private val syncManager: SyncManager
 ) {

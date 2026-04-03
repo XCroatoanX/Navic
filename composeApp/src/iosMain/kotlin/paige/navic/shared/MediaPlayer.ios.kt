@@ -5,7 +5,7 @@ package paige.navic.shared
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
-import paige.navic.data.repositories.TracksRepository
+import paige.navic.domain.repositories.TrackRepository
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
@@ -50,7 +50,7 @@ import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
 	storage: PlayerStateStorage,
-	tracksRepository: TracksRepository,
+	tracksRepository: TrackRepository,
 ) : MediaPlayerViewModel(storage, tracksRepository) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null

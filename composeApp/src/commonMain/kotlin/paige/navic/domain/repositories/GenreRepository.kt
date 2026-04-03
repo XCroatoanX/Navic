@@ -1,4 +1,4 @@
-package paige.navic.data.repositories
+package paige.navic.domain.repositories
 
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.async
@@ -12,11 +12,10 @@ import paige.navic.data.database.relations.GenreWithAlbums
 import paige.navic.data.session.SessionManager
 import kotlin.random.Random
 
-open class GenresRepository(
+class GenreRepository(
 	private val genreDao: GenreDao,
 	private val albumDao: AlbumDao
 ) {
-
 	fun getGenresWithAlbumsFlow(): Flow<List<GenreWithAlbums>> {
 		return genreDao.getGenresWithAlbumsFlow()
 	}

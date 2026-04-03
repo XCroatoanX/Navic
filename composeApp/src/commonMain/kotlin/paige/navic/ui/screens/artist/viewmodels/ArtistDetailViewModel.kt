@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.repositories.DbRepository
+import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
