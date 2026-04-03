@@ -3,11 +3,13 @@ package paige.navic.di
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ShareManager
 import paige.navic.shared.MediaPlayerViewModel
 
 actual val platformModule = module {
@@ -36,5 +38,9 @@ actual val platformModule = module {
 			trackRepository = get(),
 			albumDao = get()
 		)
+	}
+
+	single<ShareManager> {
+		ShareManager(context = get())
 	}
 }

@@ -62,7 +62,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_share_lyrics
 import navic.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalShareManager
+import org.koin.compose.koinInject
 import paige.navic.LocalSnackbarState
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -70,6 +70,7 @@ import paige.navic.icons.desktop.Navic
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
+import paige.navic.managers.ShareManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.FormRow
 
@@ -82,7 +83,7 @@ fun LyricsShareSheet(
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
 ) {
-	val shareManager = LocalShareManager.current
+	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 

@@ -1,18 +1,12 @@
 package paige.navic.managers
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toAwtImage
-import paige.navic.LocalSnackbarState
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 
-actual class ShareManager(
-	private val snackbarState: SnackbarHostState
-) {
+actual class ShareManager {
 	actual suspend fun shareImage(
 		bitmap: ImageBitmap,
 		fileName: String
@@ -29,7 +23,6 @@ actual class ShareManager(
 			},
 			null
 		)
-		snackbarState.showSnackbar("Copied to clipboard")
 	}
 	actual suspend fun shareString(string: String) {
 		Toolkit.getDefaultToolkit().systemClipboard.setContents(
@@ -44,13 +37,5 @@ actual class ShareManager(
 			},
 			null
 		)
-		snackbarState.showSnackbar("Copied to clipboard")
 	}
 }
-
-@Composable
-actual fun rememberShareManager(): ShareManager {
-	val snackbarState = LocalSnackbarState.current
-	return remember { ShareManager(snackbarState) }
-}
-

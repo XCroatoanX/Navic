@@ -1,7 +1,5 @@
 package paige.navic.managers
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -70,6 +68,3 @@ actual class ShareManager {
 
 	actual suspend fun shareString(string: String) = share(string)
 }
-
-@Composable
-actual fun rememberShareManager(): ShareManager = remember { ShareManager() }

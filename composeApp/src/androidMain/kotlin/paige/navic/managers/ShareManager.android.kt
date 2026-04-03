@@ -3,11 +3,8 @@ package paige.navic.managers
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -62,10 +59,4 @@ actual class ShareManager(
 		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		context.startActivity(chooser)
 	}
-}
-
-@Composable
-actual fun rememberShareManager(): ShareManager {
-	val context = LocalContext.current
-	return remember { ShareManager(context) }
 }

@@ -2,10 +2,12 @@ package paige.navic.di
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ShareManager
 import paige.navic.shared.JvmMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 import java.io.File
@@ -51,4 +53,6 @@ actual val platformModule = module {
 			trackRepository = get()
 		)
 	}
+
+	singleOf(::ShareManager)
 }

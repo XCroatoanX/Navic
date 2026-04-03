@@ -37,13 +37,14 @@ import navic.composeapp.generated.resources.info_share_expires_in
 import navic.composeapp.generated.resources.info_shared_by
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalCtx
-import paige.navic.LocalShareManager
 import paige.navic.LocalSnackbarState
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
+import paige.navic.managers.ShareManager
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
@@ -59,7 +60,7 @@ fun ShareListScreenItem(
 	onSetDeletionId: (newDeletionId: String) -> Unit
 ) {
 	val ctx = LocalCtx.current
-	val shareManager = LocalShareManager.current
+	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	var expanded by remember { mutableStateOf(false) }
 	var currentTime by remember { mutableStateOf(Clock.System.now()) }
