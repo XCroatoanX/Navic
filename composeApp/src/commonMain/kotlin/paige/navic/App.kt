@@ -83,6 +83,7 @@ import paige.navic.ui.screens.settings.FontsScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
 import paige.navic.ui.screens.settings.SettingsAcknowledgementsScreen
 import paige.navic.ui.screens.settings.SettingsAppearanceScreen
+import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
@@ -294,6 +295,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.Acknowledgements>(metadata = detailPane("settings")) {
 			SettingsAcknowledgementsScreen()
+		}
+		entry<Screen.Settings.DataStorage>(metadata = detailPane("settings")) {
+			SettingsDataStorageScreen()
 		}
 		entry<Screen.Settings.Fonts> {
 			FontsScreen()

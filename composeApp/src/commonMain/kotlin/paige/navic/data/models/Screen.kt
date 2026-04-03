@@ -55,6 +55,7 @@ sealed interface Screen : NavKey {
 		@Serializable data object NowPlaying : Settings
 		@Serializable data object About : Settings
 		@Serializable data object Acknowledgements : Settings
+		@Serializable data object DataStorage : Settings
 		@Serializable data object Fonts : Settings
 	}
 }

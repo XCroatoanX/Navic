@@ -19,6 +19,7 @@ import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
 import paige.navic.ui.screens.settings.viewmodels.LyricsPriorityViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
+import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareDialogViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
 import paige.navic.ui.screens.track.viewmodels.TrackListViewModel
@@ -48,6 +49,7 @@ val viewModelModule = module {
 	viewModelOf(::PlaylistCreateDialogViewModel)
 	viewModelOf(::PlaylistUpdateDialogViewModel)
 	viewModelOf(::TrackListViewModel)
+	viewModelOf(::SettingsDataStorageViewModel)
 	viewModel {
 		NavtabsViewModel(
 			settings = Settings(),

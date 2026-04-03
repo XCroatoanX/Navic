@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -22,7 +23,8 @@ import kotlin.time.Instant
 data class SyncState(
 	val isSyncing: Boolean = false,
 	val progress: Float = 0f,
-	val message: String = ""
+	val message: String = "",
+	val lastFullSyncTime: Instant = Instant.fromEpochMilliseconds(0)
 )
 
 class SyncManager(
@@ -79,10 +81,14 @@ class SyncManager(
 			if (currentTime - lastFullSyncTime > fullSyncThreshold) {
 				println("SyncManager: Starting full library pull...")
 
-				_syncState.value = SyncState(isSyncing = true, message = "Starting sync...")
+				_syncState.update {
+					it.copy(isSyncing = true, message = "Starting sync...")
+				}
 
 				val result = repository.syncEverything { progress, message ->
-					_syncState.value = SyncState(isSyncing = true, progress = progress, message = message)
+					_syncState.update {
+						it.copy(isSyncing = true, progress = progress, message = message)
+					}
 				}
 
 				if (result.isSuccess) {
@@ -90,7 +96,9 @@ class SyncManager(
 					println("SyncManager: Full library sync complete.")
 				}
 
-				_syncState.value = SyncState(isSyncing = false)
+				_syncState.update {
+					it.copy(isSyncing = false, lastFullSyncTime = lastFullSyncTime)
+				}
 			}
 		}
 	}
