@@ -20,7 +20,7 @@ interface GenreDao {
 
 	@Transaction
 	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
-	fun getGenres(): List<GenreEntity>
+	suspend fun getGenres(): List<GenreEntity>
 
 	@Transaction
 	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")

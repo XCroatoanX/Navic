@@ -21,7 +21,7 @@ interface PlaylistDao {
 
 	@Transaction
 	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")
-	fun getAllPlaylists(): List<PlaylistWithSongs>
+	suspend fun getAllPlaylists(): List<PlaylistWithSongs>
 
 	@Transaction
 	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")
