@@ -57,12 +57,13 @@ import kotlin.time.Duration
 @Composable
 fun TrackListScreen(
     partialTracks: DomainSongCollection,
-    tab: String,
-	viewModel: TrackListViewModel = koinViewModel(
+    tab: String
+) {
+	val viewModel = koinViewModel<TrackListViewModel>(
 		key = partialTracks.toString(),
 		parameters = { parametersOf(partialTracks) }
 	)
-) {
+
 	val player = LocalMediaPlayer.current
 
 	val tracksState by viewModel.tracksState.collectAsState()

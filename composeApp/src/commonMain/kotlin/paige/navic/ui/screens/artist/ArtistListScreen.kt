@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,10 +63,12 @@ import paige.navic.utils.withoutTop
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistListScreen(
-	nested: Boolean = false,
-	viewModel: ArtistListViewModel = koinViewModel()
+	nested: Boolean = false
 ) {
+	val viewModel = koinViewModel<ArtistListViewModel>()
 	val artistsState by viewModel.artistsState.collectAsState()
+	val selectedArtist by viewModel.selectedArtist.collectAsState()
+	val starredState by viewModel.starredState.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	Scaffold(
@@ -159,7 +160,18 @@ fun ArtistListScreen(
 											)
 										}
 									}
-									artistsScreenItems(artists, viewModel, "artists")
+									items(artists, { it.id }) { artist ->
+										ArtistsScreenItem(
+											modifier = Modifier.animateItem(),
+											tab = "artists",
+											artist = artist,
+											selected = artist == selectedArtist,
+											starredState = starredState,
+											onSelect = { viewModel.selectArtist(artist) },
+											onDeselect = { viewModel.clearSelection() },
+											onSetStarred = { viewModel.starArtist(it) }
+										)
+									}
 								}
 
 								if (grouped.isEmpty()) {
@@ -189,21 +201,23 @@ fun ArtistListScreen(
 @Composable
 fun ArtistsScreenItem(
 	modifier: Modifier = Modifier,
-	artist: DomainArtist,
 	tab: String,
-	viewModel: ArtistListViewModel
+	artist: DomainArtist,
+	selected: Boolean,
+	starredState: UiState<Boolean>,
+	onSelect: () -> Unit,
+	onDeselect: () -> Unit,
+	onSetStarred: (starred: Boolean) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val selection by viewModel.selectedArtist.collectAsState()
-	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
 				backStack.add(Screen.ArtistDetail(artist.id))
 			},
-			onLongClick = { viewModel.selectArtist(artist) },
+			onLongClick = onSelect,
 			coverArtId = artist.coverArtId,
 			title = artist.name,
 			subtitle = pluralStringResource(
@@ -215,9 +229,9 @@ fun ArtistsScreenItem(
 			tab = tab
 		)
 		Dropdown(
-			expanded = selection == artist,
-			onDismissRequest = { viewModel.clearSelection() })
-		{
+			expanded = selected,
+			onDismissRequest = onDeselect
+		) {
 			val starred = (starredState as? UiState.Success)?.data
 			DropdownItem(
 				text = {
@@ -233,23 +247,10 @@ fun ArtistsScreenItem(
 					Icon(if (starred == true) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
-					if (starred == true)
-						viewModel.unstarSelectedArtist()
-					else viewModel.starSelectedArtist()
-					viewModel.clearSelection()
+					onSetStarred(starred != true)
 				},
 				enabled = starred != null
 			)
 		}
-	}
-}
-
-fun LazyGridScope.artistsScreenItems(
-	data: List<DomainArtist>,
-	viewModel: ArtistListViewModel,
-	tab: String
-) {
-	items(data, { it.id }) { album ->
-		ArtistsScreenItem(Modifier.animateItem(), album, tab, viewModel)
 	}
 }

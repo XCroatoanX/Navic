@@ -84,12 +84,12 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LyricsScreen(
-	track: DomainSong?,
-	viewModel: LyricsScreenViewModel = koinViewModel(
+	track: DomainSong?
+) {
+	val viewModel = koinViewModel<LyricsScreenViewModel>(
 		key = track?.id,
 		parameters = { parametersOf(track) }
 	)
-) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()

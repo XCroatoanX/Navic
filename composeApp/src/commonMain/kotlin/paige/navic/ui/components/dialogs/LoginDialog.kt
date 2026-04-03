@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -26,8 +27,6 @@ import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
@@ -48,24 +47,26 @@ import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
 import navic.composeapp.generated.resources.title_login_dialog
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.data.models.User
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Badge
 import paige.navic.icons.outlined.Link
 import paige.navic.icons.outlined.Password
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.FormButton
-import paige.navic.ui.viewmodels.LoginViewModel
 import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginDialog(
-	viewModel: LoginViewModel = koinViewModel(),
+	loginState: LoginState<User?>,
+	instanceState: TextFieldState,
+	usernameState: TextFieldState,
+	passwordState: TextFieldState,
+	onLogin: () -> Unit,
 	onDismissRequest: () -> Unit
 ) {
-	val loginState by viewModel.loginState.collectAsState()
 	val isBusy = loginState is LoginState.Loading || loginState is LoginState.Syncing
 
 	val linkColor = MaterialTheme.colorScheme.primary
@@ -88,7 +89,7 @@ fun LoginDialog(
 		title = { Text(stringResource(Res.string.title_login_dialog)) },
 		buttons = {
 			FormButton(
-				onClick = { viewModel.login() },
+				onClick = onLogin,
 				color = MaterialTheme.colorScheme.primary,
 				enabled = !isBusy
 			) {
@@ -165,7 +166,7 @@ fun LoginDialog(
 			Spacer(Modifier.height(2.dp))
 
 			OutlinedTextField(
-				state = viewModel.instanceState,
+				state = instanceState,
 				leadingIcon = { Icon(Icons.Outlined.Link, null) },
 				label = { Text(stringResource(Res.string.option_account_navidrome_instance)) },
 				placeholder = { Text("demo.navidrome.org") },
@@ -179,7 +180,7 @@ fun LoginDialog(
 			)
 			Spacer(Modifier.height(8.dp))
 			OutlinedTextField(
-				state = viewModel.usernameState,
+				state = usernameState,
 				leadingIcon = { Icon(Icons.Outlined.Badge, null) },
 				label = { Text(stringResource(Res.string.option_account_username)) },
 				lineLimits = TextFieldLineLimits.SingleLine,
@@ -192,7 +193,7 @@ fun LoginDialog(
 				)
 			)
 			OutlinedSecureTextField(
-				state = viewModel.passwordState,
+				state = passwordState,
 				leadingIcon = { Icon(Icons.Outlined.Password, null) },
 				label = { Text(stringResource(Res.string.option_account_password)) },
 				enabled = !isBusy,

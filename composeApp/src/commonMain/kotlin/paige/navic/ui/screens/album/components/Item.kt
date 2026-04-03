@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
@@ -25,21 +23,22 @@ import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.layouts.ArtGridItem
-import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.utils.UiState
 
 @Composable
 fun AlbumListScreenItem(
 	modifier: Modifier = Modifier,
-	album: DomainAlbum,
 	tab: String,
-	viewModel: AlbumListViewModel,
+	album: DomainAlbum,
+	selected: Boolean,
+	starredState: UiState<Boolean>,
+	onSelect: () -> Unit,
+	onDeselect: () -> Unit,
+	onSetStarred: (starred: Boolean) -> Unit,
 	onSetShareId: (String) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val selection by viewModel.selectedAlbum.collectAsState()
-	val starredState by viewModel.starredState.collectAsState()
 	val scope = rememberCoroutineScope()
 	Box(modifier) {
 		ArtGridItem(
@@ -49,7 +48,7 @@ fun AlbumListScreenItem(
 					backStack.add(Screen.TrackList(album, tab))
 				}
 			},
-			onLongClick = { viewModel.selectAlbum(album) },
+			onLongClick = onSelect,
 			coverArtId = album.coverArtId,
 			title = album.name,
 			subtitle = album.artistName,
@@ -57,16 +56,14 @@ fun AlbumListScreenItem(
 			tab = tab
 		)
 		Dropdown(
-			expanded = selection == album,
-			onDismissRequest = {
-				viewModel.selectAlbum(null)
-			}
+			expanded = selected,
+			onDismissRequest = onDeselect
 		) {
 			DropdownItem(
 				text = { Text(stringResource(Res.string.action_share)) },
 				leadingIcon = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
-					viewModel.selectAlbum(null)
+					onDeselect()
 					onSetShareId(album.id)
 				},
 			)
@@ -86,8 +83,8 @@ fun AlbumListScreenItem(
 					Icon(if (starred == true) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
-					viewModel.starAlbum(starred != true)
-					viewModel.selectAlbum(null)
+					onDeselect()
+					onSetStarred(starred != true)
 				},
 				enabled = starred != null
 			)

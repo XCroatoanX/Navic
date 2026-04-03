@@ -87,22 +87,16 @@ class ArtistListViewModel(
 		_selectedArtist.value = null
 	}
 
-	fun starSelectedArtist() {
+	fun starArtist(starred: Boolean) {
 		val artist = _selectedArtist.value ?: return
 		viewModelScope.launch {
 			try {
-				repository.starArtist(artist)
+				if (starred) {
+					repository.unstarArtist(artist)
+				} else {
+					repository.starArtist(artist)
+				}
 				_starredState.value = UiState.Success(true)
-			} catch(_: Exception) { }
-		}
-	}
-
-	fun unstarSelectedArtist() {
-		val artist = _selectedArtist.value ?: return
-		viewModelScope.launch {
-			try {
-				repository.unstarArtist(artist)
-				_starredState.value = UiState.Success(false)
 			} catch(_: Exception) { }
 		}
 	}

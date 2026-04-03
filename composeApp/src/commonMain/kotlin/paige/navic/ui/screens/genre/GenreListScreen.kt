@@ -43,9 +43,9 @@ import paige.navic.utils.withoutTop
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenreListScreen(
-	nested: Boolean,
-	viewModel: GenreListViewModel = koinViewModel()
+	nested: Boolean
 ) {
+	val viewModel = koinViewModel<GenreListViewModel>()
 	val state by viewModel.genresState.collectAsState()
 	val isRefreshing by viewModel.isRefreshing.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()

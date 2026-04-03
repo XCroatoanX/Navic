@@ -67,15 +67,23 @@ import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryScreen(
-	albumListViewModel: AlbumListViewModel = koinViewModel(
+fun LibraryScreen() {
+	val albumListViewModel = koinViewModel<AlbumListViewModel>(
 		key = "libraryAlbums",
 		parameters = { parametersOf(AlbumListType.Recent) }
-	),
-	playlistListViewModel: PlaylistListViewModel = koinViewModel(),
-	artistListViewModel: ArtistListViewModel = koinViewModel(),
-	genreListViewModel: GenreListViewModel = koinViewModel()
-) {
+	)
+	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
+	val albumListStarredState by albumListViewModel.starredState.collectAsState()
+
+	val playlistListViewModel = koinViewModel<PlaylistListViewModel>()
+	val playlistListSelection by playlistListViewModel.selectedPlaylist.collectAsState()
+
+	val artistListViewModel = koinViewModel<ArtistListViewModel>()
+	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
+	val artistListStarredState by artistListViewModel.starredState.collectAsState()
+
+	val genreListViewModel = koinViewModel<GenreListViewModel>()
+
 	val recentsState by albumListViewModel.albumsState.collectAsState()
 	val playlistsState by playlistListViewModel.playlistsState.collectAsState()
 	val artistsState by artistListViewModel.artistsState.collectAsState()
@@ -170,10 +178,14 @@ fun LibraryScreen(
 					) { album ->
 						AlbumListScreenItem(
 							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
+							tab = "library",
 							album = album,
-							viewModel = albumListViewModel,
-							onSetShareId = { shareId = it },
-							tab = "library"
+							selected = album == albumListSelection,
+							starredState = albumListStarredState,
+							onSelect = { albumListViewModel.selectAlbum(album) },
+							onDeselect = { albumListViewModel.selectAlbum(null) },
+							onSetStarred = { albumListViewModel.starAlbum(it) },
+							onSetShareId = { shareId = it }
 						)
 					}
 					horizontalSection(
@@ -186,7 +198,9 @@ fun LibraryScreen(
 						PlaylistListScreenItem(
 							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
 							playlist = playlist,
-							viewModel = playlistListViewModel,
+							selected = playlist == playlistListSelection,
+							onSelect = { playlistListViewModel.selectPlaylist(playlist) },
+							onDeselect = { playlistListViewModel.clearSelection() },
 							onSetShareId = { shareId = it },
 							onSetDeletionId = { deletionId = it },
 							tab = "library"
@@ -202,9 +216,13 @@ fun LibraryScreen(
 					) { artist ->
 						ArtistsScreenItem(
 							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
+							tab = "library",
 							artist = artist,
-							viewModel = artistListViewModel,
-							tab = "library"
+							selected = artist == artistListSelection,
+							starredState = artistListStarredState,
+							onSelect = { artistListViewModel.selectArtist(artist) },
+							onDeselect = { artistListViewModel.clearSelection() },
+							onSetStarred = { artistListViewModel.starArtist(it) }
 						)
 					}
 

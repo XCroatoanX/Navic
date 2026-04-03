@@ -37,10 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.russhwolf.settings.Settings
-import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
@@ -76,9 +73,9 @@ fun RootTopBar(
 	title: @Composable () -> Unit,
 	scrollBehavior: TopAppBarScrollBehavior,
 	actions: @Composable RowScope.() -> Unit = {},
-	viewModel: LoginViewModel = koinViewModel(),
-	navViewModel: NavtabsViewModel = viewModel { NavtabsViewModel(Settings(), Json) }
 ) {
+	val navViewModel = koinViewModel<NavtabsViewModel>()
+	val viewModel = koinViewModel<LoginViewModel>()
 	val loginState by viewModel.loginState.collectAsState()
 	var showLogin by remember { mutableStateOf(false) }
 
@@ -112,8 +109,12 @@ fun RootTopBar(
 	)
 	if (showLogin && loginState !is LoginState.Success) {
 		LoginDialog(
-			viewModel = viewModel,
-			onDismissRequest = { showLogin = false }
+			loginState = loginState,
+			onDismissRequest = { showLogin = false },
+			instanceState = viewModel.instanceState,
+			usernameState = viewModel.usernameState,
+			passwordState = viewModel.passwordState,
+			onLogin = { viewModel.login() }
 		)
 	}
 }

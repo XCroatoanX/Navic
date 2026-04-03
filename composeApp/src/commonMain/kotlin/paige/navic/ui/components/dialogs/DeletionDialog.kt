@@ -32,6 +32,7 @@ import navic.composeapp.generated.resources.title_delete_share
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
@@ -73,11 +74,11 @@ class DeletionViewModel : ViewModel() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DeletionDialog(
-	viewModel: DeletionViewModel = viewModel { DeletionViewModel() },
 	endpoint: DeletionEndpoint,
 	id: String?,
 	onIdClear: () -> Unit
 ) {
+	val viewModel = koinViewModel<DeletionViewModel>()
 	val snackbarState = LocalSnackbarState.current
 	val state by viewModel.state.collectAsState()
 

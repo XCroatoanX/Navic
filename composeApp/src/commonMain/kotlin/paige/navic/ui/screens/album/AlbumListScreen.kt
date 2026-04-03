@@ -61,22 +61,30 @@ import kotlin.time.Duration
 @Composable
 fun AlbumListScreen(
 	nested: Boolean = false,
-	listType: AlbumListType? = null,
-	viewModel: AlbumListViewModel = koinViewModel(
+	listType: AlbumListType
+) {
+	val viewModel = koinViewModel<AlbumListViewModel>(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) }
 	)
-) {
+	val currentListType by viewModel.listType.collectAsState()
 	val albumsState by viewModel.albumsState.collectAsState()
+	val selectedAlbum by viewModel.selectedAlbum.collectAsState()
+	val starredState by viewModel.starredState.collectAsState()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	val isRefreshing by viewModel.isRefreshing.collectAsState()
 	val isPaginating by viewModel.isPaginating.collectAsState()
 	val actions: @Composable RowScope.() -> Unit = {
-		if (listType == null) {
-			AlbumListScreenSortButton(!nested, viewModel)
-		}
+		AlbumListScreenSortButton(
+			nested = nested,
+			currentListType = currentListType,
+			onSetListType = {
+				viewModel.setListType(it)
+				viewModel.refreshAlbums()
+			}
+		)
 	}
 	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
 
@@ -132,9 +140,13 @@ fun AlbumListScreen(
 							items(state.data, { it.id }) { album ->
 								AlbumListScreenItem(
 									modifier = Modifier.animateItem(fadeInSpec = null),
-									album = album,
-									viewModel = viewModel,
 									tab = "albums",
+									album = album,
+									selected = album == selectedAlbum,
+									starredState = starredState,
+									onSelect = { viewModel.selectAlbum(album) },
+									onDeselect = { viewModel.selectAlbum(null) },
+									onSetStarred = { viewModel.starAlbum(it) },
 									onSetShareId = { newShareId ->
 										shareId = newShareId
 									}

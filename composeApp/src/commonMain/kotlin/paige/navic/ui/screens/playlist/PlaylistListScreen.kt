@@ -12,6 +12,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -75,12 +76,13 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaylistListScreen(
-	nested: Boolean = false,
-	viewModel: PlaylistListViewModel = koinViewModel()
+	nested: Boolean = false
 ) {
-	val ctx = LocalCtx.current
-
+	val viewModel = koinViewModel<PlaylistListViewModel>()
 	val playlistsState by viewModel.playlistsState.collectAsState()
+	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
+
+	val ctx = LocalCtx.current
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -95,18 +97,25 @@ fun PlaylistListScreen(
 
 	val gridState = rememberLazyGridState()
 
+	val actions: @Composable RowScope.() -> Unit = {
+		PlaylistListScreenSortButton(
+			nested = nested,
+			onSortPlaylists = { viewModel.sortPlaylists() }
+		)
+	}
+
 	Scaffold(
 		topBar = {
 			if (!nested) {
 				RootTopBar(
 					title = { Text(stringResource(Res.string.title_playlists)) },
 					scrollBehavior = scrollBehavior,
-					actions = { PlaylistListScreenSortButton(!nested, viewModel) }
+					actions = actions
 				)
 			} else {
 				NestedTopBar(
 					title = { Text(stringResource(Res.string.title_playlists)) },
-					actions = { PlaylistListScreenSortButton(!nested, viewModel) }
+					actions = actions
 				)
 			}
 		},
@@ -184,9 +193,11 @@ fun PlaylistListScreen(
 					items(data, { it.id }) { playlist ->
 						PlaylistListScreenItem(
 							modifier = Modifier.animateItem(fadeInSpec = null),
-							playlist = playlist,
 							tab = "playlists",
-							viewModel = viewModel,
+							playlist = playlist,
+							selected = playlist == selectedPlaylist,
+							onSelect = { viewModel.selectPlaylist(playlist) },
+							onDeselect = { viewModel.clearSelection() },
 							onSetShareId = { newShareId ->
 								shareId = newShareId
 							},

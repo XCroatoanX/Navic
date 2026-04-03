@@ -43,7 +43,6 @@ import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
@@ -84,18 +83,26 @@ enum class SearchCategory(val res: StringResource) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-	nested: Boolean,
-	viewModel: SearchViewModel = koinViewModel()
+	nested: Boolean
 ) {
+	val viewModel = koinViewModel<SearchViewModel>()
+
+	val artistListViewModel = koinViewModel<ArtistListViewModel>()
+	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
+	val artistListStarredState by artistListViewModel.starredState.collectAsState()
+
+	val albumListViewModel = koinViewModel<AlbumListViewModel> {
+		parametersOf(AlbumListType.AlphabeticalByName)
+	}
+	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
+	val albumListStarredState by albumListViewModel.starredState.collectAsState()
+
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
 	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
 
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
-
-	val artistListViewModel: ArtistListViewModel = koinViewModel()
-	val albumListViewModel: AlbumListViewModel = koinInject { parametersOf(AlbumListType.AlphabeticalByName) }
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 
@@ -202,10 +209,14 @@ fun SearchScreen(
 								AlbumListScreenItem(
 									modifier = Modifier.animateItem(fadeInSpec = null)
 										.width(150.dp),
+									tab = "search",
 									album = album,
-									viewModel = albumListViewModel,
+									selected = album == albumListSelection,
+									starredState = albumListStarredState,
+									onSelect = { albumListViewModel.selectAlbum(album) },
+									onDeselect = { albumListViewModel.selectAlbum(null) },
+									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
-									tab = "search"
 								)
 							}
 
@@ -219,9 +230,13 @@ fun SearchScreen(
 								ArtistsScreenItem(
 									modifier = Modifier.animateItem(fadeInSpec = null)
 										.width(150.dp),
+									tab = "search",
 									artist = artist,
-									viewModel = artistListViewModel,
-									tab = "search"
+									selected = artist == artistListSelection,
+									starredState = artistListStarredState,
+									onSelect = { artistListViewModel.selectArtist(artist) },
+									onDeselect = { artistListViewModel.clearSelection() },
+									onSetStarred = { artistListViewModel.starArtist(it) }
 								)
 							}
 						} else {

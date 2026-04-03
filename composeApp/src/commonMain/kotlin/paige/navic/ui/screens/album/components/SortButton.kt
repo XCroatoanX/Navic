@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,14 +22,13 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.common.SelectionDropdown
 import paige.navic.ui.components.layouts.TopBarButton
-import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 
 @Composable
 fun AlbumListScreenSortButton(
-	root: Boolean,
-	viewModel: AlbumListViewModel
+	nested: Boolean,
+	currentListType: AlbumListType,
+	onSetListType: (listType: AlbumListType) -> Unit
 ) {
-	val currentListType by viewModel.listType.collectAsState()
 	val items = remember {
 		listOf(
 			AlbumListType.Random,
@@ -43,7 +41,7 @@ fun AlbumListScreenSortButton(
 	}
 	Box {
 		var expanded by remember { mutableStateOf(false) }
-		if (root) {
+		if (!nested) {
 			IconButton(onClick = {
 				expanded = true
 			}) {
@@ -70,10 +68,7 @@ fun AlbumListScreenSortButton(
 			expanded = expanded,
 			onDismissRequest = { expanded = false },
 			selection = currentListType,
-			onSelect = {
-				viewModel.setListType(it)
-				viewModel.refreshAlbums()
-			}
+			onSelect = onSetListType
 		)
 	}
 }

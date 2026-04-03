@@ -37,12 +37,12 @@ import paige.navic.utils.UiState
 fun PlaylistCreateDialog(
 	onDismissRequest: () -> Unit,
 	tracks: List<DomainSong> = emptyList(),
-	navigateAfterwards: Boolean = true,
-	viewModel: PlaylistCreateDialogViewModel = koinViewModel(
+	navigateAfterwards: Boolean = true
+) {
+	val viewModel = koinViewModel<PlaylistCreateDialogViewModel>(
 		key = tracks.joinToString { it.id },
 		parameters = { parametersOf(tracks) }
 	)
-) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val state by viewModel.creationState.collectAsState()

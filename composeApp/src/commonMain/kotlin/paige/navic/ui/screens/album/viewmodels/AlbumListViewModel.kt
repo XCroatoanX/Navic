@@ -19,8 +19,8 @@ import paige.navic.utils.UiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
-    initialListType: AlbumListType?,
-	private val repository: AlbumsRepository
+    initialListType: AlbumListType = AlbumListType.AlphabeticalByArtist,
+	private val repository: AlbumsRepository,
 ) : ViewModel() {
 	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
@@ -38,7 +38,7 @@ open class AlbumListViewModel(
 	private val _isPaginating = MutableStateFlow(false)
 	val isPaginating: StateFlow<Boolean> = _isPaginating
 
-	private val _listType = MutableStateFlow(initialListType ?: AlbumListType.AlphabeticalByArtist)
+	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
 
 	val gridState = LazyGridState()

@@ -30,15 +30,16 @@ import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 @Composable
 fun PlaylistListScreenItem(
 	modifier: Modifier = Modifier,
-	playlist: DomainPlaylist,
 	tab: String,
-	viewModel: PlaylistListViewModel,
+	playlist: DomainPlaylist,
+	selected: Boolean,
+	onSelect: () -> Unit,
+	onDeselect: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetDeletionId: (String) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val selection by viewModel.selectedPlaylist.collectAsState()
 	val scope = rememberCoroutineScope()
 	Box(modifier) {
 		ArtGridItem(
@@ -48,7 +49,7 @@ fun PlaylistListScreenItem(
 					backStack.add(Screen.TrackList(playlist, tab))
 				}
 			},
-			onLongClick = { viewModel.selectPlaylist(playlist) },
+			onLongClick = onSelect,
 			coverArtId = playlist.coverArtId,
 			title = playlist.name,
 			subtitle = buildString {
@@ -67,17 +68,15 @@ fun PlaylistListScreenItem(
 			tab = tab
 		)
 		Dropdown(
-			expanded = selection == playlist,
-			onDismissRequest = {
-				viewModel.clearSelection()
-			}
+			expanded = selected,
+			onDismissRequest = onDeselect
 		) {
 			DropdownItem(
 				text = { Text(stringResource(Res.string.action_share)) },
 				leadingIcon = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
 					onSetShareId(playlist.id)
-					viewModel.clearSelection()
+					onDeselect()
 				},
 			)
 			DropdownItem(
@@ -85,7 +84,7 @@ fun PlaylistListScreenItem(
 				leadingIcon = { Icon(Icons.Outlined.PlaylistRemove, null) },
 				onClick = {
 					onSetDeletionId(playlist.id)
-					viewModel.clearSelection()
+					onDeselect()
 				}
 			)
 		}

@@ -75,12 +75,12 @@ import paige.navic.utils.fadeFromTop
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ArtistDetailScreen(
-	artistId: String,
-	viewModel: ArtistDetailViewModel = koinViewModel(
+	artistId: String
+) {
+	val viewModel = koinViewModel<ArtistDetailViewModel>(
 		key = artistId,
 		parameters = { parametersOf(artistId) }
 	)
-) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val density = LocalDensity.current
