@@ -46,10 +46,7 @@ abstract class CacheDatabase : RoomDatabase() {
 	abstract fun syncActionDao(): SyncActionDao
 }
 
-expect fun provideCacheDatabase(): CacheDatabase
-
 @Suppress("KotlinNoActualForExpect")
 expect object CacheDatabaseConstructor : RoomDatabaseConstructor<CacheDatabase> {
 	override fun initialize(): CacheDatabase
 }
-
