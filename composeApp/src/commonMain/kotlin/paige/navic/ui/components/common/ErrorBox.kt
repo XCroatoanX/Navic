@@ -41,6 +41,7 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Copy
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Refresh
+import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -63,7 +64,7 @@ fun <T>ErrorBox(
 	)
 	var copied by remember { mutableStateOf(false) }
 	LaunchedEffect(error.error) {
-		error.error.printStackTrace()
+		Logger.e("ErrorBox", "Printing stack trace for error", error.error)
 	}
 	LaunchedEffect(copied) {
 		if (copied) {

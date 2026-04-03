@@ -15,6 +15,7 @@ import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -79,7 +80,7 @@ class SyncManager(
 
 			val currentTime = Clock.System.now()
 			if (currentTime - lastFullSyncTime > fullSyncThreshold) {
-				println("SyncManager: Starting full library pull...")
+				Logger.i("SyncManager", "Starting full library pull...")
 
 				_syncState.update {
 					it.copy(isSyncing = true, message = "Starting sync...")
@@ -93,7 +94,7 @@ class SyncManager(
 
 				if (result.isSuccess) {
 					lastFullSyncTime = currentTime
-					println("SyncManager: Full library sync complete.")
+					Logger.i("SyncManager", "Full library sync complete.")
 				}
 
 				_syncState.update {
@@ -116,10 +117,10 @@ class SyncManager(
 				}
 
 				syncDao.removeAction(action.id)
-				println("SyncManager: Successfully synced ${action.actionType} for ${action.itemId}")
+				Logger.i("SyncManager", "Successfully synced ${action.actionType} for ${action.itemId}")
 
 			} catch (e: Exception) {
-				println("SyncManager: Network failed. Action left in queue. ${e.message}")
+				Logger.e("SyncManager", "Network failed. Action left in queue.", e)
 				break
 			}
 		}

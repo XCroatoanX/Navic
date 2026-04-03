@@ -112,8 +112,7 @@ abstract class MediaPlayerViewModel(
 				syncPlayerWithState(stateToApply)
 
 			} catch (e: Exception) {
-				e.printStackTrace()
-				println("Failed to restore state: ${e.message}")
+				Logger.e("MediaPlayerViewModel", "Failed to restore state!", e)
 				_uiState.value = PlayerUiState()
 			}
 		}
@@ -145,8 +144,7 @@ abstract class MediaPlayerViewModel(
 						val jsonString = Json.encodeToString(state)
 						stateRepository.saveState(jsonString)
 					} catch (e: Exception) {
-						e.printStackTrace()
-						println("Failed to save state: ${e.message}")
+						Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
 					}
 				}
 		}

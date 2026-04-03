@@ -9,6 +9,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
@@ -129,6 +133,16 @@ private fun Actions(
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val user = (loginState as? LoginState.Success)?.data
+	val platformContext = LocalPlatformContext.current
+	val avatarModel = remember(user?.avatarUrl) {
+		ImageRequest.Builder(platformContext)
+			.data(user?.avatarUrl)
+			.memoryCacheKey(user?.avatarUrl)
+			.diskCacheKey(user?.avatarUrl)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
 
 	val isSearchEnabled = config?.tabs?.any {
 		it.id == NavbarTab.Id.SEARCH && it.visible
@@ -169,23 +183,23 @@ private fun Actions(
 		if (user != null) {
 			var expanded by remember { mutableStateOf(false) }
 			Box {
-				IconButton(
-					modifier = Modifier.padding(end = 12.dp),
-					onClick = {
-						ctx.clickSound()
-						expanded = true
-					}
-				) {
-					AsyncImage(
-						model = user.avatarUrl,
-						contentDescription = user.name,
-						contentScale = ContentScale.Crop,
-						modifier = Modifier
-							.size(36.dp)
-							.clip(CircleShape)
-							.background(MaterialTheme.colorScheme.surfaceContainer)
-					)
-				}
+				AsyncImage(
+					model = avatarModel,
+					contentDescription = user.name,
+					contentScale = ContentScale.Crop,
+					modifier = Modifier
+						.padding(
+							start = 11.dp,
+							end = 12.dp
+						)
+						.size(36.dp)
+						.clip(CircleShape)
+						.background(MaterialTheme.colorScheme.surfaceContainer)
+						.clickable {
+							ctx.clickSound()
+							expanded = true
+						}
+				)
 				Dropdown(
 					expanded = expanded,
 					onDismissRequest = { expanded = false }

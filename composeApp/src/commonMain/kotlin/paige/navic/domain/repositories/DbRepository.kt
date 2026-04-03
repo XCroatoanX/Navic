@@ -23,6 +23,7 @@ import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
+import paige.navic.shared.Logger
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
@@ -52,38 +53,43 @@ class DbRepository(
 		genreDao.clearAllGenres()
 		artistDao.clearAllArtists()
 		lyricDao.clearAllLyrics()
-		println("Database wiped completely.")
+		Logger.i("DbRepository", "Database wiped completely.")
 	}
 
 	suspend fun syncEverything(
 		onProgress: (Float, String) -> Unit = { _, _ -> }
 	): Result<Unit> = runDbOp {
-		onProgress(0.0f, "Starting sync...")
+		val progressCallback = { progress: Float, message: String ->
+			Logger.i("DbRepository", "$progress $message")
+			onProgress(progress, message)
+		}
 
-		onProgress(0.02f, "Fetching genres...")
+		progressCallback(0.0f, "Starting sync...")
+
+		progressCallback(0.02f, "Fetching genres...")
 		syncGenres().getOrThrow()
 
-		onProgress(0.04f, "Fetching artists...")
+		progressCallback(0.04f, "Fetching artists...")
 		syncArtists().getOrThrow()
 
-		onProgress(0.07f, "Fetching playlists...")
+		progressCallback(0.07f, "Fetching playlists...")
 		val playlists = syncPlaylists().getOrThrow()
 
 		syncLibrarySongs { localProgress, message ->
 			val globalProgress = 0.10f + (localProgress * 0.65f)
-			onProgress(globalProgress, message)
+			progressCallback(globalProgress, message)
 		}.getOrThrow()
 
 		val totalPlaylists = playlists.size
 		if (totalPlaylists > 0) {
 			playlists.forEachIndexed { index, playlist ->
 				val globalProgress = 0.75f + (0.25f * ((index + 1).toFloat() / totalPlaylists))
-				onProgress(globalProgress, "Syncing playlist: ${playlist.name}...")
+				progressCallback(globalProgress, "Syncing playlist: ${playlist.name}...")
 				syncPlaylistSongs(playlist.playlistId).getOrThrow()
 			}
 		}
 
-		onProgress(1.0f, "Sync complete!")
+		progressCallback(1.0f, "Sync complete!")
 	}
 
 	suspend fun syncLibrarySongs(
@@ -137,7 +143,7 @@ class DbRepository(
 		songDao.insertSongs(songEntities)
 
 		if (songEntities.isNotEmpty() || albumEntities.isNotEmpty()) {
-			println("Sync Completed: ${albumEntities.size} albums, ${songEntities.size} songs")
+			Logger.i("DbRepository", "- Songs Synced: ${albumEntities.size} albums, ${songEntities.size} songs")
 		}
 
 		onProgress(1.0f, "Library saved.")
@@ -162,7 +168,7 @@ class DbRepository(
 		}
 
 		playlistDao.insertPlaylists(playlistEntities)
-		println("Playlists Synced: ${playlistEntities.size} playlists found")
+		Logger.i("DbRepository", "- Playlists Synced: ${playlistEntities.size} playlists found")
 
 		playlistEntities
 	}
@@ -176,7 +182,7 @@ class DbRepository(
 			songDao.insertSongs(songEntities)
 		}
 
-		println("Playlist [$playlistId] synced: ${songEntities.size} songs")
+		Logger.i("DbRepository", "- Playlist [$playlistId] synced: ${songEntities.size} songs")
 		songEntities.size
 	}
 
@@ -184,7 +190,7 @@ class DbRepository(
 		val remoteGenres = api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
 		genreDao.insertGenres(entities)
-		println("Genres Synced: ${entities.size} genres found")
+		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
 
 	suspend fun syncArtists(): Result<Unit> = runDbOp {
@@ -195,7 +201,7 @@ class DbRepository(
 		val entities = flatArtists.map { it.toEntity() }
 
 		artistDao.insertArtists(entities)
-		println("Artists Synced: ${entities.size} artists found")
+		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
 
 	suspend fun fetchArtistMetadata(artistId: String): Result<DomainArtist> = runDbOp {

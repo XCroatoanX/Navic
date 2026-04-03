@@ -13,6 +13,7 @@ import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
+import paige.navic.shared.Logger
 import kotlin.time.Clock
 
 class TrackRepository(
@@ -26,7 +27,7 @@ class TrackRepository(
 			return collection
 		} else {
 			try {
-				println("collection ${collection.name} does not have songs, refreshing")
+				Logger.w("TrackRepository", "collection ${collection.name} does not have songs, refreshing")
 				return when (collection) {
 					is DomainAlbum -> {
 						val album = SessionManager.api.getAlbum(collection.id)
@@ -41,8 +42,7 @@ class TrackRepository(
 					}
 				}
 			} catch (e: Exception) {
-				e.printStackTrace()
-				println("failed to get collection with songs, returning original one from db")
+				Logger.w("TrackRepository", "failed to get collection with songs, returning original one from db", e)
 				return collection
 			}
 		}

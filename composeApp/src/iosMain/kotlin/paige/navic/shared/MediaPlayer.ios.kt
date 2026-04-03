@@ -87,7 +87,7 @@ class IOSMediaPlayerViewModel(
 			audioSession.setCategory(AVAudioSessionCategoryPlayback, error = null)
 			audioSession.setActive(true, error = null)
 		} catch (e: Exception) {
-			println("failed to setup audio session ${e.message}")
+			Logger.e("IOSMediaPlayerViewModel", "Failed to setup audio session!", e)
 		}
 	}
 

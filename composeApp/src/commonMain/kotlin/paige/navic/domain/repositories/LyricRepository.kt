@@ -17,6 +17,7 @@ import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
+import paige.navic.shared.Logger
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -100,7 +101,7 @@ object LyricsContentParser {
 				parseLrc(text)
 			}
 		} catch (e: Exception) {
-			println("Lyrics parsing failed: ${e.message}")
+			Logger.e("LyricRepository", "Lyrics parsing failed!", e)
 			null
 		}
 	}
@@ -248,7 +249,7 @@ class LyricRepository(
 					return LyricsResult(parsedLyrics, provider)
 				}
 			} catch (e: Exception) {
-				println("Provider ${provider.name} failed: ${e.message}")
+				Logger.e("LyricRepository", "Provider ${provider.name} failed!", e)
 				continue
 			}
 		}

@@ -14,6 +14,7 @@ import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
+import paige.navic.shared.Logger
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.UiState
 
@@ -85,7 +86,7 @@ class ArtistDetailViewModel(
 						}
 					}
 					.onFailure { error ->
-						println("Failed to fetch artist metadata: ${error.message}")
+						Logger.e("ArtistDetailViewModel", "Failed to fetch artist metadata", error)
 					}
 			} catch (e: Exception) {
 				_artistState.value = UiState.Error(e)
