@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
@@ -24,7 +26,9 @@ data class ArtistState(
 
 class ArtistDetailViewModel(
 	private val artistId: String,
-	private val repository: DbRepository = DbRepository()
+	private val repository: DbRepository,
+	private val artistDao: ArtistDao,
+	private val albumDao: AlbumDao
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
@@ -38,11 +42,11 @@ class ArtistDetailViewModel(
 	private fun loadArtistData() {
 		viewModelScope.launch {
 			try {
-				val artistEntity = DbContainer.artistDao.getArtistById(artistId)
+				val artistEntity = artistDao.getArtistById(artistId)
 					?: throw Exception("Artist not found in database")
 				val domainArtist = artistEntity.toDomainModel()
 
-				val albumsWithSongs = DbContainer.albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
+				val albumsWithSongs = albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
 				val domainAlbums = albumsWithSongs.map { it.toDomainModel() }
 
 				val domainSongs = albumsWithSongs.flatMap { it.songs }
@@ -51,7 +55,7 @@ class ArtistDetailViewModel(
 					.take(10)
 
 				val initialSimilarArtists = domainArtist.similarArtistIds.mapNotNull { id ->
-					DbContainer.artistDao.getArtistById(id)?.toDomainModel()
+					artistDao.getArtistById(id)?.toDomainModel()
 				}
 
 				_artistState.value = UiState.Success(
@@ -69,7 +73,7 @@ class ArtistDetailViewModel(
 						if (currentState != null) {
 
 							val updatedSimilarArtists = updatedArtist.similarArtistIds.mapNotNull { id ->
-								DbContainer.artistDao.getArtistById(id)?.toDomainModel()
+								artistDao.getArtistById(id)?.toDomainModel()
 							}
 
 							_artistState.value = UiState.Success(

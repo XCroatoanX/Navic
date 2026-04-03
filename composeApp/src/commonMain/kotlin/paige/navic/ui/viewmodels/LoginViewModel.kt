@@ -14,7 +14,7 @@ import paige.navic.utils.LoginState
 import kotlin.onFailure
 
 class LoginViewModel(
-	private val repository: DbRepository = DbRepository()
+	private val repository: DbRepository
 ) : ViewModel() {
 	private val _loginState = MutableStateFlow<LoginState<User?>>(LoginState.Idle)
 	val loginState: StateFlow<LoginState<User?>> = _loginState.asStateFlow()

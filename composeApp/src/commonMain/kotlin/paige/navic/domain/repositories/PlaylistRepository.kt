@@ -12,7 +12,7 @@ import paige.navic.domain.models.DomainPlaylist
 import paige.navic.utils.UiState
 
 class PlaylistRepository(
-    private val playlistDao: PlaylistDao = DbContainer.playlistDao
+	private val playlistDao: PlaylistDao
 ) {
 	fun getPlaylistsFlow(): Flow<UiState<List<DomainPlaylist>>> = flow {
 		val localData = playlistDao

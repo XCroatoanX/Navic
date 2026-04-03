@@ -6,8 +6,8 @@ import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.session.SessionManager
 
 class SearchRepository(
-	private val albumDao: AlbumDao = DbContainer.albumDao,
-	private val songDao: SongDao = DbContainer.songDao
+	private val albumDao: AlbumDao,
+	private val songDao: SongDao
 ) {
 	suspend fun search(query: String): List<Any> {
 		val data = SessionManager.api.searchID3(query)

@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -35,6 +34,7 @@ import navic.composeapp.generated.resources.info_no_artists
 import navic.composeapp.generated.resources.title_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
@@ -65,7 +65,7 @@ import paige.navic.utils.withoutTop
 @Composable
 fun ArtistListScreen(
 	nested: Boolean = false,
-	viewModel: ArtistListViewModel = viewModel { ArtistListViewModel() }
+	viewModel: ArtistListViewModel = koinViewModel()
 ) {
 	val artistsState by viewModel.artistsState.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()

@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
@@ -37,6 +36,8 @@ import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.Screen
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
@@ -67,12 +68,13 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
-	albumListViewModel: AlbumListViewModel = viewModel(key = "libraryAlbums") {
-		AlbumListViewModel(AlbumListType.Recent)
-	},
-	playlistListViewModel: PlaylistListViewModel = viewModel { PlaylistListViewModel() },
-	artistListViewModel: ArtistListViewModel = viewModel { ArtistListViewModel() },
-	genreListViewModel: GenreListViewModel = viewModel { GenreListViewModel() }
+	albumListViewModel: AlbumListViewModel = koinViewModel(
+		key = "libraryAlbums",
+		parameters = { parametersOf(AlbumListType.Recent) }
+	),
+	playlistListViewModel: PlaylistListViewModel = koinViewModel(),
+	artistListViewModel: ArtistListViewModel = koinViewModel(),
+	genreListViewModel: GenreListViewModel = koinViewModel()
 ) {
 	val recentsState by albumListViewModel.albumsState.collectAsState()
 	val playlistsState by playlistListViewModel.playlistsState.collectAsState()

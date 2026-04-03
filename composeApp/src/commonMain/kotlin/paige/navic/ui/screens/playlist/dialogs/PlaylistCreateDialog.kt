@@ -14,16 +14,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_playlist_name
 import navic.composeapp.generated.resources.title_create_playlist
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -38,9 +38,10 @@ fun PlaylistCreateDialog(
 	onDismissRequest: () -> Unit,
 	tracks: List<DomainSong> = emptyList(),
 	navigateAfterwards: Boolean = true,
-	viewModel: PlaylistCreateDialogViewModel = viewModel(key = tracks.joinToString()) {
-		PlaylistCreateDialogViewModel(tracks)
-	}
+	viewModel: PlaylistCreateDialogViewModel = koinViewModel(
+		key = tracks.joinToString { it.id },
+		parameters = { parametersOf(tracks) }
+	)
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current

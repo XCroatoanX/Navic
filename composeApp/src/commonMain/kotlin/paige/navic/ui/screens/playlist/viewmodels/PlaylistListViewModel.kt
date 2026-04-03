@@ -13,7 +13,7 @@ import paige.navic.utils.UiState
 import paige.navic.utils.sortedByMode
 
 class PlaylistListViewModel(
-	private val repository: PlaylistRepository = PlaylistRepository()
+	private val repository: PlaylistRepository
 ) : ViewModel() {
 	private val _playlistsState = MutableStateFlow<UiState<List<DomainPlaylist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()

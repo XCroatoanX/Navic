@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
@@ -45,6 +44,7 @@ import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
@@ -85,7 +85,7 @@ enum class SearchCategory(val res: StringResource) {
 @Composable
 fun SearchScreen(
 	nested: Boolean,
-	viewModel: SearchViewModel = viewModel { SearchViewModel() }
+	viewModel: SearchViewModel = koinViewModel()
 ) {
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
@@ -94,7 +94,7 @@ fun SearchScreen(
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 
-	val artistListViewModel = viewModel { ArtistListViewModel() }
+	val artistListViewModel: ArtistListViewModel = koinViewModel()
 	val albumListViewModel: AlbumListViewModel = koinInject { parametersOf(AlbumListType.AlphabeticalByName) }
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }

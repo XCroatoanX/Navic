@@ -8,6 +8,6 @@ import org.koin.dsl.includes
 fun initKoin(config: KoinAppDeclaration? = null): KoinApplication {
 	return startKoin {
 		includes(config)
-		modules(databaseModule, managerModule, repositoryModule, viewModelModule)
+		modules(appModule, databaseModule, managerModule, repositoryModule, viewModelModule, platformModule)
 	}
 }

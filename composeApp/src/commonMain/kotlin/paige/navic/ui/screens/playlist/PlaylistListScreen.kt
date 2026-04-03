@@ -38,13 +38,13 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.info_no_playlists_short
 import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
@@ -76,7 +76,7 @@ import kotlin.time.Duration
 @Composable
 fun PlaylistListScreen(
 	nested: Boolean = false,
-	viewModel: PlaylistListViewModel = viewModel { PlaylistListViewModel() }
+	viewModel: PlaylistListViewModel = koinViewModel()
 ) {
 	val ctx = LocalCtx.current
 

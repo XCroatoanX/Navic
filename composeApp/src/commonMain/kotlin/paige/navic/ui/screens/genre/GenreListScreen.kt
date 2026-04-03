@@ -18,12 +18,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.info_no_genres
 import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Genre
@@ -44,7 +44,7 @@ import paige.navic.utils.withoutTop
 @Composable
 fun GenreListScreen(
 	nested: Boolean,
-	viewModel: GenreListViewModel = viewModel { GenreListViewModel() }
+	viewModel: GenreListViewModel = koinViewModel()
 ) {
 	val state by viewModel.genresState.collectAsState()
 	val isRefreshing by viewModel.isRefreshing.collectAsState()

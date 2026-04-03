@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_log_in
@@ -49,6 +48,7 @@ import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
 import navic.composeapp.generated.resources.title_login_dialog
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Badge
 import paige.navic.icons.outlined.Link
@@ -62,7 +62,7 @@ import paige.navic.utils.UiState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginDialog(
-	viewModel: LoginViewModel = viewModel { LoginViewModel() },
+	viewModel: LoginViewModel = koinViewModel(),
 	onDismissRequest: () -> Unit
 ) {
 	val loginState by viewModel.loginState.collectAsState()

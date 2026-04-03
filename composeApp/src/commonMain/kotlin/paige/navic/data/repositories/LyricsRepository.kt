@@ -178,9 +178,9 @@ object LyricsContentParser {
 }
 
 class LyricsRepository(
-	private val lyricDao: LyricDao = DbContainer.lyricDao,
-	private val client: HttpClient = HttpClient(),
-	private val settings: Settings = Settings()
+	private val lyricDao: LyricDao,
+	private val client: HttpClient,
+	private val settings: Settings
 ) {
 
 	private val json = Json { ignoreUnknownKeys = true }

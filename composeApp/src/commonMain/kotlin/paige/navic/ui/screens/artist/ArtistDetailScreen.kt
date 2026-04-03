@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.option_sort_frequent
@@ -52,6 +51,8 @@ import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_similar_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
@@ -75,7 +76,10 @@ import paige.navic.utils.fadeFromTop
 @Composable
 fun ArtistDetailScreen(
 	artistId: String,
-	viewModel: ArtistDetailViewModel = viewModel(key = artistId) { ArtistDetailViewModel(artistId) }
+	viewModel: ArtistDetailViewModel = koinViewModel(
+		key = artistId,
+		parameters = { parametersOf(artistId) }
+	)
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current

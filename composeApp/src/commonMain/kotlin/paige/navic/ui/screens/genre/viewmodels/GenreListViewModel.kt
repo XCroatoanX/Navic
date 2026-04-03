@@ -12,7 +12,7 @@ import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 
 class GenreListViewModel(
-	private val repository: GenresRepository = GenresRepository()
+	private val repository: GenresRepository
 ) : ViewModel() {
 
 	private val _isRefreshing = MutableStateFlow(false)

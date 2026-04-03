@@ -26,12 +26,12 @@ import paige.navic.domain.models.DomainArtist
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
-	private val albumDao: AlbumDao = DbContainer.albumDao,
-	private val playlistDao: PlaylistDao = DbContainer.playlistDao,
-	private val songDao: SongDao = DbContainer.songDao,
-	private val genreDao: GenreDao = DbContainer.genreDao,
-	private val artistDao: ArtistDao = DbContainer.artistDao,
-	private val lyricDao: LyricDao = DbContainer.lyricDao
+	private val albumDao: AlbumDao,
+	private val playlistDao: PlaylistDao,
+	private val songDao: SongDao,
+	private val genreDao: GenreDao,
+	private val artistDao: ArtistDao,
+	private val lyricDao: LyricDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)

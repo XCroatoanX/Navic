@@ -51,7 +51,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -59,6 +58,8 @@ import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.info_lyrics_provider
 import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
@@ -84,9 +85,10 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun LyricsScreen(
 	track: DomainSong?,
-	viewModel: LyricsScreenViewModel = viewModel(key = track?.id) {
-		LyricsScreenViewModel(track)
-	}
+	viewModel: LyricsScreenViewModel = koinViewModel(
+		key = track?.id,
+		parameters = { parametersOf(track) }
+	)
 ) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsStateWithLifecycle()

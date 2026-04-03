@@ -46,6 +46,7 @@ import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
 import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.NavbarConfig
@@ -75,7 +76,7 @@ fun RootTopBar(
 	title: @Composable () -> Unit,
 	scrollBehavior: TopAppBarScrollBehavior,
 	actions: @Composable RowScope.() -> Unit = {},
-	viewModel: LoginViewModel = viewModel { LoginViewModel() },
+	viewModel: LoginViewModel = koinViewModel(),
 	navViewModel: NavtabsViewModel = viewModel { NavtabsViewModel(Settings(), Json) }
 ) {
 	val loginState by viewModel.loginState.collectAsState()

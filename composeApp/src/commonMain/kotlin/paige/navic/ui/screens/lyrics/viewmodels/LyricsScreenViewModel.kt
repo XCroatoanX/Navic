@@ -13,7 +13,7 @@ import paige.navic.utils.UiState
 
 class LyricsScreenViewModel(
     private val track: DomainSong?,
-    private val repository: LyricsRepository = LyricsRepository()
+    private val repository: LyricsRepository
 ) : ViewModel() {
 	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
 	val lyricsState = _lyricsState.asStateFlow()

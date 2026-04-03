@@ -13,8 +13,8 @@ import paige.navic.data.session.SessionManager
 import kotlin.random.Random
 
 open class GenresRepository(
-	private val genreDao: GenreDao = DbContainer.genreDao,
-	private val albumDao: AlbumDao = DbContainer.albumDao
+	private val genreDao: GenreDao,
+	private val albumDao: AlbumDao
 ) {
 
 	fun getGenresWithAlbumsFlow(): Flow<List<GenreWithAlbums>> {

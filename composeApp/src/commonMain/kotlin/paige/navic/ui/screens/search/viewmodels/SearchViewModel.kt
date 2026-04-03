@@ -16,7 +16,7 @@ import paige.navic.utils.UiState
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
-	private val repository: SearchRepository = SearchRepository()
+	private val repository: SearchRepository
 ) : ViewModel() {
 	private val _searchState = MutableStateFlow<UiState<List<Any>>>(UiState.Success(emptyList()))
 	val searchState = _searchState.asStateFlow()

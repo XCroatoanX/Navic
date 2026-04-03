@@ -16,7 +16,7 @@ import paige.navic.domain.models.DomainArtist
 import paige.navic.utils.UiState
 
 class ArtistListViewModel(
-	private val repository: ArtistsRepository = ArtistsRepository()
+	private val repository: ArtistsRepository
 ) : ViewModel() {
 	private val _artistsState = MutableStateFlow<UiState<List<DomainArtist>>>(UiState.Loading())
 	val artistsState = _artistsState.asStateFlow()

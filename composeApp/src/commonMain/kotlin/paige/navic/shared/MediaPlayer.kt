@@ -34,11 +34,11 @@ data class PlayerUiState(
 )
 
 abstract class MediaPlayerViewModel(
-	private val storage: PlayerStateStorage
+	private val storage: PlayerStateStorage,
+	private val tracksRepository: TracksRepository
 ) : ViewModel() {
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
-	private val tracksRepository: TracksRepository = TracksRepository()
 
 	init {
 		viewModelScope.launch {

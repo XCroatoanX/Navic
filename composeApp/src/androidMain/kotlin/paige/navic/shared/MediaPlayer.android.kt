@@ -7,10 +7,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -32,12 +30,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.MainActivity
 import paige.navic.R
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.repositories.TracksRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.utils.effectiveGain
@@ -138,9 +138,11 @@ class PlaybackService : MediaSessionService() {
 }
 
 class AndroidMediaPlayerViewModel(
-	private val application: Application, storage: PlayerStateStorage,
-	private val albumDao: AlbumDao = DbContainer.albumDao,
-) : MediaPlayerViewModel(storage) {
+	private val application: Application,
+	storage: PlayerStateStorage,
+	tracksRepository: TracksRepository,
+	private val albumDao: AlbumDao
+) : MediaPlayerViewModel(storage, tracksRepository) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 
@@ -463,15 +465,5 @@ class AndroidMediaPlayerViewModel(
 
 @Composable
 actual fun rememberMediaPlayer(): MediaPlayerViewModel {
-	val context = LocalContext.current.applicationContext as Application
-
-	return viewModel {
-		val producePath = {
-			context.filesDir.resolve(DATASTORE_FILE_NAME).absolutePath
-		}
-		val dataStore = DataStoreSingleton.getInstance(producePath)
-		val storage = DataStorePlayerStorage(dataStore)
-
-		AndroidMediaPlayerViewModel(context, storage)
-	}
+	return koinViewModel<AndroidMediaPlayerViewModel>()
 }
