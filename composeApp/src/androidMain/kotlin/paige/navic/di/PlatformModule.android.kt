@@ -36,7 +36,8 @@ actual val platformModule = module {
 			application = androidApplication(),
 			stateRepository = get(),
 			trackRepository = get(),
-			albumDao = get()
+			albumDao = get(),
+			downloadManager = get()
 		)
 	}
 

@@ -40,7 +40,9 @@ import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.AndroidScrobbleManager
+import paige.navic.managers.DownloadManager
 import paige.navic.utils.effectiveGain
+import java.io.File
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
@@ -141,7 +143,8 @@ class AndroidMediaPlayerViewModel(
 	private val application: Application,
 	stateRepository: PlayerStateRepository,
 	trackRepository: TrackRepository,
-	private val albumDao: AlbumDao
+	private val albumDao: AlbumDao,
+	private val downloadManager: DownloadManager
 ) : MediaPlayerViewModel(stateRepository, trackRepository) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -455,8 +458,15 @@ class AndroidMediaPlayerViewModel(
 			)
 			.build()
 
+		val localPath = downloadManager.getDownloadedFilePath(id)
+		val uri = if (localPath != null) {
+			File(localPath).toUri()
+		} else {
+			SessionManager.api.getStreamUrl(id).toUri()
+		}
+
 		return MediaItem.Builder()
-			.setUri(SessionManager.api.getStreamUrl(id))
+			.setUri(uri)
 			.setMediaId(id)
 			.setMediaMetadata(metadata)
 			.build()

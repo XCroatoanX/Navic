@@ -12,6 +12,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
@@ -30,6 +32,22 @@ class DownloadManager(
 
 	val allDownloads = downloadDao.getAllDownloads()
 	val downloadCount = downloadDao.getDownloadsCount()
+
+	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
+
+	init {
+		scope.launch {
+			allDownloads.collectLatest { downloads ->
+				_downloadedSongs.value = downloads
+					.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
+					.associate { it.songId to it.filePath!! }
+			}
+		}
+	}
+
+	fun getDownloadedFilePath(songId: String): String? {
+		return _downloadedSongs.value[songId]
+	}
 
 	fun downloadSong(song: DomainSong) {
 		if (activeDownloads.containsKey(song.id)) return

@@ -10,6 +10,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.DownloadManager
 import paige.navic.managers.IOSScrobbleManager
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
@@ -53,6 +54,7 @@ import platform.UIKit.UIImage
 class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	trackRepository: TrackRepository,
+	private val downloadManager: DownloadManager
 ) : MediaPlayerViewModel(stateRepository, trackRepository) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
@@ -128,10 +130,15 @@ class IOSMediaPlayerViewModel(
 	override fun playAt(index: Int) {
 		val trackToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
+		val localPath = downloadManager.getDownloadedFilePath(trackToPlay.id)
+		val url = if (localPath != null) {
+			NSURL.fileURLWithPath(localPath)
+		} else {
+			NSURL.URLWithString(SessionManager.api.getStreamUrl(trackToPlay.id))!!
+		}
+
 		player.replaceCurrentItemWithPlayerItem(
-			AVPlayerItem(
-				NSURL.URLWithString(SessionManager.api.getStreamUrl(trackToPlay.id))!!
-			)
+			AVPlayerItem(url)
 		)
 		player.play()
 
