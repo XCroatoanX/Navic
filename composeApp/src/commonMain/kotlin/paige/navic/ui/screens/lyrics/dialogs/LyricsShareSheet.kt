@@ -44,7 +44,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -54,6 +53,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.materialkolor.utils.ColorUtils.calculateLuminance
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
@@ -64,6 +67,7 @@ import navic.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalSnackbarState
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.desktop.Navic
@@ -71,6 +75,7 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
 import paige.navic.managers.ShareManager
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.FormRow
 
@@ -79,13 +84,23 @@ import paige.navic.ui.components.common.FormRow
 fun LyricsShareSheet(
 	track: DomainSong,
 	selectedLyrics: List<String>,
-	sharedPainter: Painter,
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
 ) {
 	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+	val platformContext = LocalPlatformContext.current
+	val model = remember(track.coverArtId) {
+		ImageRequest.Builder(platformContext)
+			.data(track.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.memoryCacheKey(track.coverArtId)
+			.diskCacheKey(track.coverArtId)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
 
 	val defaultColor = MaterialTheme.colorScheme.onPrimary
 	val colors = remember {
@@ -154,8 +169,8 @@ fun LyricsShareSheet(
 						modifier = Modifier.fillMaxWidth(),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						Image(
-							painter = sharedPainter,
+						AsyncImage(
+							model = model,
 							contentDescription = null,
 							contentScale = ContentScale.Crop,
 							modifier = Modifier

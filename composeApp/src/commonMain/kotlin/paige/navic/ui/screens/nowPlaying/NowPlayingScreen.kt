@@ -31,7 +31,6 @@ import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingArtworkPager
 import paige.navic.ui.screens.nowPlaying.components.rows.NowPlayingControlsRow
 import paige.navic.utils.fadeFromTop
-import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -45,14 +44,12 @@ fun NowPlayingScreen() {
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 
-	val sharedPainter = rememberTrackPainter(track?.coverArtId)
-
 	Box(Modifier.fillMaxSize()) {
 		when (Settings.shared.nowPlayingBackgroundStyle) {
 			NowPlayingBackgroundStyle.Static -> Unit
 			NowPlayingBackgroundStyle.Dynamic -> {
 				BlendBackground(
-					painter = sharedPainter,
+					coverArtId = track?.coverArtId,
 					isPaused = playerState.isPaused
 				)
 			}

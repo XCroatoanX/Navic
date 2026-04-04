@@ -58,7 +58,6 @@ import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.info_lyrics_provider
 import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
@@ -78,7 +77,6 @@ import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.calculateWordProgress
 import paige.navic.utils.fadeFromTop
-import paige.navic.utils.rememberTrackPainter
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -125,8 +123,6 @@ fun LyricsScreen(
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
-
-	val sharedPainter = rememberTrackPainter(track.coverArtId)
 
 	Box(modifier = Modifier.fillMaxSize()) {
 		AnimatedContent(
@@ -399,7 +395,6 @@ fun LyricsScreen(
 				LyricsShareSheet(
 					track = track,
 					selectedLyrics = stringsToShare,
-					sharedPainter = sharedPainter,
 					onDismiss = { showShareSheet = false },
 					onShare = {
 						showShareSheet = false
