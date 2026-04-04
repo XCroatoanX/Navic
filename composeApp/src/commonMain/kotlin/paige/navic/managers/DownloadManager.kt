@@ -32,6 +32,11 @@ class DownloadManager(
 
 	val allDownloads = downloadDao.getAllDownloads()
 	val downloadCount = downloadDao.getDownloadsCount()
+	val downloadSize = allDownloads.map { downloads ->
+		downloads
+			.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
+			.sumOf { storageManager.getFileSize(it.filePath!!) }
+	}
 
 	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
 

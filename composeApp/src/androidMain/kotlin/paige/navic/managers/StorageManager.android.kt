@@ -23,6 +23,14 @@ actual class StorageManager(
 		return File(path).delete()
 	}
 
+	actual fun getFileSize(path: String): Long {
+		return try {
+			File(path).length()
+		} catch (_: Exception) {
+			0L
+		}
+	}
+
 	actual suspend fun saveFile(path: String, channel: ByteReadChannel) {
 		withContext(dispatcher) {
 			FileOutputStream(path).use { outputStream ->

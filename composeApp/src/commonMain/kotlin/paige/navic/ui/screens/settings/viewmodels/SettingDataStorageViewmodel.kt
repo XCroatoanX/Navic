@@ -32,6 +32,7 @@ class SettingsDataStorageViewModel(
 	val pendingActionCount = _pendingActionCount.asStateFlow()
 
 	val downloadCount = downloadManager.downloadCount
+	val downloadSize = downloadManager.downloadSize
 
 	init {
 		loadPendingActions()

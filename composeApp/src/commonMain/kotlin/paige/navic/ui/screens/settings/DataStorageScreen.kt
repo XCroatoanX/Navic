@@ -76,10 +76,20 @@ fun SettingsDataStorageScreen() {
 	val syncState by viewModel.syncState.collectAsStateWithLifecycle()
 	val pendingActionCount by viewModel.pendingActionCount.collectAsStateWithLifecycle()
 	val downloadCount by viewModel.downloadCount.collectAsStateWithLifecycle(0)
+	val downloadSize by viewModel.downloadSize.collectAsStateWithLifecycle(0L)
 
 	var imageCacheSizeMb by remember { mutableStateOf("Calculating...") }
-	// TODO: show downloads size
-	var downloadsSizeMb by remember { mutableStateOf(" // Calculating size...") }
+
+	val downloadsSizeMb = remember(downloadSize) {
+		val mb = downloadSize.toDouble() / (1024 * 1024)
+		if (mb > 1024) {
+			val gb = mb / 1024
+			" // ${(gb * 100).toInt() / 100.0} GB"
+		} else {
+			" // ${mb.toInt()} MB"
+		}
+	}
+
 	val smoothSyncProgress by animateFloatAsState(
 		if (syncState.isSyncing) syncState.progress else 0f,
 		animationSpec = tween(

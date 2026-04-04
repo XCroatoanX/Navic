@@ -10,6 +10,8 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
+import platform.Foundation.NSFileSize
+import platform.Foundation.NSNumber
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readAvailable
 import kotlinx.cinterop.reinterpret
@@ -35,6 +37,12 @@ actual class StorageManager(
 
 	actual fun deleteFile(path: String): Boolean {
 		return NSFileManager.defaultManager.removeItemAtPath(path, null)
+	}
+
+	actual fun getFileSize(path: String): Long {
+		val manager = NSFileManager.defaultManager
+		val attributes = manager.attributesOfItemAtPath(path, null)
+		return (attributes?.get(NSFileSize) as? NSNumber)?.longValue ?: 0L
 	}
 
 	actual suspend fun saveFile(path: String, channel: ByteReadChannel) {
