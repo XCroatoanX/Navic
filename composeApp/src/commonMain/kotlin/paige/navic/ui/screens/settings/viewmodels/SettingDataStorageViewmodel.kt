@@ -12,11 +12,13 @@ import kotlinx.coroutines.launch
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.domain.repositories.DbRepository
+import paige.navic.managers.DownloadManager
 
 class SettingsDataStorageViewModel(
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository,
-	private val syncDao: SyncActionDao
+	private val syncDao: SyncActionDao,
+	private val downloadManager: DownloadManager
 ) : ViewModel() {
 
 	val syncState = syncManager.syncState
@@ -28,6 +30,8 @@ class SettingsDataStorageViewModel(
 
 	private val _pendingActionCount = MutableStateFlow(0)
 	val pendingActionCount = _pendingActionCount.asStateFlow()
+
+	val downloadCount = downloadManager.downloadCount
 
 	init {
 		loadPendingActions()
@@ -57,5 +61,9 @@ class SettingsDataStorageViewModel(
 			syncDao.clearAllActions()
 			_pendingActionCount.value = 0
 		}
+	}
+
+	fun clearAllDownloads() {
+		downloadManager.clearAllDownloads()
 	}
 }

@@ -28,7 +28,8 @@ class DownloadManager(
 ) {
 	private val activeDownloads = mutableMapOf<String, Job>()
 
-	val allDownloads: Flow<List<DownloadEntity>> = downloadDao.getAllDownloads()
+	val allDownloads = downloadDao.getAllDownloads()
+	val downloadCount = downloadDao.getDownloadsCount()
 
 	fun downloadSong(song: DomainSong) {
 		if (activeDownloads.containsKey(song.id)) return
@@ -128,6 +129,19 @@ class DownloadManager(
 						-> DownloadStatus.DOWNLOADED
 
 				else -> DownloadStatus.NOT_DOWNLOADED
+			}
+		}
+	}
+
+	fun clearAllDownloads() {
+		scope.launch {
+			activeDownloads.values.forEach { it.cancel() }
+			activeDownloads.clear()
+			downloadDao.clearAllDownloads()
+			allDownloads.collect { downloads ->
+				downloads.forEach { download ->
+					deleteDownload(download.songId)
+				}
 			}
 		}
 	}

@@ -26,16 +26,19 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_clear_downloads
 import navic.composeapp.generated.resources.action_clear_image_cache
 import navic.composeapp.generated.resources.action_clear_pending_actions
 import navic.composeapp.generated.resources.action_rebuild_database
 import navic.composeapp.generated.resources.action_trigger_sync
+import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.info_status_idle
 import navic.composeapp.generated.resources.info_sync_date_format
 import navic.composeapp.generated.resources.info_sync_hours_ago
 import navic.composeapp.generated.resources.info_sync_just_now
 import navic.composeapp.generated.resources.info_sync_mins_ago
 import navic.composeapp.generated.resources.info_sync_never
+import navic.composeapp.generated.resources.option_downloaded_songs
 import navic.composeapp.generated.resources.option_image_cache_size
 import navic.composeapp.generated.resources.option_last_sync
 import navic.composeapp.generated.resources.option_live_status
@@ -47,6 +50,7 @@ import navic.composeapp.generated.resources.title_cache_management
 import navic.composeapp.generated.resources.title_danger_zone
 import navic.composeapp.generated.resources.title_data_storage
 import navic.composeapp.generated.resources.title_sync_control
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
@@ -71,8 +75,11 @@ fun SettingsDataStorageScreen() {
 
 	val syncState by viewModel.syncState.collectAsStateWithLifecycle()
 	val pendingActionCount by viewModel.pendingActionCount.collectAsStateWithLifecycle()
+	val downloadCount by viewModel.downloadCount.collectAsStateWithLifecycle(0)
 
 	var imageCacheSizeMb by remember { mutableStateOf("Calculating...") }
+	// TODO: show downloads size
+	var downloadsSizeMb by remember { mutableStateOf(" // Calculating size...") }
 	val smoothSyncProgress by animateFloatAsState(
 		if (syncState.isSyncing) syncState.progress else 0f,
 		animationSpec = tween(
@@ -183,6 +190,18 @@ fun SettingsDataStorageScreen() {
 
 					FormRow {
 						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.option_downloaded_songs))
+							Text(
+								pluralStringResource(Res.plurals.count_songs, downloadCount, downloadCount)
+									+ downloadsSizeMb,
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+					}
+
+					FormRow {
+						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_image_cache_size))
 							Text(
 								imageCacheSizeMb,
@@ -214,6 +233,13 @@ fun SettingsDataStorageScreen() {
 					FormRow(onClick = { viewModel.removeAllActions() }) {
 						Text(
 							stringResource(Res.string.action_clear_pending_actions),
+							color = MaterialTheme.colorScheme.error
+						)
+					}
+
+					FormRow(onClick = { viewModel.clearAllDownloads() }) {
+						Text(
+							stringResource(Res.string.action_clear_downloads),
 							color = MaterialTheme.colorScheme.error
 						)
 					}
