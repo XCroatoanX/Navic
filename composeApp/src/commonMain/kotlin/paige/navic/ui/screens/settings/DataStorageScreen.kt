@@ -1,12 +1,19 @@
 package paige.navic.ui.screens.settings
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,6 +73,13 @@ fun SettingsDataStorageScreen() {
 	val pendingActionCount by viewModel.pendingActionCount.collectAsStateWithLifecycle()
 
 	var imageCacheSizeMb by remember { mutableStateOf("Calculating...") }
+	val smoothSyncProgress by animateFloatAsState(
+		if (syncState.isSyncing) syncState.progress else 0f,
+		animationSpec = tween(
+			durationMillis = 250,
+			easing = EaseOut
+		)
+	)
 
 	LaunchedEffect(Unit) {
 		withContext(Dispatchers.IO) {
@@ -95,28 +109,26 @@ fun SettingsDataStorageScreen() {
 				Form {
 					FormRow {
 						Column(Modifier.fillMaxWidth()) {
-							Row(verticalAlignment = Alignment.CenterVertically) {
+							Column {
+								Text(stringResource(Res.string.option_live_status))
 								Text(
-									text = stringResource(Res.string.option_live_status),
-									modifier = Modifier.weight(1f)
+									text = syncState.message.ifEmpty { stringResource(Res.string.info_status_idle) },
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
-								if (syncState.isSyncing) {
-									CircularProgressIndicator(
-										modifier = Modifier.padding(start = 8.dp),
-										strokeWidth = 2.dp
-									)
-								}
 							}
-							Text(
-								text = syncState.message.ifEmpty { stringResource(Res.string.info_status_idle) },
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-							if (syncState.isSyncing && syncState.progress > 0f) {
-								Spacer(modifier = Modifier.height(8.dp))
+							AnimatedVisibility(
+								syncState.isSyncing,
+								enter = fadeIn() + expandVertically(clip = false),
+								exit = fadeOut() + shrinkVertically(clip = false)
+							) {
 								LinearProgressIndicator(
-									progress = { syncState.progress },
-									modifier = Modifier.fillMaxWidth()
+									progress = {
+										if (syncState.isSyncing)
+											1f
+										else smoothSyncProgress.coerceIn(0f, 1f)
+									},
+									modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
 								)
 							}
 						}
