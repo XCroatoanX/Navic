@@ -9,6 +9,7 @@ import paige.navic.data.database.CacheDatabase
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ShareManager
+import paige.navic.managers.StorageManager
 import paige.navic.shared.MediaPlayerViewModel
 
 actual val platformModule = module {
@@ -41,5 +42,9 @@ actual val platformModule = module {
 
 	single<ShareManager> {
 		ShareManager(context = get())
+	}
+
+	single<StorageManager> {
+		StorageManager(context = androidApplication())
 	}
 }

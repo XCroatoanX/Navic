@@ -7,6 +7,7 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
+import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.dao.PlaylistDao
@@ -14,6 +15,7 @@ import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.ArtistEntity
+import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.GenreEntity
 import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.database.entities.PlaylistEntity
@@ -31,7 +33,8 @@ import paige.navic.data.database.entities.SyncActionEntity
 		SongEntity::class,
 		ArtistEntity::class,
 		LyricEntity::class,
-		SyncActionEntity::class
+		SyncActionEntity::class,
+		DownloadEntity::class
 	]
 )
 @TypeConverters(Converters::class)
@@ -44,6 +47,7 @@ abstract class CacheDatabase : RoomDatabase() {
 	abstract fun artistDao(): ArtistDao
 	abstract fun lyricDao(): LyricDao
 	abstract fun syncActionDao(): SyncActionDao
+	abstract fun downloadDao(): DownloadDao
 }
 
 @Suppress("KotlinNoActualForExpect")

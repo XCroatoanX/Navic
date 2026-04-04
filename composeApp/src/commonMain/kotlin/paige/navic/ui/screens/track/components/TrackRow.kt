@@ -2,22 +2,32 @@ package paige.navic.ui.screens.track.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import paige.navic.data.database.entities.DownloadEntity
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSong
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Check
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.utils.toHoursMinutesSeconds
 
@@ -28,7 +38,8 @@ fun TracksScreenTrackRow(
 	index: Int,
 	count: Int,
 	onClick: (() -> Unit),
-	onLongClick: (() -> Unit)
+	onLongClick: (() -> Unit),
+	download: DownloadEntity? = null
 ) {
 	SegmentedListItem(
 		modifier = Modifier.padding(
@@ -69,15 +80,41 @@ fun TracksScreenTrackRow(
 			}
 		},
 		trailingContent = {
-			track.duration.toHoursMinutesSeconds().let {
-				Text(
-					text = it,
-					style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
-					fontWeight = FontWeight(400),
-					fontSize = 13.sp,
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					maxLines = 1
-				)
+			Row(verticalAlignment = Alignment.CenterVertically) {
+				if (download != null) {
+					when (download.status) {
+						DownloadStatus.DOWNLOADING -> {
+							CircularProgressIndicator(
+								progress = { download.progress },
+								modifier = Modifier.size(16.dp),
+								strokeWidth = 2.dp
+							)
+							Spacer(Modifier.width(8.dp))
+						}
+
+						DownloadStatus.DOWNLOADED -> {
+							Icon(
+								Icons.Outlined.Check,
+								contentDescription = null,
+								modifier = Modifier.size(16.dp),
+								tint = MaterialTheme.colorScheme.primary
+							)
+							Spacer(Modifier.width(8.dp))
+						}
+
+						else -> {}
+					}
+				}
+				track.duration.toHoursMinutesSeconds().let {
+					Text(
+						text = it,
+						style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
+						fontWeight = FontWeight(400),
+						fontSize = 13.sp,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+						maxLines = 1
+					)
+				}
 			}
 		}
 	)

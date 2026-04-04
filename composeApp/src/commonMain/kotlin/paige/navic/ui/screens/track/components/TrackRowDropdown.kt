@@ -11,6 +11,9 @@ import androidx.compose.runtime.setValue
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
 import navic.composeapp.generated.resources.action_add_to_playlist
+import navic.composeapp.generated.resources.action_cancel_download
+import navic.composeapp.generated.resources.action_delete_download
+import navic.composeapp.generated.resources.action_download
 import navic.composeapp.generated.resources.action_remove_from_playlist
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
@@ -18,6 +21,7 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
@@ -25,6 +29,9 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
+import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.Delete
+import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.Info
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
@@ -46,6 +53,10 @@ fun TrackRowDropdown(
     track: DomainSong,
     onRemoveFromPlaylist: () -> Unit,
     starredState: UiState<Boolean>,
+    downloadStatus: DownloadStatus?,
+    onDownload: () -> Unit,
+    onCancelDownload: () -> Unit,
+    onDeleteDownload: () -> Unit,
 ) {
 	val backStack = LocalNavStack.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
@@ -92,6 +103,43 @@ fun TrackRowDropdown(
 			},
 			enabled = starred != null
 		)
+
+		when (downloadStatus) {
+			DownloadStatus.DOWNLOADING -> {
+				DropdownItem(
+					containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+					text = { Text(stringResource(Res.string.action_cancel_download)) },
+					leadingIcon = { Icon(Icons.Outlined.Close, null) },
+					onClick = {
+						onCancelDownload()
+						onDismissRequest()
+					}
+				)
+			}
+			DownloadStatus.DOWNLOADED -> {
+				DropdownItem(
+					containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+					text = { Text(stringResource(Res.string.action_delete_download)) },
+					leadingIcon = { Icon(Icons.Outlined.Delete, null) },
+					onClick = {
+						onDeleteDownload()
+						onDismissRequest()
+					}
+				)
+			}
+			else -> {
+				DropdownItem(
+					containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+					text = { Text(stringResource(Res.string.action_download)) },
+					leadingIcon = { Icon(Icons.Outlined.Download, null) },
+					onClick = {
+						onDownload()
+						onDismissRequest()
+					}
+				)
+			}
+		}
+
 		DropdownItem(
 			containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 			text = { Text(stringResource(Res.string.action_track_info)) },

@@ -7,9 +7,10 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import paige.navic.data.database.SyncManager
+import paige.navic.managers.DownloadManager
 
 val managerModule = module {
 	single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
-
+	single<DownloadManager> { DownloadManager(get(), get(), get()) }
 	singleOf(::SyncManager)
 }

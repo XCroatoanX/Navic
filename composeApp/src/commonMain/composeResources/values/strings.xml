@@ -186,6 +186,9 @@
 	<string name="action_view_artist">View artist</string>
 	<string name="action_star">Star</string>
 	<string name="action_remove_star">Unstar</string>
+	<string name="action_download">Download</string>
+	<string name="action_delete_download">Delete download</string>
+	<string name="action_cancel_download">Cancel download</string>
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Login</string>

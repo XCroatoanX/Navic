@@ -13,4 +13,5 @@ val databaseModule = module {
 	single { get<CacheDatabase>().artistDao() }
 	single { get<CacheDatabase>().lyricDao() }
 	single { get<CacheDatabase>().syncActionDao() }
+	single { get<CacheDatabase>().downloadDao() }
 }

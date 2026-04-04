@@ -1,0 +1,134 @@
+package paige.navic.managers
+
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.onDownload
+import io.ktor.client.request.prepareRequest
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.http.HttpMethod
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import paige.navic.data.database.dao.DownloadDao
+import paige.navic.data.database.entities.DownloadEntity
+import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
+import paige.navic.shared.Logger
+
+class DownloadManager(
+    private val downloadDao: DownloadDao,
+    private val storageManager: StorageManager,
+    private val scope: CoroutineScope,
+	private val client: HttpClient = HttpClient()
+) {
+	private val activeDownloads = mutableMapOf<String, Job>()
+
+	val allDownloads: Flow<List<DownloadEntity>> = downloadDao.getAllDownloads()
+
+	fun downloadSong(song: DomainSong) {
+		if (activeDownloads.containsKey(song.id)) return
+
+		val job = scope.launch(Dispatchers.IO) {
+			try {
+				Logger.i("DownloadManager", "beginning download for ${song.id}")
+
+				downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.DOWNLOADING, 0f))
+
+				var lastProgress = 0f
+				val request = client.prepareRequest(
+					SessionManager.api.getStreamUrl(song.id)
+				) {
+					method = HttpMethod.Get
+					onDownload { bytesSentTotal, contentLength ->
+						if (contentLength != null && contentLength > 0f) {
+							val progress = (bytesSentTotal.toDouble() / contentLength).toFloat()
+							if (progress - lastProgress >= 0.01f || progress == 1f) {
+								lastProgress = progress
+								Logger.i("DownloadManager", "downloading ${song.id} $progress")
+								scope.launch {
+									downloadDao.updateProgress(song.id, DownloadStatus.DOWNLOADING, progress)
+								}
+							}
+						} else {
+							Logger.i("DownloadManager", "downloaded ${song.id}")
+						}
+					}
+				}
+
+				request.execute { response ->
+					Logger.i("DownloadManager", "writing download for ${song.id}")
+					val path = storageManager.getDownloadPath(song.id, song.fileExtension)
+					storageManager.saveFile(path, response.bodyAsChannel())
+					Logger.i("DownloadManager", "wrote download for ${song.id}")
+
+					downloadDao.insertDownload(
+						DownloadEntity(
+							song.id,
+							DownloadStatus.DOWNLOADED,
+							1f,
+							path
+						)
+					)
+				}
+			} catch (e: Exception) {
+				Logger.e("DownloadManager", "Failed to download song ${song.id}", e)
+				downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.FAILED, 0f))
+			} finally {
+				activeDownloads.remove(song.id)
+			}
+		}
+		activeDownloads[song.id] = job
+	}
+
+	suspend fun downloadCollection(collection: DomainSongCollection) {
+		collection.songs
+			.filter { !isDownloaded(it.id) }
+			.forEach { downloadSong(it) }
+	}
+
+	fun cancelDownload(songId: String) {
+		activeDownloads[songId]?.cancel()
+		activeDownloads.remove(songId)
+		scope.launch {
+			val existing = downloadDao.getDownloadById(songId)
+			if (existing?.status == DownloadStatus.DOWNLOADING) {
+				downloadDao.deleteDownload(songId)
+			}
+		}
+	}
+
+	fun deleteDownload(songId: String) {
+		cancelDownload(songId)
+		scope.launch {
+			val download = downloadDao.getDownloadById(songId)
+			download?.filePath?.let { storageManager.deleteFile(it) }
+			downloadDao.deleteDownload(songId)
+		}
+	}
+
+	suspend fun isDownloaded(songId: String): Boolean {
+		return downloadDao.getDownloadById(songId)?.status == DownloadStatus.DOWNLOADED
+	}
+
+	fun getCollectionDownloadStatus(songIds: List<String>): Flow<DownloadStatus> {
+		return allDownloads.map { downloads ->
+			val collectionDownloads = downloads.filter { it.songId in songIds }
+			when {
+				collectionDownloads.isEmpty() -> DownloadStatus.NOT_DOWNLOADED
+
+				collectionDownloads.any { it.status == DownloadStatus.DOWNLOADING } -> DownloadStatus.DOWNLOADING
+
+				(collectionDownloads.size == songIds.size &&
+					collectionDownloads.all { it.status == DownloadStatus.DOWNLOADED })
+						-> DownloadStatus.DOWNLOADED
+
+				else -> DownloadStatus.NOT_DOWNLOADED
+			}
+		}
+	}
+}

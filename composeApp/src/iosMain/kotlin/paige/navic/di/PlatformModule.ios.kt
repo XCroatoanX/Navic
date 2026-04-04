@@ -9,6 +9,7 @@ import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ShareManager
+import paige.navic.managers.StorageManager
 import paige.navic.shared.IOSMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 import platform.Foundation.NSDocumentDirectory
@@ -47,6 +48,7 @@ actual val platformModule = module {
 	}
 
 	singleOf(::ShareManager)
+	single<StorageManager> { StorageManager() }
 }
 
 @OptIn(ExperimentalForeignApi::class)

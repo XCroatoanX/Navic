@@ -5,23 +5,36 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.AlbumInfo
 import dev.zt64.subsonic.api.model.Artist
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.managers.DownloadManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
 
 class TrackListViewModel(
-    private val partialCollection: DomainSongCollection,
-    private val repository: TrackRepository
+	private val partialCollection: DomainSongCollection,
+	private val repository: TrackRepository,
+	private val downloadManager: DownloadManager
 ) : ViewModel() {
 	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
 	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()
+
+	val allDownloads = downloadManager.allDownloads
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.Lazily,
+			initialValue = emptyList()
+		)
 
 	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
 	val selectedTrack: StateFlow<DomainSong?> = _selectedTrack.asStateFlow()
@@ -136,5 +149,36 @@ class TrackListViewModel(
 				repository.unstarTrack(_selectedTrack.value!!)
 			} catch(_: Exception) { }
 		}
+	}
+
+	fun downloadTrack(track: DomainSong) {
+		downloadManager.downloadSong(track)
+	}
+
+	fun cancelDownload(trackId: String) {
+		downloadManager.cancelDownload(trackId)
+	}
+
+	fun deleteDownload(trackId: String) {
+		downloadManager.deleteDownload(trackId)
+	}
+
+	fun downloadAll() {
+		val tracks = (tracksState.value as? UiState.Success)?.data ?: return
+		viewModelScope.launch {
+			downloadManager.downloadCollection(tracks)
+		}
+	}
+
+	fun cancelDownloadAll() {
+		val tracks = (tracksState.value as? UiState.Success)?.data ?: return
+		tracks.songs.forEach {
+			downloadManager.cancelDownload(it.id)
+		}
+	}
+
+	fun collectionDownloadStatus(): Flow<DownloadStatus> {
+		val songs = (tracksState.value as? UiState.Success)?.data?.songs.orEmpty()
+		return downloadManager.getCollectionDownloadStatus(songs.map { it.id })
 	}
 }

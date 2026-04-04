@@ -6,8 +6,6 @@ import dev.zt64.subsonic.api.SubsonicApi
 import dev.zt64.subsonic.client.SubsonicAuth
 import dev.zt64.subsonic.client.SubsonicClient
 import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.cache.HttpCache
-import io.ktor.client.plugins.cache.storage.CacheStorage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,9 +16,6 @@ object SessionManager {
 	private val settings = Settings()
 	private val _isLoggedIn = MutableStateFlow(false)
 	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
-
-	// platform specified http cache storage
-	var cacheStorage: CacheStorage? = null
 
 	var api: SubsonicClient = createClient(
 		instanceUrl = settings.getString("instanceUrl", ""),
@@ -41,11 +36,6 @@ object SessionManager {
 		),
 		client = "Navic",
 		clientConfig = {
-			install(HttpCache) {
-				cacheStorage?.let {
-					publicStorage(it)
-				}
-			}
 			install(UserAgent) {
 				agent = "Navic"
 			}

@@ -27,6 +27,7 @@ import navic.composeapp.generated.resources.info_no_tracks
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
@@ -76,6 +77,8 @@ fun TrackListScreen(
 	val albumInfoState by viewModel.albumInfoState.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
 	val artistState by viewModel.artistState.collectAsState()
+	val allDownloads by viewModel.allDownloads.collectAsState()
+	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
 	val scrolled by remember {
 		derivedStateOf {
@@ -140,9 +143,17 @@ fun TrackListScreen(
 					return@LazyColumn
 				}
 
-				item { TracksScreenHeadingRowButtons(tracks) }
+				item {
+					TracksScreenHeadingRowButtons(
+						tracks = tracks,
+						onDownloadAll = { viewModel.downloadAll() },
+						onCancelDownloadAll = { viewModel.cancelDownloadAll() },
+						downloadStatus = downloadStatus
+					)
+				}
 
 				itemsIndexed(tracks.songs) { index, track ->
+					val download = allDownloads.find { it.songId == track.id }
 					Box {
 						TracksScreenTrackRow(
 							track = track,
@@ -155,7 +166,8 @@ fun TrackListScreen(
 							},
 							onLongClick = {
 								viewModel.selectTrack(track, index)
-							}
+							},
+							download = download
 						)
 						TrackRowDropdown(
 							expanded = selection == track && selectedIndex == index,
@@ -166,7 +178,11 @@ fun TrackListScreen(
 							tracks = tracks,
 							track = track,
 							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
-							starredState = starredState
+							starredState = starredState,
+							downloadStatus = download?.status,
+							onDownload = { viewModel.downloadTrack(track) },
+							onCancelDownload = { viewModel.cancelDownload(track.id) },
+							onDeleteDownload = { viewModel.deleteDownload(track.id) }
 						)
 					}
 				}
