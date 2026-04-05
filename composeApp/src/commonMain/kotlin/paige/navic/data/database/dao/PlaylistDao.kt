@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.relations.PlaylistWithSongs
 import paige.navic.shared.Logger
 
@@ -19,6 +20,8 @@ interface PlaylistDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertPlaylists(playlists: List<PlaylistEntity>)
 
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	suspend fun insertPlaylistSongCrossRefs(crossRefs: List<PlaylistSongCrossRef>)
 
 	@Transaction
 	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")

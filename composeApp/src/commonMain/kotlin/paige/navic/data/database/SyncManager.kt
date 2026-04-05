@@ -42,6 +42,7 @@ class SyncManager(
 	val syncState = _syncState.asStateFlow()
 
 	fun startPeriodicSync() {
+		Logger.i("SyncManager", "Starting periodic sync cicle.")
 		if (syncJob?.isActive == true) return
 
 		syncJob = scope.launch {

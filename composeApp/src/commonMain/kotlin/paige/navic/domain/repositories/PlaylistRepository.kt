@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.utils.UiState
 

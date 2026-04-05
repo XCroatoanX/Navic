@@ -20,6 +20,7 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
@@ -171,6 +172,11 @@ class DbRepository(
 
 		if (songEntities.isNotEmpty()) {
 			songDao.insertSongs(songEntities)
+			
+			val crossRefs = songEntities.map {
+				PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId)
+			}
+			playlistDao.insertPlaylistSongCrossRefs(crossRefs)
 		}
 
 		Logger.i("DbRepository", "- Playlist [$playlistId] synced: ${songEntities.size} songs")
