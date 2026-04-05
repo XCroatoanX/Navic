@@ -18,7 +18,7 @@ fun List<DomainAlbum>.sortedByListType(listType: AlbumListType): List<DomainAlbu
 	return when (listType) {
 		AlbumListType.AlphabeticalByArtist -> this.sortedBy { it.artistName.lowercase() }
 		AlbumListType.AlphabeticalByName -> this.sortedBy { it.name.lowercase() }
-		AlbumListType.Frequent -> this.sortedByDescending { it.playCount }
+		AlbumListType.Frequent -> this.filter { it.playCount != 0 }.sortedByDescending { it.playCount }
 		AlbumListType.Highest -> this.sortedByDescending { it.userRating }
 		AlbumListType.Newest -> this.sortedByDescending { it.createdAt }
 		AlbumListType.Random -> this.shuffled()
