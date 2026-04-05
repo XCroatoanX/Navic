@@ -70,6 +70,7 @@ import paige.navic.icons.outlined.Share
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.common.KeepScreenOn
 import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
 import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
@@ -92,6 +93,10 @@ fun LyricsScreen(
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
+
+	if (Settings.shared.lyricsKeepAlive) {
+		KeepScreenOn()
+	}
 
 	var isSelectionMode by rememberSaveable { mutableStateOf(false) }
 	val selectedIndices = rememberSaveable { mutableStateListOf<Int>() }
