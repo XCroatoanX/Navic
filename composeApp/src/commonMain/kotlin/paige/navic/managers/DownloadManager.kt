@@ -1,5 +1,8 @@
 package paige.navic.managers
 
+import coil3.SingletonImageLoader
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.prepareRequest
@@ -25,6 +28,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.shared.Logger
 
 class DownloadManager(
+	private val platformContext: coil3.PlatformContext,
     private val downloadDao: DownloadDao,
     private val storageManager: StorageManager,
     private val scope: CoroutineScope,
@@ -65,6 +69,23 @@ class DownloadManager(
 				Logger.i("DownloadManager", "beginning download for ${song.id}")
 
 				downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.DOWNLOADING, 0f))
+
+				val coverId = song.coverArtId
+
+				if (coverId != null) {
+					Logger.i("DownloadManager", "caching cover art for $coverId")
+					val coverArtUrl = SessionManager.api.getCoverArtUrl(coverId, auth = true)
+
+					val imageRequest = ImageRequest.Builder(platformContext)
+						.data(coverArtUrl)
+						.memoryCacheKey(coverId)
+						.diskCacheKey(coverId)
+						.diskCachePolicy(CachePolicy.ENABLED)
+						.build()
+
+					SingletonImageLoader.get(platformContext).execute(imageRequest)
+					Logger.i("DownloadManager", "cached cover art for $coverId")
+				}
 
 				var lastProgress = 0f
 				val request = client.prepareRequest(
