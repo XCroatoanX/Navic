@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +62,9 @@ import paige.navic.ui.screens.library.components.libraryScreenOverviewButton
 import paige.navic.ui.screens.playlist.components.PlaylistListScreenItem
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.ui.viewmodels.LoginViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
@@ -90,6 +93,9 @@ fun LibraryScreen() {
 	val artistsState by artistListViewModel.artistsState.collectAsState()
 	val genresState by genreListViewModel.genresState.collectAsState()
 
+	val loginViewModel = koinViewModel<LoginViewModel>()
+	val loginState by loginViewModel.loginState.collectAsState()
+
 	val gridState = albumListViewModel.gridState
 
 	var shareId by remember { mutableStateOf<String?>(null) }
@@ -97,6 +103,13 @@ fun LibraryScreen() {
 	var deletionId by remember { mutableStateOf<String?>(null) }
 	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+	LaunchedEffect(loginState is LoginState.Success) {
+		albumListViewModel.refreshAlbums(false)
+		playlistListViewModel.refreshPlaylists(false)
+		artistListViewModel.refreshArtists(false)
+		genreListViewModel.refreshGenres(false)
+	}
 
 	Scaffold(
 		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
