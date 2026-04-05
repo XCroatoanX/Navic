@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.relations.PlaylistWithSongs
+import paige.navic.shared.Logger
 
 @Suppress("unused")
 @Dao
@@ -39,4 +40,19 @@ interface PlaylistDao {
 
 	@Query("DELETE FROM PlaylistEntity")
 	suspend fun clearAllPlaylists()
+
+	@Query("SELECT playlistId FROM PlaylistEntity")
+	suspend fun getAllPlaylistIds(): List<String>
+
+	@Transaction
+	suspend fun updateAllPlaylists(remotePlaylists: List<PlaylistEntity>) {
+		val remoteIds = remotePlaylists.map { it.playlistId }.toSet()
+		getAllPlaylistIds().forEach { localId ->
+			if (localId !in remoteIds) {
+				Logger.w("PlaylistDao", "playlist $localId no longer exists remotely")
+				deletePlaylist(localId)
+			}
+		}
+		insertPlaylists(remotePlaylists)
+	}
 }

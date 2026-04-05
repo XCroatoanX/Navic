@@ -35,6 +35,13 @@ val viewModelModule = module {
 		)
 	}
 
+	viewModel { (tracks: List<DomainSong>, playlistToExclude: String?) ->
+		PlaylistUpdateDialogViewModel(
+			tracks = tracks,
+			playlistToExclude = playlistToExclude
+		)
+	}
+
 	viewModelOf(::AlbumListViewModel)
 	viewModelOf(::ArtistListViewModel)
 	viewModelOf(::SearchViewModel)
@@ -47,7 +54,6 @@ val viewModelModule = module {
 	viewModelOf(::ShareDialogViewModel)
 	viewModelOf(::LyricsPriorityViewModel)
 	viewModelOf(::PlaylistCreateDialogViewModel)
-	viewModelOf(::PlaylistUpdateDialogViewModel)
 	viewModelOf(::TrackListViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModel {

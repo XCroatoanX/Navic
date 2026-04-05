@@ -142,8 +142,8 @@ class DbRepository(
 			album.songs.map { it.toEntity() }
 		}
 
-		albumDao.insertAlbums(albumEntities)
-		songDao.insertSongs(songEntities)
+		albumDao.updateAllAlbums(albumEntities)
+		songDao.updateAllSongs(songEntities)
 
 		if (songEntities.isNotEmpty() || albumEntities.isNotEmpty()) {
 			Logger.i("DbRepository", "- Songs Synced: ${albumEntities.size} albums, ${songEntities.size} songs")
@@ -155,22 +155,10 @@ class DbRepository(
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
 		val remotePlaylists = api.getPlaylists()
-
-		if (remotePlaylists.isEmpty() && playlistDao.getPlaylistCount() > 0) {
-			return@runDbOp emptyList()
-		}
-
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
-		val remoteIds = playlistEntities.map { it.playlistId }.toSet()
-		val localPlaylists = playlistDao.getAllPlaylists()
 
-		localPlaylists.forEach { local ->
-			if (local.playlist.playlistId !in remoteIds) {
-				playlistDao.deletePlaylist(local.playlist.playlistId)
-			}
-		}
+		playlistDao.updateAllPlaylists(playlistEntities)
 
-		playlistDao.insertPlaylists(playlistEntities)
 		Logger.i("DbRepository", "- Playlists Synced: ${playlistEntities.size} playlists found")
 
 		playlistEntities
@@ -192,7 +180,7 @@ class DbRepository(
 	suspend fun syncGenres(): Result<Unit> = runDbOp {
 		val remoteGenres = api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
-		genreDao.insertGenres(entities)
+		genreDao.updateAllGenres(entities)
 		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
 
@@ -202,8 +190,7 @@ class DbRepository(
 			indexGroup.artists
 		}
 		val entities = flatArtists.map { it.toEntity() }
-
-		artistDao.insertArtists(entities)
+		artistDao.updateAllArtists(entities)
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
 
@@ -220,7 +207,7 @@ class DbRepository(
 			lastFmUrl = artistInfo.lastFmUrl
 		)
 
-		artistDao.insertArtists(listOf(updatedEntity))
+		artistDao.insertArtist(updatedEntity)
 
 		updatedEntity.toDomainModel()
 	}

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.utils.UiState
@@ -14,15 +15,24 @@ import paige.navic.utils.UiState
 class PlaylistRepository(
 	private val playlistDao: PlaylistDao
 ) {
-	fun getPlaylistsFlow(): Flow<UiState<List<DomainPlaylist>>> = flow {
-		val localData = playlistDao
+	private suspend fun getLocalData(): List<DomainPlaylist> {
+		return playlistDao
 			.getAllPlaylists()
 			.map { it.toDomainModel() }
+	}
+
+	private suspend fun refreshLocalData(): List<DomainPlaylist> {
+		val remotePlaylists = SessionManager.api.getPlaylists()
+		val playlistEntities = remotePlaylists.map { it.toEntity() }
+		playlistDao.updateAllPlaylists(playlistEntities)
+		return getLocalData()
+	}
+
+	fun getPlaylistsFlow(): Flow<UiState<List<DomainPlaylist>>> = flow {
+		val localData = getLocalData()
 		emit(UiState.Loading(data = localData))
 		try {
-			val remoteData = SessionManager.api.getPlaylists()
-				.mapNotNull { playlistDao.getPlaylistById(it.id)?.toDomainModel() }
-			emit(UiState.Success(data = remoteData))
+			emit(UiState.Success(data = refreshLocalData()))
 		} catch (error: Exception) {
 			emit(UiState.Error(error = error, data = localData))
 		}

@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.ArtistEntity
+import paige.navic.shared.Logger
 
 @Suppress("unused")
 @Dao
@@ -45,4 +47,19 @@ interface ArtistDao {
 
 	@Query("DELETE FROM ArtistEntity")
 	suspend fun clearAllArtists()
+
+	@Query("SELECT artistId FROM ArtistEntity")
+	suspend fun getAllArtistIds(): List<String>
+
+	@Transaction
+	suspend fun updateAllArtists(remoteArtists: List<ArtistEntity>) {
+		val remoteIds = remoteArtists.map { it.artistId }.toSet()
+		getAllArtistIds().forEach { localId ->
+			if (localId !in remoteIds) {
+				Logger.w("ArtistDao", "artist $localId no longer exists remotely")
+				deleteArtist(localId)
+			}
+		}
+		insertArtists(remoteArtists)
+	}
 }
