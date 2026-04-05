@@ -7,6 +7,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.shared.JvmMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
@@ -51,9 +52,11 @@ actual val platformModule = module {
 		JvmMediaPlayerViewModel(
 			stateRepository = get(),
 			trackRepository = get(),
-			downloadManager = get()
+			downloadManager = get(),
+			connectivityManager = get()
 		)
 	}
 
 	singleOf(::ShareManager)
+	single<ConnectivityManager> { ConnectivityManager(get()) }
 }

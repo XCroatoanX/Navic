@@ -4,14 +4,21 @@ import paige.navic.domain.repositories.TrackRepository
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 
 // TODO: implement this class
 class JvmMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	trackRepository: TrackRepository,
-	private val downloadManager: DownloadManager
-) : MediaPlayerViewModel(stateRepository, trackRepository) {
+	downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
+) : MediaPlayerViewModel(
+	stateRepository = stateRepository,
+	trackRepository = trackRepository,
+	downloadManager = downloadManager,
+	connectivityManager = connectivityManager
+) {
 	override fun addToQueueSingle(track: DomainSong) {
 	}
 

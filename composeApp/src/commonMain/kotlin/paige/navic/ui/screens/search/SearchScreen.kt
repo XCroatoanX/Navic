@@ -31,12 +31,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
+import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_all
 import navic.composeapp.generated.resources.title_artists
@@ -55,6 +57,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
+import paige.navic.icons.outlined.Offline
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
@@ -100,6 +103,8 @@ fun SearchScreen(
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
 	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+	val isOnline by viewModel.isOnline.collectAsState()
+	val downloadedSongs by viewModel.downloadedSongs.collectAsState()
 
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
@@ -175,13 +180,15 @@ fun SearchScreen(
 									tracks.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
+									val isDownloaded = downloadedSongs.containsKey(track.id)
+									val canPlay = isOnline || isDownloaded
 									ListItem(
-										modifier = Modifier.clickable {
+										modifier = Modifier.clickable(canPlay) {
 											ctx.clickSound()
 											player.clearQueue()
 											player.addToQueueSingle(track)
 											player.playAt(0)
-										},
+										}.alpha(if (canPlay) 1f else 0.75f),
 										headlineContent = { Text(track.title) },
 										supportingContent = {
 											MarqueeText(
@@ -194,6 +201,15 @@ fun SearchScreen(
 												modifier = Modifier.size(50.dp),
 												shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 											)
+										},
+										trailingContent = {
+											if (!canPlay) {
+												Icon(
+													Icons.Outlined.Offline,
+													stringResource(Res.string.info_not_available_offline),
+													modifier = Modifier.size(20.dp)
+												)
+											}
 										}
 									)
 								}

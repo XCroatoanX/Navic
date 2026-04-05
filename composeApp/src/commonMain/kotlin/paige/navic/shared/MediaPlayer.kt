@@ -12,12 +12,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.domain.repositories.TrackRepository
+import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.DownloadManager
 import kotlin.time.Clock
 
 @Serializable
@@ -35,10 +34,18 @@ data class PlayerUiState(
 
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
-	private val trackRepository: TrackRepository
+	private val trackRepository: TrackRepository,
+	protected val connectivityManager: ConnectivityManager,
+	protected val downloadManager: DownloadManager
 ) : ViewModel() {
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+
+	protected fun isAvailable(trackId: String): Boolean {
+		val isOnline = connectivityManager.isOnline.value
+		val isDownloaded = downloadManager.downloadedSongs.value.containsKey(trackId)
+		return isOnline || isDownloaded
+	}
 
 	init {
 		viewModelScope.launch {
@@ -101,9 +108,7 @@ abstract class MediaPlayerViewModel(
 		if (!savedJson.isNullOrBlank()) {
 			try {
 				val restoredState = Json.decodeFromJsonElement<PlayerUiState>(
-					Json
-						.parseToJsonElement(savedJson)
-						.filterKeys("genres")
+					Json.parseToJsonElement(savedJson)
 				)
 				val stateToApply = restoredState.copy(isPaused = true, isLoading = false)
 
@@ -115,22 +120,6 @@ abstract class MediaPlayerViewModel(
 				Logger.e("MediaPlayerViewModel", "Failed to restore state!", e)
 				_uiState.value = PlayerUiState()
 			}
-		}
-	}
-
-	// TODO: shitty temporary workaround for bug in subsonic-kotlin, remove when fixed upstream
-	// see https://canary.discord.com/channels/1468073950016835709/1468074620631519232/1486078368494522621
-	private fun JsonElement.filterKeys(targetKey: String): JsonElement {
-		return when (this) {
-			is JsonObject -> {
-				val filteredMap = this.filter { it.key != targetKey }
-					.mapValues { it.value.filterKeys(targetKey) }
-				JsonObject(filteredMap)
-			}
-			is JsonArray -> {
-				JsonArray(this.map { it.filterKeys(targetKey) })
-			}
-			else -> this
 		}
 	}
 

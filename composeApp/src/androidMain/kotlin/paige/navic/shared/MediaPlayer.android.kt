@@ -39,6 +39,7 @@ import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.managers.DownloadManager
 import paige.navic.utils.effectiveGain
@@ -144,8 +145,14 @@ class AndroidMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	trackRepository: TrackRepository,
 	private val albumDao: AlbumDao,
-	private val downloadManager: DownloadManager
-) : MediaPlayerViewModel(stateRepository, trackRepository) {
+	downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
+) : MediaPlayerViewModel(
+	stateRepository = stateRepository,
+	trackRepository = trackRepository,
+	downloadManager = downloadManager,
+	connectivityManager = connectivityManager
+) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 
@@ -171,6 +178,11 @@ class AndroidMediaPlayerViewModel(
 			addListener(object : Player.Listener {
 				override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 					updatePlaybackState()
+					mediaItem?.mediaId?.let { id ->
+						if (!isAvailable(id)) {
+							controller?.seekToNextMediaItem()
+						}
+					}
 				}
 
 				override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -381,8 +393,13 @@ class AndroidMediaPlayerViewModel(
 	override fun playAt(index: Int) {
 		controller?.let { player ->
 			if (index in 0 until player.mediaItemCount) {
-				player.seekTo(index, 0L)
-				player.play()
+				val track = player.getMediaItemAt(index)
+				if (!isAvailable(track.mediaId)) {
+					player.seekToNextMediaItem()
+				} else {
+					player.seekTo(index, 0L)
+					player.play()
+				}
 			}
 		}
 	}

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.DownloadEntity
@@ -39,6 +41,7 @@ class DownloadManager(
 	}
 
 	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
+	val downloadedSongs: StateFlow<Map<String, String>> = _downloadedSongs.asStateFlow()
 
 	init {
 		scope.launch {

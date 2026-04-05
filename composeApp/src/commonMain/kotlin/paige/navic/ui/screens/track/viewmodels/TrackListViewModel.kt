@@ -17,6 +17,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.managers.DownloadManager
+import paige.navic.managers.ConnectivityManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
@@ -24,10 +25,13 @@ import paige.navic.utils.UiState
 class TrackListViewModel(
 	private val partialCollection: DomainSongCollection,
 	private val repository: TrackRepository,
-	private val downloadManager: DownloadManager
+	private val downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
 	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()
+
+	val isOnline = connectivityManager.isOnline
 
 	val allDownloads = downloadManager.allDownloads
 		.stateIn(

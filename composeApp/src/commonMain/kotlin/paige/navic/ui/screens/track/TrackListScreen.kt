@@ -70,6 +70,7 @@ fun TrackListScreen(
 	val tracksState by viewModel.tracksState.collectAsState()
 	val selection by viewModel.selectedTrack.collectAsState()
 	val selectedIndex by viewModel.selectedIndex.collectAsState()
+	val isOnline by viewModel.isOnline.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -167,7 +168,8 @@ fun TrackListScreen(
 							onLongClick = {
 								viewModel.selectTrack(track, index)
 							},
-							download = download
+							download = download,
+							isOffline = !isOnline
 						)
 						TrackRowDropdown(
 							expanded = selection == track && selectedIndex == index,

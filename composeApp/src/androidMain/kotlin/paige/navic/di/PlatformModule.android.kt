@@ -8,6 +8,7 @@ import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -37,7 +38,8 @@ actual val platformModule = module {
 			stateRepository = get(),
 			trackRepository = get(),
 			albumDao = get(),
-			downloadManager = get()
+			downloadManager = get(),
+			connectivityManager = get()
 		)
 	}
 
@@ -47,5 +49,12 @@ actual val platformModule = module {
 
 	single<StorageManager> {
 		StorageManager(context = androidApplication())
+	}
+
+	single<ConnectivityManager> {
+		ConnectivityManager(
+			context = androidApplication(),
+			scope = get()
+		)
 	}
 }

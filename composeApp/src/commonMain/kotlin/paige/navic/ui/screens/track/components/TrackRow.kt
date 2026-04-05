@@ -23,11 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_not_available_offline
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.utils.toHoursMinutesSeconds
 
@@ -39,23 +43,30 @@ fun TracksScreenTrackRow(
 	count: Int,
 	onClick: (() -> Unit),
 	onLongClick: (() -> Unit),
-	download: DownloadEntity? = null
+	download: DownloadEntity? = null,
+	isOffline: Boolean = false
 ) {
+	val isDownloaded = download?.status == DownloadStatus.DOWNLOADED
+	val canPlay = !isOffline || isDownloaded
+
 	SegmentedListItem(
-		modifier = Modifier.padding(
-			start = 16.dp,
-			end = 16.dp,
-			bottom = ListItemDefaults.SegmentedGap
-		),
+		modifier = Modifier
+			.padding(
+				start = 16.dp,
+				end = 16.dp,
+				bottom = ListItemDefaults.SegmentedGap
+			),
 		contentPadding = PaddingValues(14.dp),
 		onClick = onClick,
 		onLongClick = onLongClick,
+		enabled = canPlay,
 		shapes = ListItemDefaults.segmentedShapes(
 			index = index,
 			count = count
 		),
 		colors = ListItemDefaults.segmentedColors(
-			containerColor = MaterialTheme.colorScheme.surfaceContainer
+			containerColor = MaterialTheme.colorScheme.surfaceContainer,
+			disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
 		),
 		leadingContent = {
 			Text(
@@ -81,6 +92,14 @@ fun TracksScreenTrackRow(
 		},
 		trailingContent = {
 			Row(verticalAlignment = Alignment.CenterVertically) {
+				if (!canPlay) {
+					Icon(
+						Icons.Outlined.Offline,
+						stringResource(Res.string.info_not_available_offline),
+						modifier = Modifier.size(20.dp)
+					)
+					Spacer(Modifier.width(6.dp))
+				}
 				if (download != null) {
 					when (download.status) {
 						DownloadStatus.DOWNLOADING -> {

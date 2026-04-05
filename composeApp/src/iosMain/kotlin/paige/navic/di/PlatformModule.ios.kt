@@ -8,6 +8,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
 import paige.navic.shared.IOSMediaPlayerViewModel
@@ -44,12 +45,14 @@ actual val platformModule = module {
 		IOSMediaPlayerViewModel(
 			stateRepository = get(),
 			trackRepository = get(),
-			downloadManager = get()
+			downloadManager = get(),
+			connectivityManager = get()
 		)
 	}
 
 	singleOf(::ShareManager)
 	single<StorageManager> { StorageManager() }
+	single<ConnectivityManager> { ConnectivityManager(get()) }
 }
 
 @OptIn(ExperimentalForeignApi::class)
