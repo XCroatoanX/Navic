@@ -1,41 +1,34 @@
 package paige.navic.ui.screens.track.components
 
 import androidx.compose.foundation.lazy.LazyListScope
-import dev.zt64.subsonic.api.model.Artist
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_more_by_artist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
-import paige.navic.utils.UiState
 
 fun LazyListScope.tracksScreenMoreByArtistRow(
-    tracks: DomainSongCollection,
-    artistState: UiState<Artist>,
-    tab: String
+	artistName: String,
+	artistAlbums: List<DomainAlbum>,
+	tab: String
 ) {
-	(artistState as? UiState.Success)?.data?.takeIf {
-		it.album.any { album -> album.id != tracks.id }
-	}?.let { artist ->
-		item {
-			val backStack = LocalNavStack.current
-			ArtCarousel(
-				title = stringResource(Res.string.title_more_by_artist, artist.name),
-				items = artist.album
-					.filter { it.id != tracks.id }.sortedByDescending { it.playCount }
-			) { album ->
-				ArtCarouselItem(
-					coverArtId = album.coverArtId,
-					title = album.name,
-					contentDescription = album.name,
-					onClick = {
-						backStack.add(Screen.TrackList(tracks, tab))
-					}
-				)
-			}
+	item {
+		val backStack = LocalNavStack.current
+		ArtCarousel(
+			title = stringResource(Res.string.title_more_by_artist, artistName),
+			items = artistAlbums.sortedByDescending { it.playCount }
+		) { album ->
+			ArtCarouselItem(
+				coverArtId = album.coverArtId,
+				title = album.name,
+				contentDescription = album.name,
+				onClick = {
+					backStack.add(Screen.TrackList(album, tab))
+				}
+			)
 		}
 	}
 }

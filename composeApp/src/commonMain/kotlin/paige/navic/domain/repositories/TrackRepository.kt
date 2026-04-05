@@ -1,6 +1,7 @@
 package paige.navic.domain.repositories
 
 import dev.zt64.subsonic.api.model.AlbumInfo
+import kotlinx.coroutines.flow.map
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.PlaylistDao
@@ -47,6 +48,10 @@ class TrackRepository(
 			}
 		}
 	}
+
+	fun getOtherAlbums(artistId: String, albumId: String) = albumDao
+		.getAlbumsByArtistExcluding(artistId, albumId)
+		.map { it.map { album -> album.toDomainModel() } }
 
 	suspend fun getAlbumInfo(albumId: String): AlbumInfo {
 		return SessionManager.api.getAlbumInfo(albumId)

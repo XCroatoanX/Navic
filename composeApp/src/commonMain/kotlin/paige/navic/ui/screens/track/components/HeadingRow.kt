@@ -47,11 +47,7 @@ fun TracksScreenHeadingRow(
 			contentDescription = partialTracks.name,
 			modifier = Modifier
 				.widthIn(0.dp, 420.dp)
-				.padding(
-					top = 10.dp,
-					start = 64.dp,
-					end = 64.dp
-				)
+				.padding(horizontal = 64.dp)
 				.aspectRatio(1f)
 				.sharedElement(
 					sharedContentState = this@with.rememberSharedContentState("${tab}-${partialTracks.id}-cover"),

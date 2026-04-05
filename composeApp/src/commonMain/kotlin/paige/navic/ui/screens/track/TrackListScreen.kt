@@ -2,10 +2,8 @@ package paige.navic.ui.screens.track
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_tracks
 import org.jetbrains.compose.resources.stringResource
@@ -77,7 +74,7 @@ fun TrackListScreen(
 
 	val albumInfoState by viewModel.albumInfoState.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
-	val artistState by viewModel.artistState.collectAsState()
+	val otherAlbums by viewModel.otherAlbums.collectAsState()
 	val allDownloads by viewModel.allDownloads.collectAsState()
 	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
@@ -93,7 +90,11 @@ fun TrackListScreen(
 				albumInfoState = albumInfoState,
 				tracks = tracksState,
 				scrolled = scrolled,
-				onSetShareId = { shareId = it }
+				onSetShareId = { shareId = it },
+				isOnline = isOnline,
+				onDownloadAll = { viewModel.downloadAll() },
+				onCancelDownloadAll = { viewModel.cancelDownloadAll() },
+				downloadStatus = downloadStatus
 			)
 		},
 		bottomBar = {
@@ -107,11 +108,9 @@ fun TrackListScreen(
 			modifier = Modifier
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = tracksState is UiState.Loading
-				|| (artistState is UiState.Loading && partialTracks is DomainAlbum),
+			isRefreshing = tracksState is UiState.Loading,
 			onRefresh = {
 				viewModel.refreshTracks()
-				viewModel.refreshArtist()
 			}
 		) {
 			LazyColumn(
@@ -120,9 +119,7 @@ fun TrackListScreen(
 					.fillMaxSize()
 					.fadeFromTop(),
 				horizontalAlignment = Alignment.CenterHorizontally,
-				contentPadding = contentPadding.withoutTop() + PaddingValues(
-					top = 16.dp
-				),
+				contentPadding = contentPadding.withoutTop(),
 				state = viewModel.listState
 			) {
 				item {
@@ -146,10 +143,7 @@ fun TrackListScreen(
 
 				item {
 					TracksScreenHeadingRowButtons(
-						tracks = tracks,
-						onDownloadAll = { viewModel.downloadAll() },
-						onCancelDownloadAll = { viewModel.cancelDownloadAll() },
-						downloadStatus = downloadStatus
+						tracks = tracks
 					)
 				}
 
@@ -200,11 +194,13 @@ fun TrackListScreen(
 
 				item { TracksScreenFooterRow(tracks) }
 
-				tracksScreenMoreByArtistRow(
-					tracks = tracks,
-					artistState = artistState,
-					tab = tab
-				)
+				(tracks as? DomainAlbum)?.artistName?.let { artistName ->
+					tracksScreenMoreByArtistRow(
+						artistName = artistName,
+						artistAlbums = otherAlbums,
+						tab = tab
+					)
+				}
 			}
 		}
 	}

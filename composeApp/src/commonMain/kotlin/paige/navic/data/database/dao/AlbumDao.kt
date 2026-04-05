@@ -37,6 +37,10 @@ interface AlbumDao {
 	fun getAlbumsByArtist(artistId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND albumId != :albumId ORDER BY year DESC")
+	fun getAlbumsByArtistExcluding(artistId: String, albumId: String): Flow<List<AlbumWithSongs>>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%'")
 	fun searchAlbums(query: String): Flow<List<AlbumWithSongs>>
 

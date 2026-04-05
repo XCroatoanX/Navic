@@ -40,6 +40,14 @@ class TrackListViewModel(
 			initialValue = emptyList()
 		)
 
+	val otherAlbums = repository
+		.getOtherAlbums((partialCollection as? DomainAlbum)?.artistId.orEmpty(), partialCollection.id)
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.Lazily,
+			initialValue = emptyList()
+		)
+
 	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
 	val selectedTrack: StateFlow<DomainSong?> = _selectedTrack.asStateFlow()
 
@@ -52,16 +60,12 @@ class TrackListViewModel(
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
-	private val _artistState = MutableStateFlow<UiState<Artist>>(UiState.Loading())
-	val artistState = _artistState.asStateFlow()
-
 	val listState = LazyListState()
 
 	init {
 		viewModelScope.launch {
 			SessionManager.isLoggedIn.collect {
 				refreshTracks()
-				refreshArtist()
 			}
 		}
 	}
@@ -86,22 +90,6 @@ class TrackListViewModel(
 			} catch (e: Exception) {
 				_tracksState.value = UiState.Error(e)
 			}
-		}
-	}
-
-	fun refreshArtist() {
-		if (partialCollection is DomainAlbum) {
-			viewModelScope.launch {
-				_artistState.value = UiState.Loading()
-				try {
-					_artistState.value = UiState.Success(SessionManager.api.getArtist(partialCollection.id))
-				} catch (e: Exception) {
-					e.printStackTrace()
-					_artistState.value = UiState.Error(e)
-				}
-			}
-		} else {
-			_artistState.value = UiState.Error(Exception("do something here idk"))
 		}
 	}
 

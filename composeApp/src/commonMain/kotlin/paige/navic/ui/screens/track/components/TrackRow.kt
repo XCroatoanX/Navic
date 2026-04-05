@@ -7,22 +7,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
@@ -54,13 +58,13 @@ fun TracksScreenTrackRow(
 			.padding(
 				start = 16.dp,
 				end = 16.dp,
-				bottom = ListItemDefaults.SegmentedGap
+				bottom = 3.dp
 			),
 		contentPadding = PaddingValues(14.dp),
 		onClick = onClick,
 		onLongClick = onLongClick,
 		enabled = canPlay,
-		shapes = ListItemDefaults.segmentedShapes(
+		shapes = segmentedShapes(
 			index = index,
 			count = count
 		),
@@ -137,4 +141,51 @@ fun TracksScreenTrackRow(
 			}
 		}
 	)
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun segmentedShapes(
+	index: Int,
+	count: Int,
+	defaultShapes: ListItemShapes = ListItemDefaults.shapes(),
+): ListItemShapes {
+	val overrideShape = ContinuousRoundedRectangle(18.dp)
+	return remember(index, count, defaultShapes, overrideShape) {
+		when {
+			count == 1 -> defaultShapes
+
+			index == 0 -> {
+				val defaultBaseShape = defaultShapes.shape
+				if (defaultBaseShape is CornerBasedShape) {
+					defaultShapes.copy(
+						shape =
+							defaultBaseShape.copy(
+								topStart = overrideShape.topStart,
+								topEnd = overrideShape.topEnd,
+							)
+					)
+				} else {
+					defaultShapes
+				}
+			}
+
+			index == count - 1 -> {
+				val defaultBaseShape = defaultShapes.shape
+				if (defaultBaseShape is CornerBasedShape) {
+					defaultShapes.copy(
+						shape =
+							defaultBaseShape.copy(
+								bottomStart = overrideShape.bottomStart,
+								bottomEnd = overrideShape.bottomEnd,
+							)
+					)
+				} else {
+					defaultShapes
+				}
+			}
+
+			else -> defaultShapes
+		}
+	}
 }
