@@ -11,10 +11,6 @@ actual object Logger {
 		Log.i(tag, msg, tr)
 	}
 
-	actual fun d(tag: String, msg: String, tr: Throwable?) {
-		Log.d(tag, msg, tr)
-	}
-
 	actual fun w(tag: String, msg: String, tr: Throwable?) {
 		Log.w(tag, msg, tr)
 	}

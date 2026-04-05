@@ -13,11 +13,6 @@ actual object Logger {
 		tr?.printStackTrace()
 	}
 
-	actual fun d(tag: String, msg: String, tr: Throwable?) {
-		Logger.getLogger(tag).info(msg)
-		tr?.printStackTrace()
-	}
-
 	actual fun w(tag: String, msg: String, tr: Throwable?) {
 		Logger.getLogger(tag).warning(msg)
 		tr?.printStackTrace()

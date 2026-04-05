@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.AlbumInfo
-import dev.zt64.subsonic.api.model.Artist
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +19,7 @@ import paige.navic.managers.DownloadManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainSong
+import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 
 class TrackListViewModel(
@@ -123,7 +123,9 @@ class TrackListViewModel(
 					songIndicesToRemove = listOf(selection)
 				)
 				refreshTracks()
-			} catch (_: Exception) { }
+			} catch(e: Exception) {
+				Logger.e("TrackListViewModel", "Failed to remove song from playlist", e)
+			}
 		}
 	}
 
@@ -131,7 +133,9 @@ class TrackListViewModel(
 		viewModelScope.launch {
 			try {
 				repository.starTrack(_selectedTrack.value!!)
-			} catch(_: Exception) { }
+			} catch(e: Exception) {
+				Logger.e("TrackListViewModel", "Failed to star song", e)
+			}
 		}
 	}
 
@@ -139,7 +143,9 @@ class TrackListViewModel(
 		viewModelScope.launch {
 			try {
 				repository.unstarTrack(_selectedTrack.value!!)
-			} catch(_: Exception) { }
+			} catch(e: Exception) {
+				Logger.e("TrackListViewModel", "Failed to unstar song", e)
+			}
 		}
 	}
 

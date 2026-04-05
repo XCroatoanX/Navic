@@ -9,7 +9,6 @@ import paige.navic.data.database.entities.SongEntity
 import paige.navic.shared.Logger
 
 @Dao
-@Suppress("unused")
 interface SongDao {
 	@Query("SELECT * FROM SongEntity WHERE songId = :songId LIMIT 1")
 	suspend fun getSongById(songId: String): SongEntity?

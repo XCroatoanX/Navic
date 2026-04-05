@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import paige.navic.data.database.entities.LyricEntity
 
-@Suppress("unused")
 @Dao
 interface LyricDao {
 	@Transaction

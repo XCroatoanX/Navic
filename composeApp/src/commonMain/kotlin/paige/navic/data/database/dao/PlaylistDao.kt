@@ -11,7 +11,6 @@ import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.relations.PlaylistWithSongs
 import paige.navic.shared.Logger
 
-@Suppress("unused")
 @Dao
 interface PlaylistDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)

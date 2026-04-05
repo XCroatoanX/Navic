@@ -11,7 +11,6 @@ import paige.navic.data.database.relations.GenreWithAlbums
 import paige.navic.shared.Logger
 
 @Dao
-@Suppress("unused")
 interface GenreDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertGenre(song: GenreEntity)

@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.ArtistEntity
 import paige.navic.shared.Logger
 
-@Suppress("unused")
 @Dao
 interface ArtistDao {
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")

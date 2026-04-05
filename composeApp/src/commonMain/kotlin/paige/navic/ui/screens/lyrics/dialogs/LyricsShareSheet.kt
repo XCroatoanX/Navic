@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.lyrics.dialogs
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -75,7 +74,6 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
 import paige.navic.managers.ShareManager
-import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.FormRow
 

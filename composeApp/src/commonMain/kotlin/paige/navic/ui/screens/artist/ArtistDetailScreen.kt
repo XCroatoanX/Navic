@@ -198,7 +198,7 @@ fun ArtistDetailScreen(
 								}
 							ArtCarousel(
 								stringResource(Res.string.title_albums),
-								state.albums.sortedByDescending { it.playCount }
+								state.albums.sortedByDescending { album -> album.playCount }
 							) { album ->
 								ArtCarouselItem(album.coverArtId, album.name, null) {
 									backStack.add(Screen.TrackList(album, "artist"))

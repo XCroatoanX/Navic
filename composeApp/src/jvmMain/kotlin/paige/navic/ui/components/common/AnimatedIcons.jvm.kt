@@ -1,3 +1,5 @@
+@file:Suppress("SameReturnValue")
+
 package paige.navic.ui.components.common
 
 import androidx.compose.runtime.Composable

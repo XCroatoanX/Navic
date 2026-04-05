@@ -92,7 +92,6 @@ fun SongEntity.toDomainModel() = DomainSong(
 	musicBrainzId = this.musicBrainzId,
 	contributors = this.contributors,
 	replayGain = this.replayGain,
-	explicitStatus = null,
 )
 
 fun DomainSong.toEntity() = SongEntity(

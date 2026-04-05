@@ -10,7 +10,6 @@ import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.relations.AlbumWithSongs
 import paige.navic.shared.Logger
 
-@Suppress("unused")
 @Dao
 interface AlbumDao {
 	@Transaction

@@ -75,10 +75,6 @@ class ArtistListViewModel(
 		}
 	}
 
-	fun setListType(listType: ArtistListType) {
-		_listType.value = listType
-	}
-
 	fun clearError() {
 		_artistsState.value = UiState.Success(_artistsState.value.data.orEmpty())
 	}

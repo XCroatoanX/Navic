@@ -4,10 +4,12 @@ import androidx.room.TypeConverter
 import paige.navic.domain.repositories.LyricsProvider
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainReplayGain
+import paige.navic.shared.Logger
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
+@Suppress("unused")
 class Converters {
 	// Duration
 	@TypeConverter
@@ -98,6 +100,7 @@ class Converters {
 		return try {
 			LyricsProvider.valueOf(name)
 		} catch (e: Exception) {
+			Logger.w("Converters", "Unknown lyrics provider", e)
 			LyricsProvider.SUBSONIC
 		}
 	}

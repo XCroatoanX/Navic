@@ -4,11 +4,11 @@
 
 package paige.navic.data.models.settings
 
-import com.russhwolf.settings.Settings
+import com.russhwolf.settings.Settings as KmpSettings
 import paige.navic.data.models.settings.enums.*
 
 class Settings(
-	settings: com.russhwolf.settings.Settings
+	settings: KmpSettings
 ) : BasePreferenceManager(settings) {
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
@@ -62,8 +62,6 @@ class Settings(
 	var lastFullSyncTime by preference(0L)
 
 	companion object {
-		val shared = Settings(
-			Settings()
-		)
+		val shared = Settings(KmpSettings())
 	}
 }

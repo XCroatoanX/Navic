@@ -7,7 +7,6 @@ import androidx.room.Transaction
 import paige.navic.data.database.entities.SyncActionEntity
 
 @Dao
-@Suppress("unused")
 interface SyncActionDao {
 	@Insert
 	suspend fun enqueue(action: SyncActionEntity)

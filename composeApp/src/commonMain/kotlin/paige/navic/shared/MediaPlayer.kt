@@ -38,6 +38,8 @@ abstract class MediaPlayerViewModel(
 	protected val connectivityManager: ConnectivityManager,
 	protected val downloadManager: DownloadManager
 ) : ViewModel() {
+
+	@Suppress("PropertyName")
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 

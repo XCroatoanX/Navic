@@ -32,7 +32,6 @@ data class DomainSong(
 	val sampleRate: Int?,
 	val audioChannelCount: Int?,
 	val replayGain: DomainReplayGain?,
-	val explicitStatus: DomainExplicitStatus?,
 	val fileSize: Long,
 	val fileExtension: String,
 	val mimeType: String,
