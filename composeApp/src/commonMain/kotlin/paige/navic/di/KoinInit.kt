@@ -8,5 +8,6 @@ fun initKoin(config: KoinAppDeclaration? = null): KoinApplication {
 	return startKoin {
 		config?.invoke(this)
 		modules(appModule, databaseModule, managerModule, repositoryModule, viewModelModule, platformModule)
+		koin.createEagerInstances()
 	}
 }
