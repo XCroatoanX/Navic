@@ -45,6 +45,7 @@ import paige.navic.icons.outlined.History
 import paige.navic.icons.outlined.LibraryAdd
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
+import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.RootBottomBar
@@ -122,8 +123,8 @@ fun LibraryScreen() {
 				|| genresState is UiState.Loading,
 			onRefresh = {
 				if (!isLoggedIn) return@PullToRefreshBox
-				albumListViewModel.refreshAlbums()
-				playlistListViewModel.refreshPlaylists()
+				albumListViewModel.refreshAlbums(true)
+				playlistListViewModel.refreshPlaylists(true)
 				artistListViewModel.refreshArtists()
 				genreListViewModel.refreshGenres()
 			}
@@ -240,6 +241,21 @@ fun LibraryScreen() {
 		}
 	}
 
+	val flattenedErrors = listOf(
+		(recentsState as? UiState.Error)?.error,
+		(playlistsState as? UiState.Error)?.error,
+		(flatArtistsState as? UiState.Error)?.error,
+		(genresState as? UiState.Error)?.error
+	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
+
+	ErrorSnackbar(
+		error = flattenedErrors?.let { Error(it) },
+		onClearError = {
+			albumListViewModel.clearError()
+			playlistListViewModel.clearError()
+		}
+	)
+
 	@Suppress("AssignedValueIsNeverRead")
 	ShareDialog(
 		id = shareId,
@@ -253,6 +269,6 @@ fun LibraryScreen() {
 		endpoint = DeletionEndpoint.PLAYLIST,
 		id = deletionId,
 		onIdClear = { deletionId = null },
-		onRefresh = { playlistListViewModel.refreshPlaylists() }
+		onRefresh = { playlistListViewModel.refreshPlaylists(true) }
 	)
 }

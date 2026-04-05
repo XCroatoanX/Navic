@@ -1,45 +1,58 @@
 package paige.navic.domain.repositories
 
 import dev.zt64.subsonic.api.model.AlbumListType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.entities.SyncActionType
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.database.relations.AlbumWithSongs
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.utils.UiState
+import paige.navic.utils.sortedByListType
 import kotlin.time.Clock
 
 class AlbumRepository(
 	private val albumDao: AlbumDao,
-	private val syncManager: SyncManager
+	private val syncManager: SyncManager,
+	private val dbRepository: DbRepository
 ) {
-	fun getAlbumsFlow(
-		offset: Int,
+	private suspend fun getLocalData(
 		listType: AlbumListType
-	): Flow<List<AlbumWithSongs>> {
-		val totalToLoad = 30 + offset
-		return when (listType) {
-			is AlbumListType.AlphabeticalByArtist -> albumDao.getAlbumsAlphabeticalByArtist(totalToLoad)
-			is AlbumListType.Newest -> albumDao.getAlbumsNewest(totalToLoad)
-			is AlbumListType.Random -> albumDao.getAlbumsRandom(totalToLoad)
-			is AlbumListType.Starred -> albumDao.getAlbumsStarred(totalToLoad)
-			is AlbumListType.Frequent -> albumDao.getAlbumsFrequent(totalToLoad)
-			is AlbumListType.Recent -> albumDao.getAlbumsRecent(totalToLoad)
-			is AlbumListType.ByGenre -> albumDao.getAlbumsByGenre(listType.genre)
-			else -> albumDao.getAlbumsAlphabeticalByName(totalToLoad)
-		}
+	): List<DomainAlbum> {
+		return albumDao
+			.getAllAlbumsList()
+			.map { it.toDomainModel() }
+			.sortedByListType(listType)
 	}
 
-	suspend fun syncAlbums(listType: AlbumListType, offset: Int) {
-		val remote = SessionManager.api.getAlbums(
-			type = listType,
-			size = 30,
-			offset = offset
-		)
-		albumDao.insertAlbums(remote.map { it.toEntity() })
+	private suspend fun refreshLocalData(
+		listType: AlbumListType
+	): List<DomainAlbum> {
+		dbRepository.syncLibrarySongs().getOrThrow()
+		return getLocalData(listType)
 	}
+
+	fun getAlbumsFlow(
+		fullRefresh: Boolean,
+		listType: AlbumListType
+	): Flow<UiState<List<DomainAlbum>>> = flow {
+		val localData = getLocalData(listType)
+		if (fullRefresh) {
+			emit(UiState.Loading(data = localData))
+			try {
+				emit(UiState.Success(data = refreshLocalData(listType)))
+			} catch (error: Exception) {
+				emit(UiState.Error(error = error, data = localData))
+			}
+		} else {
+			emit(UiState.Success(data = localData))
+		}
+	}.flowOn(Dispatchers.IO)
 
 	suspend fun isAlbumStarred(album: DomainAlbum): Boolean {
 		return albumDao.isAlbumStarred(album.id)

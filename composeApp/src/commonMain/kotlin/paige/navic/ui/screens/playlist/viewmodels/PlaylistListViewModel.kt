@@ -22,7 +22,7 @@ class PlaylistListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshPlaylists() }
+			SessionManager.isLoggedIn.collect { if (it) refreshPlaylists(false) }
 		}
 	}
 
@@ -34,9 +34,9 @@ class PlaylistListViewModel(
 		_selectedPlaylist.value = null
 	}
 
-	fun refreshPlaylists() {
+	fun refreshPlaylists(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getPlaylistsFlow().collect {
+			repository.getPlaylistsFlow(fullRefresh).collect {
 				_playlistsState.value = it
 				sortPlaylists()
 			}
@@ -47,6 +47,16 @@ class PlaylistListViewModel(
 		_playlistsState.value.data?.sortedByMode(
 			Settings.shared.playlistSortMode,
 			Settings.shared.playlistsReversed
-		)?.let { _playlistsState.value = UiState.Success(it) }
+		)?.let {
+			_playlistsState.value = when (val state = _playlistsState.value) {
+				is UiState.Loading -> UiState.Loading(data = it)
+				is UiState.Success -> UiState.Success(data = it)
+				is UiState.Error -> UiState.Error(error = state.error, data = it)
+			}
+		}
+	}
+
+	fun clearError() {
+		_playlistsState.value = UiState.Success(_playlistsState.value.data.orEmpty())
 	}
 }

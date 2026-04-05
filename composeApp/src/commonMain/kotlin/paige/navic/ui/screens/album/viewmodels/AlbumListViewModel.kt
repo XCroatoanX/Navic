@@ -6,12 +6,8 @@ import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
@@ -25,18 +21,11 @@ open class AlbumListViewModel(
 	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
-	private val _isRefreshing = MutableStateFlow(false)
-	val isRefreshing = _isRefreshing.asStateFlow()
-
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
-
-	private val _offset = MutableStateFlow(0)
-	private val _isPaginating = MutableStateFlow(false)
-	val isPaginating: StateFlow<Boolean> = _isPaginating
 
 	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
@@ -45,51 +34,16 @@ open class AlbumListViewModel(
 
 	init {
 		viewModelScope.launch {
-			combine(_offset, _listType) { offset, type ->
-				type to offset
-			}.flatMapLatest { (type, offset) ->
-				repository.getAlbumsFlow(offset, type)
-			}.collect { dbAlbums ->
-				_isPaginating.value = false
-
-				if (dbAlbums.isNotEmpty()) {
-					_albumsState.value = UiState.Success(dbAlbums.map { it.toDomainModel() })
-				}
-			}
-		}
-
-		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshAlbums() }
+			SessionManager.isLoggedIn.collect { if (it) refreshAlbums(false) }
 		}
 	}
 
-	fun refreshAlbums() {
+	fun refreshAlbums(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			_offset.value = 0
-			val hasData = (_albumsState.value as? UiState.Success)?.data?.isNotEmpty() == true
-
-			if (hasData) _isRefreshing.value = true else _albumsState.value = UiState.Loading()
-
-			try {
-				repository.syncAlbums(_listType.value, _offset.value)
-			} catch (e: Exception) {
-				_albumsState.value = UiState.Error(e)
-			} finally {
-				_isRefreshing.value = false
+			repository.getAlbumsFlow(fullRefresh, _listType.value).collect {
+				_albumsState.value = it
 			}
 		}
-	}
-
-	fun paginate() {
-		if (_isPaginating.value || _albumsState.value !is UiState.Success) return
-
-		val currentDataSize = (_albumsState.value as UiState.Success).data.size
-		val expectedSize = _offset.value + 30
-
-		if (currentDataSize < expectedSize) return
-
-		_isPaginating.value = true
-		_offset.value += 30
 	}
 
 	fun selectAlbum(album: DomainAlbum?) {
@@ -121,5 +75,9 @@ open class AlbumListViewModel(
 
 	fun setListType(listType: AlbumListType) {
 		_listType.value = listType
+	}
+
+	fun clearError() {
+		_albumsState.value = UiState.Success(_albumsState.value.data.orEmpty())
 	}
 }

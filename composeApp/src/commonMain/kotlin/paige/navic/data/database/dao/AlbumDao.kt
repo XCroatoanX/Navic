@@ -14,34 +14,6 @@ import paige.navic.shared.Logger
 @Dao
 interface AlbumDao {
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity ORDER BY name COLLATE NOCASE ASC LIMIT :limit")
-	fun getAlbumsAlphabeticalByName(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE ASC LIMIT :limit")
-	fun getAlbumsAlphabeticalByArtist(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt ASC, name COLLATE NOCASE ASC LIMIT :limit")
-	fun getAlbumsNewest(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity ORDER BY RANDOM() LIMIT :limit")
-	fun getAlbumsRandom(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC LIMIT :limit")
-	fun getAlbumsStarred(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE lastPlayedAt IS NOT NULL ORDER BY lastPlayedAt DESC, name COLLATE NOCASE ASC LIMIT :limit")
-	fun getAlbumsRecent(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE playCount IS NOT 0 ORDER BY playCount DESC, name COLLATE NOCASE ASC LIMIT :limit")
-	fun getAlbumsFrequent(limit: Int): Flow<List<AlbumWithSongs>>
-
-	@Transaction
 	@Query(" SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year DESC, name COLLATE NOCASE ASC")
 	fun getAlbumsByGenre(genreName: String): Flow<List<AlbumWithSongs>>
 
