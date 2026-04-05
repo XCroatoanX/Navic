@@ -24,6 +24,10 @@ fun List<DomainAlbum>.sortedByListType(listType: AlbumListType): List<DomainAlbu
 		AlbumListType.Random -> this.shuffled()
 		AlbumListType.Recent -> this.sortedByDescending { it.lastPlayedAt }
 		AlbumListType.Starred -> this.filter { it.starredAt != null }.sortedBy { it.starredAt }
-		else -> this
+		is AlbumListType.ByGenre -> this.filter { it.genre == listType.genre }
+		is AlbumListType.ByYear -> this.filter {
+			(it.year ?: 0) >= listType.fromYear
+				&& (it.year ?: 0) <= listType.toYear
+		}
 	}
 }

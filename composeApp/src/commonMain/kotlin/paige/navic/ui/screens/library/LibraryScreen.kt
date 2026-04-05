@@ -92,14 +92,6 @@ fun LibraryScreen() {
 
 	val gridState = albumListViewModel.gridState
 
-	val flatArtistsState = remember(artistsState) {
-		when (val s = artistsState) {
-			is UiState.Success -> UiState.Success(s.data)
-			is UiState.Loading -> UiState.Loading()
-			is UiState.Error -> UiState.Error(s.error)
-		}
-	}
-
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
@@ -125,8 +117,8 @@ fun LibraryScreen() {
 				if (!isLoggedIn) return@PullToRefreshBox
 				albumListViewModel.refreshAlbums(true)
 				playlistListViewModel.refreshPlaylists(true)
-				artistListViewModel.refreshArtists()
-				genreListViewModel.refreshGenres()
+				artistListViewModel.refreshArtists(true)
+				genreListViewModel.refreshGenres(true)
 			}
 		) {
 			LazyVerticalGrid(
@@ -211,7 +203,7 @@ fun LibraryScreen() {
 					horizontalSection(
 						title = Res.string.title_artists,
 						destination = Screen.ArtistList(true),
-						state = flatArtistsState,
+						state = artistsState,
 						key = { it.id },
 						seeAll = true
 					) { artist ->
@@ -244,7 +236,7 @@ fun LibraryScreen() {
 	val flattenedErrors = listOf(
 		(recentsState as? UiState.Error)?.error,
 		(playlistsState as? UiState.Error)?.error,
-		(flatArtistsState as? UiState.Error)?.error,
+		(artistsState as? UiState.Error)?.error,
 		(genresState as? UiState.Error)?.error
 	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
 
@@ -253,6 +245,8 @@ fun LibraryScreen() {
 		onClearError = {
 			albumListViewModel.clearError()
 			playlistListViewModel.clearError()
+			artistListViewModel.clearError()
+			genreListViewModel.clearError()
 		}
 	)
 

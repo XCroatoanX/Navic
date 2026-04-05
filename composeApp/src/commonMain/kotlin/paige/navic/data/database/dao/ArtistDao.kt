@@ -12,14 +12,14 @@ import paige.navic.shared.Logger
 @Suppress("unused")
 @Dao
 interface ArtistDao {
-	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC LIMIT :limit")
-	fun getArtistsAlphabeticalByName(limit: Int): Flow<List<ArtistEntity>>
+	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
+	suspend fun getArtistsAlphabeticalByName(): List<ArtistEntity>
 
-	@Query("SELECT * FROM ArtistEntity ORDER BY RANDOM() LIMIT :limit")
-	fun getArtistsRandom(limit: Int): Flow<List<ArtistEntity>>
+	@Query("SELECT * FROM ArtistEntity ORDER BY RANDOM()")
+	suspend fun getArtistsRandom(): List<ArtistEntity>
 
-	@Query("SELECT * FROM ArtistEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC LIMIT :limit")
-	fun getArtistsStarred(limit: Int): Flow<List<ArtistEntity>>
+	@Query("SELECT * FROM ArtistEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
+	suspend fun getArtistsStarred(): List<ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
 	fun getAllArtists(): Flow<List<ArtistEntity>>

@@ -14,10 +14,6 @@ import paige.navic.utils.UiState
 class GenreListViewModel(
 	private val repository: GenreRepository
 ) : ViewModel() {
-
-	private val _isRefreshing = MutableStateFlow(false)
-	val isRefreshing = _isRefreshing.asStateFlow()
-
 	private val _genresState = MutableStateFlow<UiState<List<GenreWithAlbums>>>(UiState.Loading())
 	val genresState = _genresState.asStateFlow()
 
@@ -25,37 +21,19 @@ class GenreListViewModel(
 
 	init {
 		viewModelScope.launch {
-			repository.getGenresWithAlbumsFlow().collect { dbGenres ->
-				if (dbGenres.isNotEmpty()) {
-					_genresState.value = UiState.Success(dbGenres)
-				}
-			}
-		}
-
-		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshGenres() }
+			SessionManager.isLoggedIn.collect { if (it) refreshGenres(false) }
 		}
 	}
 
-	fun refreshGenres() {
+	fun refreshGenres(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			val hasData = (_genresState.value as? UiState.Success)?.data?.isNotEmpty() == true
-
-			if (hasData) {
-				_isRefreshing.value = true
-			} else {
-				_genresState.value = UiState.Loading()
-			}
-
-			try {
-				repository.syncGenres()
-			} catch (e: Exception) {
-				if (!hasData) {
-					_genresState.value = UiState.Error(e)
-				}
-			} finally {
-				_isRefreshing.value = false
+			repository.getGenresWithAlbumsFlow(fullRefresh).collect {
+				_genresState.value = it
 			}
 		}
+	}
+
+	fun clearError() {
+		_genresState.value = UiState.Success(_genresState.value.data.orEmpty())
 	}
 }

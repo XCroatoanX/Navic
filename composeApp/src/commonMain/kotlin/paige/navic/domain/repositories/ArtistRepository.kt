@@ -1,13 +1,17 @@
 package paige.navic.domain.repositories
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.ArtistDao
-import paige.navic.data.database.entities.ArtistEntity
 import paige.navic.data.database.entities.SyncActionType
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
+import paige.navic.utils.UiState
 import kotlin.time.Clock
 
 enum class ArtistListType {
@@ -16,24 +20,42 @@ enum class ArtistListType {
 
 class ArtistRepository(
 	private val artistDao: ArtistDao,
-	private val syncManager: SyncManager
+	private val syncManager: SyncManager,
+	private val dbRepository: DbRepository
 ) {
-	fun getArtistsFlow(
-		offset: Int,
+	private suspend fun getLocalData(
 		listType: ArtistListType
-	): Flow<List<ArtistEntity>> {
-		val totalToLoad = 30 + offset
+	): List<DomainArtist> {
 		return when (listType) {
-			ArtistListType.Random -> artistDao.getArtistsRandom(totalToLoad)
-			ArtistListType.Starred -> artistDao.getArtistsStarred(totalToLoad)
-			else -> artistDao.getArtistsAlphabeticalByName(totalToLoad)
-		}
+			ArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName()
+			ArtistListType.Random -> artistDao.getArtistsRandom()
+			ArtistListType.Starred -> artistDao.getArtistsStarred()
+		}.map { it.toDomainModel() }
 	}
 
-	suspend fun syncArtists() {
-		val remoteArtists = SessionManager.api.getArtists().index.flatMap { it.artists }
-		artistDao.insertArtists(remoteArtists.map { it.toEntity() })
+	private suspend fun refreshLocalData(
+		listType: ArtistListType
+	): List<DomainArtist> {
+		dbRepository.syncArtists().getOrThrow()
+		return getLocalData(listType)
 	}
+
+	fun getArtistsFlow(
+		fullRefresh: Boolean,
+		listType: ArtistListType
+	): Flow<UiState<List<DomainArtist>>> = flow {
+		val localData = getLocalData(listType)
+		if (fullRefresh) {
+			emit(UiState.Loading(data = localData))
+			try {
+				emit(UiState.Success(data = refreshLocalData(listType)))
+			} catch (error: Exception) {
+				emit(UiState.Error(error = error, data = localData))
+			}
+		} else {
+			emit(UiState.Success(data = localData))
+		}
+	}.flowOn(Dispatchers.IO)
 
 	suspend fun isArtistStarred(artist: DomainArtist): Boolean {
 		return artistDao.isArtistStarred(artist.id)

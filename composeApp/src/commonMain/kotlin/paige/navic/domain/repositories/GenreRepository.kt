@@ -1,44 +1,40 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.AlbumListType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import paige.navic.data.database.dao.AlbumDao
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.dao.GenreDao
-import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.database.relations.GenreWithAlbums
-import paige.navic.data.session.SessionManager
-import kotlin.random.Random
+import paige.navic.utils.UiState
 
 class GenreRepository(
 	private val genreDao: GenreDao,
-	private val albumDao: AlbumDao
+	private val dbRepository: DbRepository
 ) {
-	fun getGenresWithAlbumsFlow(): Flow<List<GenreWithAlbums>> {
-		return genreDao.getGenresWithAlbumsFlow()
+	private suspend fun getLocalData(): List<GenreWithAlbums> {
+		return genreDao.getGenresWithAlbums()
 	}
 
-	suspend fun syncGenres() = coroutineScope {
-		val apiGenres = SessionManager.api.getGenres()
+	private suspend fun refreshLocalData(): List<GenreWithAlbums> {
+		dbRepository.syncGenres().getOrThrow()
+		return getLocalData()
+	}
 
-		val fetchedData = apiGenres.map { genre ->
-			async {
-				val albums = SessionManager.api.getAlbums(
-					type = AlbumListType.ByGenre(genre.name),
-					size = 5
-				).shuffled(Random(genre.name.hashCode()))
-				genre to albums
+	fun getGenresWithAlbumsFlow(
+		fullRefresh: Boolean
+	): Flow<UiState<List<GenreWithAlbums>>> = flow {
+		val localData = getLocalData()
+		if (fullRefresh) {
+			emit(UiState.Loading(data = localData))
+			try {
+				emit(UiState.Success(data = refreshLocalData()))
+			} catch (error: Exception) {
+				emit(UiState.Error(error = error, data = localData))
 			}
-		}.awaitAll()
-
-		val genreEntities = fetchedData.map { (apiGenre, _) -> apiGenre.toEntity() }
-		val albumEntities = fetchedData.flatMap { (apiGenre, apiAlbums) ->
-			apiAlbums.map { it.toEntity().copy(genre = apiGenre.name) }
+		} else {
+			emit(UiState.Success(data = localData))
 		}
-
-		genreDao.insertGenres(genreEntities)
-		albumDao.insertAlbums(albumEntities)
-	}
+	}.flowOn(Dispatchers.IO)
 }

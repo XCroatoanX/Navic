@@ -32,6 +32,10 @@ interface GenreDao {
 
 	@Transaction
 	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
+	suspend fun getGenresWithAlbums(): List<GenreWithAlbums>
+
+	@Transaction
+	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
 	fun getGenresWithAlbumsFlow(): Flow<List<GenreWithAlbums>>
 
 	@Query("DELETE FROM GenreEntity")
