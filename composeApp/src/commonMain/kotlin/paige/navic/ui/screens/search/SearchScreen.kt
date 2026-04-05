@@ -153,7 +153,7 @@ fun SearchScreen(
 					val albums =
 						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbum>() else emptyList()
 					val artists =
-						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance< DomainArtist>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<DomainArtist>() else emptyList()
 					val tracks =
 						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
 
