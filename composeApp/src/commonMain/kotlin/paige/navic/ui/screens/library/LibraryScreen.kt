@@ -71,7 +71,7 @@ import kotlin.time.Duration
 fun LibraryScreen() {
 	val albumListViewModel = koinViewModel<AlbumListViewModel>(
 		key = "libraryAlbums",
-		parameters = { parametersOf(AlbumListType.Recent) }
+		parameters = { parametersOf(AlbumListType.Frequent) }
 	)
 	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
 	val albumListStarredState by albumListViewModel.starredState.collectAsState()
