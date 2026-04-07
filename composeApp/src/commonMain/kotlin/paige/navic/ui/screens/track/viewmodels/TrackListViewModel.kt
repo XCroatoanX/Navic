@@ -28,13 +28,13 @@ import paige.navic.utils.UiState
  * Not to be confused with SongListViewModel, this just has a dumb name
  */
 class TrackListViewModel(
-	private val partialCollection: DomainSongCollection,
+	private val collection: DomainSongCollection,
 	private val repository: TrackRepository,
 	private val downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
-	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
-	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()
+	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading(collection))
+	val collectionState: StateFlow<UiState<DomainSongCollection>> = _collectionState.asStateFlow()
 
 	val isOnline = connectivityManager.isOnline
 
@@ -46,7 +46,7 @@ class TrackListViewModel(
 		)
 
 	val otherAlbums = repository
-		.getOtherAlbums((partialCollection as? DomainAlbum)?.artistId.orEmpty(), partialCollection.id)
+		.getOtherAlbums((collection as? DomainAlbum)?.artistId.orEmpty(), collection.id)
 		.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.Lazily,
@@ -55,9 +55,6 @@ class TrackListViewModel(
 
 	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
 	val selectedTrack: StateFlow<DomainSong?> = _selectedTrack.asStateFlow()
-
-	private val _selectedIndex = MutableStateFlow<Int?>(null)
-	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
 
 	private val _albumInfoState = MutableStateFlow<UiState<DomainAlbumInfo>>(UiState.Loading())
 	val albumInfoState = _albumInfoState.asStateFlow()
@@ -69,39 +66,29 @@ class TrackListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
-				refreshTracks()
-			}
+			SessionManager.isLoggedIn.collect { if (it) refreshCollection(false) }
 		}
 	}
 
-	fun refreshTracks() {
+	fun refreshCollection(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			_tracksState.value = UiState.Loading()
-			try {
-				val localCollection = repository.fetchWithAllTracks(partialCollection)
-				_tracksState.value = UiState.Success(localCollection)
-
-				if (localCollection is DomainAlbum) {
+			repository.getCollectionFlow(fullRefresh, collection.id).collect {
+				_collectionState.value = it
+				if (it.data is DomainAlbum) {
 					try {
-						val albumInfo = repository.getAlbumInfo(localCollection.id)
+						val albumInfo = repository.getAlbumInfo(collection.id)
 						_albumInfoState.value = UiState.Success(albumInfo.toDomainModel())
 					} catch (e: Exception) {
 						_albumInfoState.value = UiState.Error(e)
 					}
-				} else {
-					_albumInfoState.value = UiState.Error(Exception("No album info for playlists"))
 				}
-			} catch (e: Exception) {
-				_tracksState.value = UiState.Error(e)
 			}
 		}
 	}
 
-	fun selectTrack(track: DomainSong, index: Int) {
+	fun selectTrack(track: DomainSong) {
 		viewModelScope.launch {
 			_selectedTrack.value = track
-			_selectedIndex.value = index
 			_starredState.value = UiState.Loading()
 			_albumInfoState.value = UiState.Loading()
 			try {
@@ -115,23 +102,23 @@ class TrackListViewModel(
 
 	fun clearSelection() {
 		_selectedTrack.value = null
-		_selectedIndex.value = null
 	}
 
 	fun removeFromPlaylist() {
-		val selection = _selectedIndex.value ?: return
-		clearSelection()
+		val track = _selectedTrack.value ?: return
+		val songs = _collectionState.value.data?.songs ?: return
 		viewModelScope.launch {
 			try {
 				SessionManager.api.updatePlaylist(
-					id = partialCollection.id,
-					songIndicesToRemove = listOf(selection)
+					id = collection.id,
+					songIndicesToRemove = listOf(songs.indexOfFirst { it === track })
 				)
-				refreshTracks()
+				refreshCollection(false)
 			} catch(e: Exception) {
 				Logger.e("TrackListViewModel", "Failed to remove song from playlist", e)
 			}
 		}
+		clearSelection()
 	}
 
 	fun starSelectedTrack() {
@@ -167,21 +154,20 @@ class TrackListViewModel(
 	}
 
 	fun downloadAll() {
-		val tracks = (tracksState.value as? UiState.Success)?.data ?: return
+		val collection = _collectionState.value.data ?: return
 		viewModelScope.launch {
-			downloadManager.downloadCollection(tracks)
+			downloadManager.downloadCollection(collection)
 		}
 	}
 
 	fun cancelDownloadAll() {
-		val tracks = (tracksState.value as? UiState.Success)?.data ?: return
-		tracks.songs.forEach {
+		_collectionState.value.data?.songs?.forEach {
 			downloadManager.cancelDownload(it.id)
 		}
 	}
 
 	fun collectionDownloadStatus(): Flow<DownloadStatus> {
-		val songs = (tracksState.value as? UiState.Success)?.data?.songs.orEmpty()
+		val songs = _collectionState.value.data?.songs.orEmpty()
 		return downloadManager.getCollectionDownloadStatus(songs.map { it.id })
 	}
 }

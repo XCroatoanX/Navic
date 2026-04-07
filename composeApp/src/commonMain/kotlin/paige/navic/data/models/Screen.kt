@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import paige.navic.domain.models.DomainAlbumListType
-import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 
 @Immutable
@@ -50,8 +49,11 @@ sealed interface Screen : NavKey {
 	@Immutable @Serializable data object NowPlaying : Screen
 	@Immutable @Serializable data object Lyrics : Screen
 	@Immutable @Serializable data object Queue : Screen
-	@Immutable @Serializable data class TrackList(val partialCollection: DomainSongCollection, val tab: String) : Screen
-	@Immutable @Serializable data class TrackDetail(val track: DomainSong) : Screen
+	@Immutable @Serializable data class TrackList(
+		val collection: DomainSongCollection,
+		val tab: String
+	) : Screen
+	@Immutable @Serializable data class TrackDetail(val songId: String) : Screen
 	@Immutable @Serializable data class Search(
 		val nested: Boolean = false
 	) : Screen
