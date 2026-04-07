@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
 import org.jetbrains.compose.resources.stringResource
@@ -52,7 +53,7 @@ fun ArtistActionButtons(
 			modifier = Modifier
 				.weight(1f)
 				.height(52.dp)
-				.clip(CircleShape)
+				.clip(ContinuousCapsule)
 				.background(
 					if (playEnabled) MaterialTheme.colorScheme.primary
 					else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -82,8 +83,9 @@ fun ArtistActionButtons(
 					onDownload()
 				}
 			},
-			shape = com.kyant.capsule.ContinuousCapsule,
-			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED,
+			shape = ContinuousCapsule,
+			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED
+				&& playEnabled,
 			contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
 		) {
 			when (downloadStatus) {

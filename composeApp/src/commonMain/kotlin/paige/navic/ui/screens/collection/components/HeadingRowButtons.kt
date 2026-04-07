@@ -116,7 +116,8 @@ fun CollectionDetailScreenHeadingRowButtons(
 				}
 			},
 			shape = shape,
-			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED,
+			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED
+				&& collection.songs.isNotEmpty(),
 			contentPadding = PaddingValues(0.dp)
 		) {
 			when (downloadStatus) {
