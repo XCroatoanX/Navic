@@ -17,17 +17,17 @@ import paige.navic.ui.theme.defaultFont
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CollectionDetailScreenFooterRow(
-	tracks: DomainSongCollection
+	collection: DomainSongCollection
 ) {
 	Text(
 		buildString {
 			append(pluralStringResource(
 				Res.plurals.count_songs,
-				tracks.songCount,
-				tracks.songCount
+				collection.songCount,
+				collection.songCount
 			))
 			append(" • ")
-			append(tracks.duration.toString())
+			append(collection.duration.toString())
 		},
 		style = MaterialTheme.typography.titleSmall,
 		fontFamily = defaultFont(round = 100f),

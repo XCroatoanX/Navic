@@ -71,7 +71,7 @@ import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.managers.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
-import paige.navic.ui.components.common.TrackRow
+import paige.navic.ui.components.common.SongRow
 import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
@@ -244,9 +244,9 @@ fun ArtistDetailScreen(
 										modifier = Modifier.fillMaxWidth().height(250.dp)
 									) {
 										items(songs) { song ->
-											TrackRow(
+											SongRow(
 												modifier = Modifier.weight(1f),
-												track = song
+												song = song
 											)
 										}
 									}

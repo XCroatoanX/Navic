@@ -19,10 +19,10 @@ class JvmMediaPlayerViewModel(
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {
-	override fun addToQueueSingle(track: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong) {
 	}
 
-	override fun addToQueue(tracks: DomainSongCollection) {
+	override fun addToQueue(collection: DomainSongCollection) {
 	}
 
 	override fun removeFromQueue(index: Int) {
@@ -63,7 +63,7 @@ class JvmMediaPlayerViewModel(
 	override fun toggleRepeat() {
 	}
 
-	override fun shufflePlay(tracks: DomainSongCollection) {
+	override fun shufflePlay(collection: DomainSongCollection) {
 		resetSleepTimer()
 	}
 

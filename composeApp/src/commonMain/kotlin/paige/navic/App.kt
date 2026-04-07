@@ -253,8 +253,8 @@ private fun entryProvider(
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			val player = koinViewModel<MediaPlayerViewModel>()
 			val playerState by player.uiState.collectAsState()
-			val track = playerState.currentTrack
-			LyricsScreen(track)
+			val song = playerState.currentSong
+			LyricsScreen(song)
 		}
 		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			QueueScreen()

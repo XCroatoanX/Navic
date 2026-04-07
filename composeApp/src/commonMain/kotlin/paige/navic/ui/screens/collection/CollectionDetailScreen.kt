@@ -64,7 +64,7 @@ fun CollectionDetailScreen(
 
 	val collectionState by viewModel.collectionState.collectAsState()
 	val collection = collectionState.data
-	val selection by viewModel.selectedTrack.collectAsState()
+	val selection by viewModel.selectedSong.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
@@ -146,7 +146,7 @@ fun CollectionDetailScreen(
 								player.playAt(index)
 							},
 							onLongClick = {
-								viewModel.selectTrack(song)
+								viewModel.selectSong(song)
 							},
 							onAddToQueue = {
 								player.addToQueueSingle(song)
@@ -157,15 +157,15 @@ fun CollectionDetailScreen(
 						CollectionDetailScreenSongRowDropdown(
 							expanded = selection == song,
 							onDismissRequest = { viewModel.clearSelection() },
-							onRemoveStar = { viewModel.unstarSelectedTrack() },
-							onAddStar = { viewModel.starSelectedTrack() },
+							onRemoveStar = { viewModel.unstarSelectedSong() },
+							onAddStar = { viewModel.starSelectedSong() },
 							onShare = { shareId = song.id },
 							collection = collection,
 							song = song,
 							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
 							starredState = starredState,
 							downloadStatus = download?.status,
-							onDownload = { viewModel.downloadTrack(song) },
+							onDownload = { viewModel.downloadSong(song) },
 							onCancelDownload = { viewModel.cancelDownload(song.id) },
 							onDeleteDownload = { viewModel.deleteDownload(song.id) },
 							onAddToQueue = { player.addToQueueSingle(song) }

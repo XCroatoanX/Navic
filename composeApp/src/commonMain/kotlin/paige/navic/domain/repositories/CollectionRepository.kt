@@ -82,23 +82,21 @@ class CollectionRepository(
 		return SessionManager.api.getAlbumInfo(albumId)
 	}
 
-	suspend fun isTrackStarred(trackId: String): Boolean {
-		return songDao.isSongStarred(trackId)
-	}
+	suspend fun isSongStarred(songId: String) = songDao.isSongStarred(songId)
 
-	suspend fun starTrack(track: DomainSong) {
-		val starredEntity = track.toEntity().copy(
+	suspend fun starSong(song: DomainSong) {
+		val starredEntity = song.toEntity().copy(
 			starredAt = Clock.System.now()
 		)
 		songDao.insertSong(starredEntity)
-		syncManager.enqueueAction(SyncActionType.STAR, track.id)
+		syncManager.enqueueAction(SyncActionType.STAR, song.id)
 	}
 
-	suspend fun unstarTrack(track: DomainSong) {
-		val unstarredEntity = track.toEntity().copy(
+	suspend fun unstarSong(song: DomainSong) {
+		val unstarredEntity = song.toEntity().copy(
 			starredAt = null
 		)
 		songDao.insertSong(unstarredEntity)
-		syncManager.enqueueAction(SyncActionType.UNSTAR, track.id)
+		syncManager.enqueueAction(SyncActionType.UNSTAR, song.id)
 	}
 }

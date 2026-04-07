@@ -30,16 +30,16 @@ import paige.navic.ui.viewmodels.LoginViewModel
 val viewModelModule = module {
 	viewModelOf(::ArtistDetailViewModel)
 
-	viewModel { (track: DomainSong?) ->
+	viewModel { (song: DomainSong?) ->
 		LyricsScreenViewModel(
-			track = track,
+			song = song,
 			repository = get()
 		)
 	}
 
-	viewModel { (tracks: List<DomainSong>, playlistToExclude: String?) ->
+	viewModel { (songs: List<DomainSong>, playlistToExclude: String?) ->
 		PlaylistUpdateDialogViewModel(
-			tracks = tracks,
+			songs = songs,
 			playlistToExclude = playlistToExclude
 		)
 	}

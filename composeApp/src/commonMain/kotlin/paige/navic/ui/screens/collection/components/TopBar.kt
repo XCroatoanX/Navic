@@ -173,7 +173,7 @@ fun CollectionDetailScreenTopBar(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = collection?.songs.orEmpty().toPersistentList(),
+			songs = collection?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

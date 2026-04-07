@@ -204,7 +204,7 @@ fun CollectionDetailScreenSongRowDropdown(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = persistentListOf(song),
+			songs = persistentListOf(song),
 			playlistToExclude = if (collection is DomainPlaylist)
 				collection.id
 			else null,
