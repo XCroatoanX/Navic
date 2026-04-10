@@ -29,7 +29,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -134,18 +137,21 @@ fun App() {
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
 	}
+	var hasCheckedForUpdates by rememberSaveable { mutableStateOf(false) }
 
-	// todo: this should survive config changes but im lazy ykyk
 	LaunchedEffect(Unit) {
-		checkForUpdate(ctx.appVersion)?.let { newRelease ->
-			val result = snackbarState.showSnackbar(
-				message = getString(Res.string.info_update_app),
-				actionLabel = getString(Res.string.action_update_app),
-				withDismissAction = true,
-				duration = SnackbarDuration.Indefinite
-			)
-			if (result == SnackbarResult.ActionPerformed) {
-				uriHandler.openUri(newRelease.url)
+		if (!hasCheckedForUpdates && Settings.shared.checkForUpdates) {
+			hasCheckedForUpdates = true
+			checkForUpdate(ctx.appVersion)?.let { newRelease ->
+				val result = snackbarState.showSnackbar(
+					message = getString(Res.string.info_update_app),
+					actionLabel = getString(Res.string.action_update_app),
+					withDismissAction = true,
+					duration = SnackbarDuration.Indefinite
+				)
+				if (result == SnackbarResult.ActionPerformed) {
+					uriHandler.openUri(newRelease.url)
+				}
 			}
 		}
 	}
