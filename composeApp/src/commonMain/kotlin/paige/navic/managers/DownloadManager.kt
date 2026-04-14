@@ -229,15 +229,20 @@ class DownloadManager(
 
 	private suspend fun downloadAudioFile(song: DomainSong) {
 		var lastProgress = 0f
+		var progressJob: Job? = null
+
 		val request = client.prepareRequest(SessionManager.api.getStreamUrl(song.id)) {
 			method = HttpMethod.Get
 			onDownload { bytesSentTotal, contentLength ->
-				if (contentLength != null && contentLength > 0f) {
+				if (contentLength != null && contentLength > 0L) {
 					val progress = (bytesSentTotal.toDouble() / contentLength).toFloat()
 					if (progress - lastProgress >= 0.01f || progress == 1f) {
 						lastProgress = progress
 						Logger.i("DownloadManager", "downloading ${song.id} $progress")
-						scope.launch {
+
+						progressJob?.cancel()
+
+						progressJob = scope.launch {
 							downloadDao.updateProgress(
 								song.id,
 								DownloadStatus.DOWNLOADING,
@@ -256,6 +261,8 @@ class DownloadManager(
 			val path = storageManager.getDownloadPath(song.id, song.fileExtension)
 			storageManager.saveFile(path, response.bodyAsChannel())
 			Logger.i("DownloadManager", "wrote download for ${song.id}")
+
+			progressJob?.cancel()
 
 			downloadDao.insertDownload(
 				DownloadEntity(
