@@ -51,7 +51,6 @@ import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.ArtGrid
-import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
