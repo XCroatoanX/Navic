@@ -3,6 +3,7 @@ package paige.navic.managers
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import coil3.size.Size
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.prepareRequest
@@ -181,9 +182,11 @@ class DownloadManager(
 
 		val imageRequest = ImageRequest.Builder(platformContext)
 			.data(coverArtUrl)
+			.size(Size.ORIGINAL)
 			.memoryCacheKey(coverId)
 			.diskCacheKey(coverId)
 			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.DISABLED)
 			.build()
 
 		SingletonImageLoader.get(platformContext).execute(imageRequest)
