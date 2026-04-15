@@ -20,7 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
@@ -58,6 +60,8 @@ class DownloadManager(
 
 	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
 	val downloadedSongs: StateFlow<Map<String, String>> = _downloadedSongs.asStateFlow()
+	private val coverLocks = mutableMapOf<String, Mutex>()
+	private val mapLock = Mutex()
 
 	init {
 		scope.launch {
@@ -173,21 +177,38 @@ class DownloadManager(
 		}
 	}
 
+	private suspend fun getLockFor(coverId: String): Mutex {
+		return mapLock.withLock {
+			coverLocks.getOrPut(coverId) { Mutex() }
+		}
+	}
+
 	private suspend fun cacheCoverArt(coverId: String?) {
 		if (coverId == null) return
 
-		Logger.i("DownloadManager", "caching cover art for $coverId")
-		val coverArtUrl = SessionManager.api.getCoverArtUrl(coverId, auth = true)
+		val lock = getLockFor(coverId)
 
-		val imageRequest = ImageRequest.Builder(platformContext)
-			.data(coverArtUrl)
-			.memoryCacheKey(coverId)
-			.diskCacheKey(coverId)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.build()
+		lock.withLock {
+			try {
+				Logger.i("DownloadManager", "caching cover art for $coverId")
+				val coverArtUrl = SessionManager.api.getCoverArtUrl(coverId, auth = true)
 
-		SingletonImageLoader.get(platformContext).execute(imageRequest)
-		Logger.i("DownloadManager", "cached cover art for $coverId")
+				val imageRequest = ImageRequest.Builder(platformContext)
+					.data(coverArtUrl)
+					.size(coil3.size.Size.ORIGINAL)
+					.memoryCacheKey(coverId)
+					.diskCacheKey(coverId)
+					.diskCachePolicy(CachePolicy.ENABLED)
+					.build()
+
+				SingletonImageLoader.get(platformContext).execute(imageRequest)
+				Logger.i("DownloadManager", "cached cover art for $coverId")
+
+			} catch (e: Exception) {
+				if (e is CancellationException) throw e
+				Logger.e("DownloadManager", "Failed to cache cover art for $coverId", e)
+			}
+		}
 	}
 
 	private suspend fun cacheAlbumCoverArt(albumId: String?) {
