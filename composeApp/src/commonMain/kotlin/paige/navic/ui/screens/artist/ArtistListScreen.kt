@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -129,7 +129,7 @@ fun ArtistsScreenItem(
 	onAddToQueue: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val uriHandler = LocalUriHandler.current
 
@@ -138,7 +138,7 @@ fun ArtistsScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
-				ctx.clickSound()
+				platformContext.clickSound()
 				backStack.add(Screen.ArtistDetail(artist.id))
 			},
 			onLongClick = onSelect,

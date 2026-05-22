@@ -25,13 +25,13 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import org.koin.compose.koinInject
 import paige.navic.data.images.getStaticImageLoader
 import paige.navic.data.session.SessionManager
 import kotlin.time.TimeSource
+import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @Composable
 fun BlendBackground(
@@ -47,15 +47,15 @@ fun BlendBackground(
 		ColorMatrix().apply { setToSaturation(1f) }
 	}
 
-	val platformContext = LocalPlatformContext.current
+	val coilPlatformContext = LocalCoilPlatformContext.current
 
-	val staticImageLoader = remember(platformContext) {
-		getStaticImageLoader(platformContext)
+	val staticImageLoader = remember(coilPlatformContext) {
+		getStaticImageLoader(coilPlatformContext)
 	}
 
 	val sessionManager = koinInject<SessionManager>()
 	val model = remember(coverArtId) {
-		ImageRequest.Builder(platformContext)
+		ImageRequest.Builder(coilPlatformContext)
 			.data(coverArtId?.let { sessionManager.getCoverArtUrl(it) })
 			.memoryCacheKey(coverArtId?.let { "${it}_static" })
 			.diskCacheKey(coverArtId)

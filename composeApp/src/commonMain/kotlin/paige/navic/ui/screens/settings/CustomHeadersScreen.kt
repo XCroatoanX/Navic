@@ -34,7 +34,7 @@ import navic.composeapp.generated.resources.action_new
 import navic.composeapp.generated.resources.option_custom_headers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
@@ -55,7 +55,7 @@ private data class Header(
 
 @Composable
 fun SettingsCustomHeadersScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val sessionManager = koinInject<SessionManager>()
 
 	val headers = remember {
@@ -81,7 +81,7 @@ fun SettingsCustomHeadersScreen() {
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.option_custom_headers)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		}
 	) { innerPadding ->
@@ -125,7 +125,7 @@ fun SettingsCustomHeadersScreen() {
 				}
 				FilledTonalButton(
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						headers.add(Header(key = "", value = ""))
 						updateSettings()
 					},

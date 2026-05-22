@@ -65,7 +65,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
@@ -99,7 +99,7 @@ fun ArtistDetailScreen(
 		key = artistId,
 		parameters = { parametersOf(artistId) }
 	)
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
@@ -269,7 +269,7 @@ fun ArtistDetailScreen(
 											style = MaterialTheme.typography.labelLarge,
 											color = MaterialTheme.colorScheme.primary,
 											modifier = Modifier.clickable(onClick = dropUnlessResumed {
-												ctx.clickSound()
+												platformContext.clickSound()
 												backStack.add(
 													Screen.SongList(
 														nested = true,

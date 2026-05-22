@@ -42,9 +42,10 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricRepository
 import paige.navic.shared.Logger
+import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(
-	private val platformContext: coil3.PlatformContext,
+	private val coilPlatformContext: CoilPlatformContext,
 	private val downloadDao: DownloadDao,
 	private val albumDao: AlbumDao,
 	private val storageManager: StorageManager,
@@ -284,7 +285,7 @@ class DownloadManager(
 		Logger.i("DownloadManager", "caching cover art for $coverId")
 		val coverArtUrl = sessionManager.getCoverArtUrl(coverId)
 
-		val imageRequest = ImageRequest.Builder(platformContext)
+		val imageRequest = ImageRequest.Builder(coilPlatformContext)
 			.data(coverArtUrl)
 			.size(Size.ORIGINAL)
 			.memoryCacheKey(coverId)
@@ -293,7 +294,7 @@ class DownloadManager(
 			.memoryCachePolicy(CachePolicy.DISABLED)
 			.build()
 
-		SingletonImageLoader.get(platformContext).execute(imageRequest)
+		SingletonImageLoader.get(coilPlatformContext).execute(imageRequest)
 		Logger.i("DownloadManager", "cached cover art for $coverId")
 	}
 
