@@ -309,7 +309,7 @@
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
-	<string name="notice_created_playlist">Created %1$s.</string>
+	<string name="notice_created_playlist">Created playlist %1$s.</string>
 	<string name="notice_deleted_download">Deleted download.</string>
 	<string name="notice_removed_from_playlist">Removed from playlist.</string>
 	<string name="notice_added_to_queue">Added to queue.</string>
