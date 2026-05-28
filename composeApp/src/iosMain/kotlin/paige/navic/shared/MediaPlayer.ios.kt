@@ -4,7 +4,11 @@ package paige.navic.shared
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.IOSScrobbleManager
@@ -27,6 +31,7 @@ import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
 import platform.AVFoundation.AVURLAsset
 import platform.AVFoundation.addPeriodicTimeObserverForInterval
+import platform.AVFoundation.asset
 import platform.AVFoundation.currentItem
 import platform.AVFoundation.currentTime
 import platform.AVFoundation.duration
@@ -119,6 +124,32 @@ class IOSMediaPlayerViewModel(
 		pendingSyncState?.let { state ->
 			syncPlayerWithState(state)
 			pendingSyncState = null
+		}
+
+		viewModelScope.launch {
+			combine(
+				connectivityManager.isCellular,
+				snapshotFlow { preferenceManager.streamingQualityWifi },
+				snapshotFlow { preferenceManager.streamingQualityCellular },
+				snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
+				snapshotFlow { preferenceManager.customMaxBitrateWifi },
+				snapshotFlow { preferenceManager.customMaxBitrateCellular }
+			) { it }.collectLatest {
+				val song = _uiState.value.currentSong ?: return@collectLatest
+				val url = getSongUrl(song) ?: return@collectLatest
+
+				if (!url.isFileURL()) {
+					val currentAsset = player.currentItem?.asset as? AVURLAsset
+					if (currentAsset?.URL?.absoluteString != url.absoluteString) {
+						val currentTime = player.currentTime()
+						val isPaused = _uiState.value.isPaused
+
+						player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
+						player.seekToTime(currentTime, toleranceBefore = CMTimeMake(0, 1), toleranceAfter = CMTimeMake(0, 1))
+						if (!isPaused) player.play()
+					}
+				}
+			}
 		}
 	}
 
