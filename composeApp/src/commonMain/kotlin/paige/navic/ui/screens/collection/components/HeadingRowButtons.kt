@@ -30,6 +30,8 @@ import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.info_download_failed
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_download_started
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
@@ -120,12 +122,14 @@ fun CollectionDetailScreenHeadingRowButtons(
 					when (downloadStatus) {
 						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {
 							downloadManager.downloadCollection(collection)
+							player.notify(Res.string.notice_download_started)
 						}
 						DownloadStatus.DOWNLOADING -> {
 							downloadManager.cancelCollectionDownload(collection)
 						}
 						DownloadStatus.DOWNLOADED -> {
 							downloadManager.deleteDownloadedCollection(collection)
+							player.notify(Res.string.notice_deleted_download)
 						}
 					}
 				}

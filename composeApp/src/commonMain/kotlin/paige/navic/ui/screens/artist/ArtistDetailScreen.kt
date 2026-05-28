@@ -56,6 +56,8 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.info_bulk_download_warning
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_download_started
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_bulk_download
@@ -197,6 +199,7 @@ fun ArtistDetailScreen(
 								state.albums.forEach { album ->
 									downloadManager.downloadCollection(album)
 								}
+								player.notify(Res.string.notice_download_started)
 							}
 						}
 					)
@@ -229,6 +232,7 @@ fun ArtistDetailScreen(
 								state.albums.forEach { album ->
 									downloadManager.deleteDownloadedCollection(album)
 								}
+								player.notify(Res.string.notice_deleted_download)
 							},
 							downloadStatus = downloadStatus,
 							playEnabled = state.albums.isNotEmpty(),
@@ -355,6 +359,7 @@ fun ArtistDetailScreen(
 										onDownloadAll = { 
 											scope.launch {
 												downloadManager.downloadCollection(album)
+												player.notify(Res.string.notice_download_started)
 											}
 										},
 										onCancelDownloadAll = {
@@ -365,6 +370,7 @@ fun ArtistDetailScreen(
 										onDeleteDownloadAll = {
 											scope.launch {
 												downloadManager.deleteDownloadedCollection(album)
+												player.notify(Res.string.notice_deleted_download)
 											}
 										},
 										rating = selectedAlbumRating,

@@ -16,7 +16,7 @@ import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.ui.core.UiState
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.notice_added_to_playlist
+import navic.composeapp.generated.resources.notice_created_playlist
 import paige.navic.shared.MediaPlayerViewModel
 
 class PlaylistCreateDialogViewModel(
@@ -48,7 +48,7 @@ class PlaylistCreateDialogViewModel(
 					)
 				)
 				_creationState.value = UiState.Success(null)
-				player.notify(Res.string.notice_added_to_playlist, playlist.name)
+				player.notify(Res.string.notice_created_playlist, playlist.name)
 			} catch (e: Exception) {
 				_creationState.value = UiState.Error(e)
 			}
