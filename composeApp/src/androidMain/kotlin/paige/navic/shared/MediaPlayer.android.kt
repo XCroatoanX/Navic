@@ -507,6 +507,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
+			notifyAddedToQueue()
 		}
 	}
 
@@ -528,6 +529,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 				)
 			}
+			notifyAddedToQueue()
 		}
 	}
 
@@ -619,6 +621,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
+			notifyPlayNext()
 		}
 	}
 
@@ -646,6 +649,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 				)
 			}
+			notifyPlayNext()
 		}
 	}
 

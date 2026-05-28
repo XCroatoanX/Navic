@@ -246,6 +246,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
+		notifyPlayNext()
 	}
 
 	override fun playNext(collection: DomainSongCollection) {
@@ -267,6 +268,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
+		notifyPlayNext()
 	}
 
 	override fun playRadio(radio: DomainRadio) {
@@ -340,6 +342,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
+		notifyAddedToQueue()
 	}
 
 	override fun addToQueue(collection: DomainSongCollection) {
@@ -355,6 +358,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
+		notifyAddedToQueue()
 	}
 
 	override fun removeFromQueue(index: Int) {
