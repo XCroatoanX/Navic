@@ -35,7 +35,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -242,9 +244,11 @@ class AndroidMediaPlayerViewModel(
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
 
-						mediaItem?.mediaId?.let { id ->
-							if (!isAvailable(id)) {
-								controller?.seekToNextMediaItem()
+						if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
+							mediaItem?.mediaId?.let { id ->
+								if (!isAvailable(id)) {
+									controller?.seekToNextMediaItem()
+								}
 							}
 						}
 					}
@@ -304,7 +308,17 @@ class AndroidMediaPlayerViewModel(
 					pendingSyncState = null
 				}
 
-				downloadManager.downloadedSongs.collectLatest { downloadedMap ->
+				combine(
+					downloadManager.downloadedSongs,
+					connectivityManager.isCellular,
+					snapshotFlow { preferenceManager.streamingQualityWifi },
+					snapshotFlow { preferenceManager.streamingQualityCellular },
+					snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
+					snapshotFlow { preferenceManager.customMaxBitrateWifi },
+					snapshotFlow { preferenceManager.customMaxBitrateCellular }
+				) { it }.collectLatest { args ->
+					@Suppress("UNCHECKED_CAST")
+					val downloadedMap = args[0] as Map<String, String>
 					val player = controller ?: return@collectLatest
 
 					for (i in 0 until player.mediaItemCount) {
@@ -314,16 +328,29 @@ class AndroidMediaPlayerViewModel(
 
 						val isCurrentlyLocal = item.localConfiguration?.uri?.scheme == "file"
 
-						if (localPath != null && !isCurrentlyLocal) {
-							val newItem = item.buildUpon()
-								.setUri(File(localPath).toUri())
-								.build()
-							player.replaceMediaItem(i, newItem)
-						} else if (localPath == null && isCurrentlyLocal) {
-							val newItem = item.buildUpon()
-								.setUri(getStreamUrl(id))
-								.build()
-							player.replaceMediaItem(i, newItem)
+						val newItem = if (localPath != null) {
+							if (!isCurrentlyLocal) {
+								item.buildUpon()
+									.setUri(File(localPath).toUri())
+									.build()
+							} else null
+						} else {
+							val newUri = getStreamUrl(id)
+							if (isCurrentlyLocal || item.localConfiguration?.uri != newUri) {
+								item.buildUpon()
+									.setUri(newUri)
+									.build()
+							} else null
+						}
+
+						if (newItem != null) {
+							if (i == player.currentMediaItemIndex) {
+								val currentPosition = player.currentPosition
+								player.replaceMediaItem(i, newItem)
+								player.seekTo(i, currentPosition)
+							} else {
+								player.replaceMediaItem(i, newItem)
+							}
 						}
 					}
 				}
@@ -426,10 +453,12 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			while (controller?.isPlaying == true) {
 				val player = controller ?: break
-				val duration = player.duration.coerceAtLeast(1)
-				val progress =
-					(player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-				_uiState.update { it.copy(progress = progress) }
+				val duration = player.duration
+				if (duration > 0) {
+					val progress =
+						(player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+					_uiState.update { it.copy(progress = progress) }
+				}
 				delay(200.milliseconds)
 			}
 		}
@@ -437,10 +466,12 @@ class AndroidMediaPlayerViewModel(
 
 	private fun updateProgress() {
 		controller?.let { player ->
-			val duration = player.duration.coerceAtLeast(1)
-			val pos = player.currentPosition
-			val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-			_uiState.update { it.copy(progress = progress) }
+			val duration = player.duration
+			if (duration > 0) {
+				val pos = player.currentPosition
+				val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+				_uiState.update { it.copy(progress = progress) }
+			}
 		}
 	}
 
