@@ -95,6 +95,7 @@ import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.core.PlatformContext
+import paige.navic.util.core.PlatformType
 import paige.navic.util.core.rememberPlatformContext
 import paige.navic.util.ui.Material3Transitions
 
@@ -215,9 +216,8 @@ fun App() {
 				) {
 					SideloadingDialog()
 				}
-				// version check is annoying to do on ios
-				if (preferenceManager.checkForUpdates
-					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
+				// version check is annoying to do on iOS
+				if (preferenceManager.checkForUpdates && platformContext.platformType == PlatformType.Android) {
 					ChangelogSheet()
 				}
 			}
