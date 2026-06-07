@@ -29,6 +29,7 @@ import navic.composeapp.generated.resources.option_custom_headers
 import navic.composeapp.generated.resources.subtitle_check_for_updates
 import navic.composeapp.generated.resources.title_confirm
 import navic.composeapp.generated.resources.title_developer
+import navic.composeapp.generated.resources.title_logs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
@@ -89,6 +90,20 @@ fun SettingsDeveloperScreen() {
 					) {
 						Text(stringResource(Res.string.option_custom_headers))
 						Icon(Icons.Outlined.ChevronForward, null)
+					}
+					if (platformContext.platformType == PlatformType.Android) {
+						FormRow(
+							onClick = dropUnlessResumed {
+								backStack.lastOrNull()?.let {
+									if (it is Screen.Settings.Developer) {
+										backStack.add(Screen.Settings.Logs)
+									}
+								}
+							}
+						) {
+							Text(stringResource(Res.string.title_logs))
+							Icon(Icons.Outlined.ChevronForward, null)
+						}
 					}
 				}
 				Form {
