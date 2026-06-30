@@ -1,5 +1,7 @@
 package paige.navic.domain.manager
 
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamiccolor.ColorSpec
 import paige.navic.domain.manager.base.BasePreferenceManager
 import paige.navic.domain.models.settings.AnimationStyle
 import paige.navic.domain.models.settings.BottomBarCollapseMode
@@ -78,9 +80,9 @@ class PreferenceManager(
 	// theme related settings
 	var theme by preference(Theme.Dynamic)
 	var themeMode by preference(ThemeMode.System)
-	var accentColourH by preference(0f)
-	var accentColourS by preference(0f)
-	var accentColourV by preference(1f)
+	var paletteStyle by preference(PaletteStyle.TonalSpot)
+	var paletteSpec by preference(ColorSpec.SpecVersion.SPEC_2025)
+	var paletteAccentH by preference(0f)
 
 	// sync related settings
 	var lastFullSyncTime by preference(0L)

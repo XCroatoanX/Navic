@@ -56,6 +56,8 @@
 	<string name="title_select_lyrics">Select Lyrics</string>
 	<string name="title_advanced">Advanced Transcoding</string>
 	<string name="title_logs">Logs</string>
+	<string name="title_palette">Palette</string>
+	<string name="title_theme_mode">Theme mode</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
@@ -80,7 +82,7 @@
 	<string name="option_now_playing_background_style">Background style</string>
 	<string name="option_now_playing_background_style_static">Static</string>
 	<string name="option_now_playing_background_style_dynamic">Dynamic</string>
-	<string name="option_accent_colour">Accent colour</string>
+	<string name="option_accent_colour">Palette accent</string>
 	<string name="option_now_playing_song_info">Show technical song info</string>
 	<string name="option_now_playing_slider_style">Slider style</string>
 	<string name="option_now_playing_slider_style_flat">Flat</string>
@@ -153,6 +155,8 @@
 	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
 	<string name="option_cover_art_quality">Cover art quality</string>
+	<string name="option_palette_style">Palette style</string>
+	<string name="option_palette_specification">Palette specification</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -199,15 +203,10 @@
 	<string name="option_mini_player_progress_style_seekable">Seekable</string>
 
 	<string name="theme_dynamic">Dynamic</string>
-	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>
 	<string name="theme_seeded">Tinted</string>
-	<string name="theme_subtitle_seeded">One colour for all</string>
 	<string name="theme_ios">Cupertino</string>
-	<string name="theme_subtitle_ios">A city in California</string>
 	<string name="theme_apple_music">Music.app</string>
-	<string name="theme_subtitle_apple_music">A theme with red/pink highlights</string>
 	<string name="theme_spotify">Spotlight</string>
-	<string name="theme_subtitle_spotify">A theme with green highlights</string>
 
 	<string name="theme_mode_system">System</string>
 	<string name="theme_mode_dark">Dark</string>

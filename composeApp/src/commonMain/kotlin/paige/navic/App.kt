@@ -94,6 +94,7 @@ import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.settings.SettingsStreamingQualityScreen
+import paige.navic.ui.screens.settings.SettingsThemesScreen
 import paige.navic.ui.screens.share.ShareListScreen
 import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
@@ -344,6 +345,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.Fonts> {
 			FontsScreen()
+		}
+		entry<Screen.Settings.Themes> {
+			SettingsThemesScreen()
 		}
 		entry<Screen.Settings.CustomHeaders> {
 			SettingsCustomHeadersScreen()
