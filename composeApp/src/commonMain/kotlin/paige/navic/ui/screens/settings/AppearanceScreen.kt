@@ -37,6 +37,7 @@ import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_alphabetical_scroll
 import navic.composeapp.generated.resources.option_animation_style
+import navic.composeapp.generated.resources.option_artist_image_shape
 import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
@@ -69,6 +70,7 @@ fun SettingsAppearanceScreen() {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
+	var showArtistImageShapeDialog by rememberSaveable { mutableStateOf(false) }
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
@@ -138,6 +140,30 @@ fun SettingsAppearanceScreen() {
 						}
 
 						val shape = preferenceManager.coverArtShape.decreasedShape
+						Box(
+							modifier = Modifier
+								.size(48.dp)
+								.clip(shape)
+								.background(MaterialTheme.colorScheme.primaryContainer)
+								.border(2.dp, MaterialTheme.colorScheme.primary, shape)
+						)
+					}
+
+					FormRow(
+						onClick = {
+							showArtistImageShapeDialog = true
+						}
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.option_artist_image_shape))
+							Text(
+								preferenceManager.artistImageShape.name,
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+
+						val shape = preferenceManager.artistImageShape.decreasedShape
 						Box(
 							modifier = Modifier
 								.size(48.dp)
@@ -226,8 +252,18 @@ fun SettingsAppearanceScreen() {
 			}
 		}
 		ArtworkShapeDialog(
+			title = { Text(stringResource(Res.string.option_artwork_shape)) },
+			selection = preferenceManager.coverArtShape,
+			onSelect = { preferenceManager.coverArtShape = it },
 			presented = showArtworkShapeDialog,
 			onDismissRequest = { showArtworkShapeDialog = false }
+		)
+		ArtworkShapeDialog(
+			title = { Text(stringResource(Res.string.option_artist_image_shape)) },
+			selection = preferenceManager.artistImageShape,
+			onSelect = { preferenceManager.artistImageShape = it },
+			presented = showArtistImageShapeDialog,
+			onDismissRequest = { showArtistImageShapeDialog = false }
 		)
 	}
 }

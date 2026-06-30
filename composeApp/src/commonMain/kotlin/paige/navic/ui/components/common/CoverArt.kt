@@ -57,7 +57,11 @@ fun CoverArt(
 	shape: Shape? = null
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
-	val shape = shape ?: preferenceManager.coverArtShape.shape
+	val shape = shape ?: if (!coverArtId.orEmpty().startsWith("ar-")) {
+		preferenceManager.coverArtShape.shape
+	} else {
+		preferenceManager.artistImageShape.shape
+	}
 	val coilPlatformContext = LocalCoilPlatformContext.current
 	val customHeaders = preferenceManager.customHeaders
 	val sessionManager = koinInject<SessionManager>()

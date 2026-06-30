@@ -35,6 +35,7 @@ class PreferenceManager(
 	var swipeToSkip by preference(true)
 	var gridSize by preference(GridSize.TwoByTwo)
 	var coverArtShape by preference(CoverArtShape.Soft)
+	var artistImageShape by preference(CoverArtShape.Soft)
 	var coverArtQuality by preference(CoverArtQuality.High)
 	var artGridItemSize by preference(150f)
 	var marqueeSpeed by preference(MarqueeSpeed.Slow)
