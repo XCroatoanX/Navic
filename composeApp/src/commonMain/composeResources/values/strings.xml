@@ -58,6 +58,7 @@
 	<string name="title_logs">Logs</string>
 	<string name="title_palette">Palette</string>
 	<string name="title_theme_mode">Theme mode</string>
+	<string name="title_account">Account</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
