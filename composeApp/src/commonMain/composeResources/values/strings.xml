@@ -193,6 +193,7 @@
 	<string name="option_navigation_bar_label_visibility">Label visibility</string>
 	<string name="option_navigation_bar_label_visibility_always">Always</string>
 	<string name="option_navigation_bar_label_visibility_only_selected">Only selected</string>
+	<string name="option_navigation_bar_label_visibility_never">Never</string>
 	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
 
 	<string name="option_mini_player_style">Mini player style</string>
