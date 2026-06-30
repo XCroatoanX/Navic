@@ -26,6 +26,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.CoverArtShape
 
@@ -37,6 +38,7 @@ fun ArtworkShapeDialog(
 ) {
 	if (!presented) return
 
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
@@ -56,6 +58,7 @@ fun ArtworkShapeDialog(
 							.fillMaxWidth()
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
+								platformContext.clickSound()
 								preferenceManager.coverArtShape = shape
 								onDismissRequest()
 							},
@@ -87,6 +90,7 @@ fun ArtworkShapeDialog(
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
 			Button(onClick = {
+				platformContext.clickSound()
 				onDismissRequest()
 			}) {
 				Text(stringResource(Res.string.action_ok))

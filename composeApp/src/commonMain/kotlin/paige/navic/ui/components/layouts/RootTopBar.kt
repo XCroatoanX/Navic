@@ -28,6 +28,7 @@ import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.domain.models.settings.NavbarConfig
@@ -100,6 +101,7 @@ private fun Actions(
 	onLogOut: () -> Unit,
 	config: NavbarConfig?,
 ) {
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 
 	val isSearchEnabled = config?.tabs?.any {
@@ -109,6 +111,7 @@ private fun Actions(
 	if (!isSearchEnabled) {
 		IconButton(
 			onClick = dropUnlessResumed {
+				platformContext.clickSound()
 				backStack.add(Screen.Search(nested = true))
 			}
 		) {
@@ -120,6 +123,7 @@ private fun Actions(
 	}
 
 	IconButton(onClick = dropUnlessResumed {
+		platformContext.clickSound()
 		backStack.add(Screen.Settings.Root)
 	}) {
 		Icon(
@@ -135,6 +139,7 @@ private fun Actions(
 
 	Box {
 		IconButton(onClick = {
+			platformContext.clickSound()
 			expanded = true
 		}) {
 			Icon(
@@ -169,13 +174,7 @@ private fun Actions(
 						expanded = false
 						sleepTimerSheetOpen = true
 					},
-					leadingIcon = {
-						Icon(
-							Icons.Outlined.Bedtime,
-							null,
-							tint = MaterialTheme.colorScheme.positive
-						)
-					}
+					leadingIcon = { Icon(Icons.Outlined.Bedtime, null, tint = MaterialTheme.colorScheme.positive) }
 				)
 			} else {
 				DropdownItem(

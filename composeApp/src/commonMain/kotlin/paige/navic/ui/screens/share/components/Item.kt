@@ -37,6 +37,7 @@ import navic.composeapp.generated.resources.info_shared_by
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalSnackbarState
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.ShareManager
@@ -58,6 +59,7 @@ fun ShareListScreenItem(
 	share: DomainShare,
 	onSetDeletionId: (newDeletionId: String) -> Unit
 ) {
+	val platformContext = LocalPlatformContext.current
 	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	var expanded by remember { mutableStateOf(false) }
@@ -133,6 +135,7 @@ fun ShareListScreenItem(
 						}
 					},
 					onClick = {
+						platformContext.clickSound()
 						expanded = true
 					},
 					onLongClick = {

@@ -178,6 +178,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 						.clickable(onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {
 								if (it is Screen.Login) {
+									platformContext.clickSound()
 									backStack.add(Screen.Settings.CustomHeaders)
 									focusManager.clearFocus(true)
 								}
@@ -198,6 +199,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 				Button(
 					modifier = Modifier.fillMaxWidth(),
 					onClick = {
+						platformContext.clickSound()
 						login()
 					},
 					enabled = !isBusy,

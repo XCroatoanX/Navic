@@ -158,6 +158,7 @@ fun ChangelogSheet() {
 
 				Button(
 					onClick = {
+						platformContext.clickSound()
 						viewModel.clearRelease()
 						uriHandler.openUri(release.url)
 					},
@@ -172,6 +173,7 @@ fun ChangelogSheet() {
 
 				OutlinedButton(
 					onClick = {
+						platformContext.clickSound()
 						viewModel.clearRelease()
 						preferenceManager.checkForUpdates = false
 					},

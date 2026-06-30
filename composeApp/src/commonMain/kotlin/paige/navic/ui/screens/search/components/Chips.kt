@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.screens.search.SearchCategory
@@ -26,6 +27,7 @@ fun SearchScreenChips(
 	selectedCategory: SearchCategory,
 	onCategorySelect: (SearchCategory) -> Unit
 ) {
+	val platformContext = LocalPlatformContext.current
 	Row(
 		modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
 		horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -41,6 +43,7 @@ fun SearchScreenChips(
 					),
 				selected = isSelected,
 				onClick = {
+					platformContext.clickSound()
 					onCategorySelect(category)
 				},
 				label = {

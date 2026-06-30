@@ -25,6 +25,7 @@ import navic.composeapp.generated.resources.action_disable_sleep_timer
 import navic.composeapp.generated.resources.action_sleep_timer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.util.core.label
 import kotlin.time.Duration.Companion.hours
@@ -44,6 +45,7 @@ val durations = listOf(
 fun SleepTimerSheet(
 	onDismissRequest: (confirmed: Boolean) -> Unit
 ) {
+	val platformContext = LocalPlatformContext.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -78,6 +80,7 @@ fun SleepTimerSheet(
 				ListItem(
 					content = { Text(it.label()) },
 					onClick = {
+						platformContext.clickSound()
 						sleepTimerManager.startTimer(it)
 						onDismissRequest(true)
 					},
@@ -95,6 +98,7 @@ fun SleepTimerSheet(
 						)
 					},
 					onClick = {
+						platformContext.clickSound()
 						sleepTimerManager.stopTimer()
 						onDismissRequest(true)
 					},

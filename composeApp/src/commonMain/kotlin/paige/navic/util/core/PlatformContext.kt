@@ -11,6 +11,7 @@ interface PlatformContext {
 	val sizeClass: WindowSizeClass
 	val platformType: PlatformType
 	fun checkLocalNetworkPermission()
+	fun clickSound()
 }
 
 enum class PlatformType {

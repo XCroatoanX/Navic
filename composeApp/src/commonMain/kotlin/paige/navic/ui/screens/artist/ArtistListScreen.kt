@@ -30,6 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
@@ -130,6 +131,7 @@ fun ArtistsScreenItem(
 	onAddToQueue: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit
 ) {
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val uriHandler = LocalUriHandler.current
 
@@ -138,6 +140,7 @@ fun ArtistsScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
+				platformContext.clickSound()
 				backStack.add(Screen.ArtistDetail(artist.id))
 			},
 			onLongClick = onSelect,

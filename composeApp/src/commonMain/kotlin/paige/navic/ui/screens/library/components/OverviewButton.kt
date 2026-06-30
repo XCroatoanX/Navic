@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.defaultFont
@@ -37,6 +38,7 @@ fun LazyGridScope.libraryScreenOverviewButton(
 	start: Boolean
 ) {
 	item(span = { GridItemSpan(1) }) {
+		val platformContext = LocalPlatformContext.current
 		val backStack = LocalNavStack.current
 		Button(
 			modifier = Modifier
@@ -57,6 +59,7 @@ fun LazyGridScope.libraryScreenOverviewButton(
 				contentColor = MaterialTheme.colorScheme.onSurfaceVariant
 			),
 			onClick = dropUnlessResumed {
+				platformContext.clickSound()
 				if (backStack.lastOrNull() !is Screen.AlbumList) {
 					backStack.add(destination)
 				}

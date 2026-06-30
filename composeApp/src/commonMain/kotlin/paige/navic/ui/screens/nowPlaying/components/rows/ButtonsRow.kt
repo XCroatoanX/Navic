@@ -35,6 +35,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
@@ -50,6 +51,7 @@ import paige.navic.ui.components.common.playPauseIconPainter
 
 @Composable
 fun NowPlayingButtonsRow() {
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val interactionSource = remember { MutableInteractionSource() }
@@ -92,6 +94,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
+				platformContext.clickSound()
 				player.toggleShuffle()
 			},
 			enabled = enabled,
@@ -107,6 +110,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
+				platformContext.clickSound()
 				player.previous()
 			},
 			enabled = enabled
@@ -127,6 +131,7 @@ fun NowPlayingButtonsRow() {
 			colors = IconButtonDefaults.filledIconButtonColors(),
 			onClick = {
 				haptic.performHapticFeedback(hapticType)
+				platformContext.clickSound()
 				player.togglePlay()
 			},
 			enabled = enabled,
@@ -162,6 +167,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
+				platformContext.clickSound()
 				player.next()
 			},
 			enabled = enabled,
@@ -175,6 +181,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
+				platformContext.clickSound()
 				player.toggleRepeat()
 			},
 			enabled = enabled,

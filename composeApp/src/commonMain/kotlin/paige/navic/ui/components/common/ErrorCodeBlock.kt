@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Copy
@@ -35,6 +36,7 @@ fun ErrorCodeBlock(error: Throwable) {
 
 	@Suppress("DEPRECATION")
 	val clipboard = LocalClipboardManager.current
+	val platformContext = LocalPlatformContext.current
 	var copied by remember { mutableStateOf(false) }
 
 	LaunchedEffect(copied) {
@@ -66,6 +68,7 @@ fun ErrorCodeBlock(error: Throwable) {
 		IconButton(
 			modifier = Modifier.align(Alignment.TopEnd).padding(6.dp),
 			onClick = {
+				platformContext.clickSound()
 				clipboard.setText(AnnotatedString(error.stackTraceToString()))
 				copied = true
 			},

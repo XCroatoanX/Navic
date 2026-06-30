@@ -59,6 +59,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
@@ -134,6 +135,7 @@ fun SearchScreen(
 	val isOnline by viewModel.isOnline.collectAsState()
 	val downloadedSongs by viewModel.downloadedSongs.collectAsState()
 
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 
@@ -269,6 +271,7 @@ fun SearchScreen(
 											modifier = Modifier
 												.background(MaterialTheme.colorScheme.surface),
 											onClick = {
+												platformContext.clickSound()
 												player.playNow(song)
 											},
 											onLongClick = { viewModel.selectSong(song) },
@@ -410,6 +413,7 @@ fun SearchScreen(
 									val historyItem = searchHistory[index]
 									ListItem(
 										modifier = Modifier.clickable {
+											platformContext.clickSound()
 											query.clearText()
 											query.edit { insert(0, historyItem) }
 										},
@@ -423,6 +427,7 @@ fun SearchScreen(
 										},
 										trailingContent = {
 											IconButton(onClick = {
+												platformContext.clickSound()
 												viewModel.removeFromSearchHistory(historyItem)
 											}) {
 												Icon(

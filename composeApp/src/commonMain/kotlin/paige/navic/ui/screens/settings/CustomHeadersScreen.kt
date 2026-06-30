@@ -126,6 +126,7 @@ fun SettingsCustomHeadersScreen() {
 				}
 				FilledTonalButton(
 					onClick = {
+						platformContext.clickSound()
 						headers.add(Header(key = "", value = ""))
 						updateSettings()
 					},

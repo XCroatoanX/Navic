@@ -34,6 +34,7 @@ import navic.composeapp.generated.resources.notice_deleted_download
 import navic.composeapp.generated.resources.notice_download_started
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.SnackBarManager
@@ -52,6 +53,7 @@ import paige.navic.ui.theme.defaultFont
 fun CollectionDetailScreenHeadingRowButtons(
 	collection: DomainSongCollection
 ) {
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val snackBarManager = koinInject<SnackBarManager>()
 	val downloadManager = koinInject<DownloadManager>()
@@ -74,6 +76,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = buttonHeight),
 			onClick = {
+				platformContext.clickSound()
 				player.shufflePlay(collection)
 			},
 			shape = buttonShape,
@@ -89,6 +92,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		Button(
 			modifier = Modifier.weight(1f).height(buttonHeight),
 			onClick = {
+				platformContext.clickSound()
 				player.playNow(collection)
 			},
 			shape = buttonShape,
@@ -113,6 +117,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = buttonHeight),
 			onClick = {
+				platformContext.clickSound()
 				scope.launch {
 					when (downloadStatus) {
 						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {

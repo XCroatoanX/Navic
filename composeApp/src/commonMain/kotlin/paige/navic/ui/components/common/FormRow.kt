@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 
 @Composable
@@ -38,6 +39,7 @@ fun FormRow(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	content: @Composable RowScope.() -> Unit
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	Box(
 		modifier = modifier
@@ -46,6 +48,7 @@ fun FormRow(
 					Modifier
 						.combinedClickable(
 							onClick = dropUnlessResumed {
+								platformContext.clickSound()
 								onClick()
 							},
 							onLongClick = onLongClick,

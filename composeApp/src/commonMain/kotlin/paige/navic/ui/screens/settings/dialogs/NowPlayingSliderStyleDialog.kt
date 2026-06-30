@@ -43,6 +43,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingSliderStyle
 import paige.navic.ui.components.common.SlimSlider
@@ -55,6 +56,7 @@ fun NowPlayingSliderStyleDialog(
 ) {
 	if (!presented) return
 
+	val platformContext = LocalPlatformContext.current
 	var sliderValue by rememberSaveable { mutableFloatStateOf(0.6767f) }
 	val preferenceManager = koinInject<PreferenceManager>()
 
@@ -149,6 +151,7 @@ fun NowPlayingSliderStyleDialog(
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
 			Button(onClick = {
+				platformContext.clickSound()
 				onDismissRequest()
 			}) {
 				Text(stringResource(Res.string.action_ok))
@@ -164,6 +167,7 @@ private fun Option(
 	label: String,
 	content: @Composable () -> Unit
 ) {
+	val platformContext = LocalPlatformContext.current
 	Card(
 		border = BorderStroke(
 			width = 1.dp,
@@ -174,6 +178,7 @@ private fun Option(
 		shape = MaterialTheme.shapes.large,
 		onClick = {
 			onClick()
+			platformContext.clickSound()
 		}
 	) {
 		Column {

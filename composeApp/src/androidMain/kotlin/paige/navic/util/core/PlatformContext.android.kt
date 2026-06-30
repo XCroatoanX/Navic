@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
+import android.view.SoundEffectConstants
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -50,6 +51,11 @@ actual fun rememberPlatformContext(): PlatformContext {
 	}
 	return remember(isDark, sizeClass) {
 		object : PlatformContext {
+			// TODO: remove this and usages of it as compose will do it by default in alpha03
+			override fun clickSound() {
+				view.playSoundEffect(SoundEffectConstants.CLICK)
+			}
+
 			override fun checkLocalNetworkPermission() {
 				if (Build.VERSION.SDK_INT >= 37) {
 					val hasPermission = context.checkSelfPermission(

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -116,6 +117,7 @@ fun SelectionDropdownItem(
 	onClick: () -> Unit
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
+	val platformContext = LocalPlatformContext.current
 	val color by animateColorAsState(
 		if (selected && preferenceManager.theme.isMaterialLike())
 			MaterialTheme.colorScheme.primary
@@ -151,6 +153,7 @@ fun SelectionDropdownItem(
 		shape = if (preferenceManager.theme.isMaterialLike()) MaterialTheme.shapes.medium else RectangleShape,
 		shadowElevation = elevation,
 		onClick = {
+			platformContext.clickSound()
 			onClick()
 		}
 	) {
