@@ -236,8 +236,12 @@ fun BottomBar(
 								Icon(item.iconUnselected, null)
 							}
 						},
-						label = {
-							Text(stringResource(item.label))
+						label = if (preferenceManager.navigationBarLabelVisibility
+							!= NavigationBarLabelVisibility.OnlySelected || selected
+						) {
+							{ Text(stringResource(item.label)) }
+						} else {
+							null
 						}
 					)
 				}
