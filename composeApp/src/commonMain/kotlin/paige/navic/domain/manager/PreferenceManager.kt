@@ -8,6 +8,7 @@ import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.CoverArtQuality
 import paige.navic.domain.models.settings.CoverArtShape
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.models.settings.FontOption
 import paige.navic.domain.models.settings.GridSize
 import paige.navic.domain.models.settings.MarqueeSpeed
@@ -61,6 +62,7 @@ class PreferenceManager(
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 	var customHeaders by preference("")
 	var checkForUpdates by preference(true)
+	var explicitContentPlayback by preference(ExplicitContentPlayback.Allowed)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)

@@ -30,7 +30,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -60,6 +63,7 @@ import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
@@ -157,6 +161,17 @@ fun App() {
 	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
+	}
+
+	var appStarted by rememberSaveable { mutableStateOf(false) }
+
+	LaunchedEffect(Unit) {
+		if (!appStarted) {
+			appStarted = true
+			if (preferenceManager.explicitContentPlayback == ExplicitContentPlayback.SkipForThisSession) {
+				preferenceManager.explicitContentPlayback = ExplicitContentPlayback.Allowed
+			}
+		}
 	}
 
 	SharedTransitionLayout {

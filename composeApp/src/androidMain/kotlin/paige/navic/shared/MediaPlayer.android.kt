@@ -195,19 +195,20 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 }
 
 class AndroidMediaPlayerViewModel(
-	private val application: Application,
 	stateRepository: PlayerStateRepository,
-	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
+	preferenceManager: PreferenceManager,
+	private val application: Application,
+	private val albumDao: AlbumDao,
 	private val platformContext: CoilPlatformContext,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager,
 	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
+	connectivityManager = connectivityManager,
 	downloadManager = downloadManager,
-	connectivityManager = connectivityManager
+	preferenceManager = preferenceManager
 ) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -254,12 +255,7 @@ class AndroidMediaPlayerViewModel(
 				addListener(object : Player.Listener {
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
-
-						mediaItem?.mediaId?.let { id ->
-							if (!isAvailable(id)) {
-								controller?.seekToNextMediaItem()
-							}
-						}
+						skipUnavailableSong()
 					}
 
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -364,6 +360,48 @@ class AndroidMediaPlayerViewModel(
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * strategically skip around in the queue until the
+	 * current song is available while avoiding infinite
+	 * loops
+	 *
+	 * this **INTENTIONALLY** does not check for if the song
+	 * is not downloaded and if the device is offline
+	 *
+	 * this used to check for that but because there have
+	 * been cases where the device is falsely identified
+	 * as being offline that's no longer the case, so we
+	 * just try to play the song anyway
+	 */
+	private fun skipUnavailableSong() {
+		val currentSong = _uiState.value.currentSong ?: return
+		if (isExplicit(currentSong)) return
+		Logger.i("MediaPlayer", "trying to skip unavailable song")
+		val queue = _uiState.value.queue
+		val currentIdx = queue.indexOf(currentSong)
+
+		// look for the next available song, wrapping around, but stop before
+		// we loop back past our own starting point
+		val nextAvailableIdx = (1..queue.size)
+			.map { offset -> (currentIdx + offset) % queue.size }
+			.firstOrNull { index -> isExplicit(queue[index]) }
+
+		if (nextAvailableIdx == null) {
+			Logger.i("MediaPlayer", "pausing because this song is unavailable and there isn't anything to skip to")
+			controller?.pause()
+			return
+		}
+
+		if (nextAvailableIdx <= currentIdx) {
+			Logger.i("MediaPlayer", "skipping and pausing because the last song in the queue was unavailable")
+			controller?.seekTo(nextAvailableIdx, 0L)
+			controller?.pause()
+		} else {
+			// just skip to the next song
+			controller?.seekTo(nextAvailableIdx, 0L)
 		}
 	}
 
@@ -647,9 +685,9 @@ class AndroidMediaPlayerViewModel(
 				val newCollection =
 					if (collection is DomainAlbum) collection.songs.sortedWith(
 						compareBy(
-						{ it.discNumber },
-						{ it.trackNumber }
-					)) else collection.songs
+							{ it.discNumber },
+							{ it.trackNumber }
+						)) else collection.songs
 				newCollection.map { it.toMediaItem() } to newCollection
 			}
 			controller?.addMediaItems(_uiState.value.currentIndex + 1, items)

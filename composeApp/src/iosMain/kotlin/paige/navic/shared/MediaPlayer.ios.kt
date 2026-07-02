@@ -77,14 +77,15 @@ class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
+	preferenceManager: PreferenceManager,
 	syncManager: SyncManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager,
 	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
+	connectivityManager = connectivityManager,
 	downloadManager = downloadManager,
-	connectivityManager = connectivityManager
+	preferenceManager = preferenceManager
 ) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
@@ -216,12 +217,6 @@ class IOSMediaPlayerViewModel(
 		if (isTransitioningBetweenTracks) return
 
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
-
-		if (!songToPlay.id.startsWith("radio_") && !isAvailable(songToPlay.id)) {
-			next()
-			return
-		}
-
 		val url = getSongUrl(songToPlay) ?: return
 
 		isTransitioningBetweenTracks = true
