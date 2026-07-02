@@ -30,20 +30,21 @@ import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
-import com.kmpalette.loader.rememberNetworkLoader
+import coil3.SingletonImageLoader
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.kmpalette.rememberDominantColorState
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.http.Url
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.ui.LocalSheetState
+import paige.navic.util.ui.toImageBitmap
+import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
@@ -119,31 +120,40 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 private fun colorSchemeForCurrentSong(): ColorScheme {
 	val player = koinInject<MediaPlayerViewModel>()
 	val sessionManager = koinInject<SessionManager>()
+
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
-	val coverUri = remember(song?.coverArtId) {
-		song?.coverArtId?.let { sessionManager.getCoverArtUrl(it) }
+	val coverId = song?.coverArtId
+	val coverUri = remember(coverId) {
+		coverId?.let { sessionManager.getCoverArtUrl(it) }
 	}
-	val networkLoader = rememberNetworkLoader(HttpClient().config {
-		install(HttpTimeout) {
-			requestTimeoutMillis = 60_000
-			connectTimeoutMillis = 60_000
-			socketTimeoutMillis = 60_000
+
+	val coilPlatformContext = LocalCoilPlatformContext.current
+	val loader = SingletonImageLoader.get(coilPlatformContext)
+	val model = remember(coverUri) {
+		ImageRequest.Builder(coilPlatformContext)
+			.data(coverUri)
+			.memoryCacheKey(coverId)
+			.diskCacheKey(coverId)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
+	val dominantColorState = rememberDominantColorState()
+
+	LaunchedEffect(model) {
+		val result = loader.execute(model)
+		result.image?.toImageBitmap()?.let { imageBitmap ->
+			dominantColorState.updateFrom(imageBitmap)
 		}
-	})
-	val dominantColorState = rememberDominantColorState(loader = networkLoader)
+	}
+
 	val scheme = rememberDynamicColorScheme(
 		seedColor = dominantColorState.color,
 		isDark = true,
 		style = if (coverUri != null) PaletteStyle.Content else PaletteStyle.Monochrome,
 		specVersion = ColorSpec.SpecVersion.SPEC_2021,
 	)
-
-	LaunchedEffect(coverUri) {
-		coverUri?.let {
-			dominantColorState.updateFrom(Url("$it&size=128"))
-		}
-	}
 
 	return scheme
 }
