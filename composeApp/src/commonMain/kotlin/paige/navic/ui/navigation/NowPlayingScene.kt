@@ -34,6 +34,7 @@ import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.kmpalette.rememberDominantColorState
+import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
@@ -43,6 +44,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.ui.LocalSheetState
+import paige.navic.util.ui.rememberScreenCornerRadius
 import paige.navic.util.ui.toImageBitmap
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
@@ -65,6 +67,25 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 			override val content = @Composable {
 				val lifecycleOwner = rememberLifecycleOwner()
 				val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+				val screenCornerRadius = rememberScreenCornerRadius()
+				@Suppress("INVISIBLE_REFERENCE")
+				val expandProgress = sheetState.anchoredDraggableState.progress(
+					from = SheetValue.Hidden,
+					to = SheetValue.Expanded
+				)
+				val shape = remember(
+					expandProgress,
+					screenCornerRadius
+				) {
+					if (expandProgress == 1f) {
+						RectangleShape
+					} else {
+						ContinuousRoundedRectangle(
+							topStart = screenCornerRadius,
+							topEnd = screenCornerRadius
+						)
+					}
+				}
 				NavicTheme(colorSchemeForCurrentSong()) {
 					ModalBottomSheet(
 						containerColor = if (isTransparent) {
@@ -78,9 +99,7 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 						sheetMaxWidth = maxWidth,
 						contentWindowInsets = { WindowInsets() },
 						dragHandle = null,
-						shape = if (sheetState.targetValue == SheetValue.Expanded)
-							RectangleShape
-						else BottomSheetDefaults.ExpandedShape
+						shape = shape
 					) {
 						CompositionLocalProvider(
 							LocalLifecycleOwner provides lifecycleOwner,
