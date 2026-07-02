@@ -257,6 +257,9 @@
 
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
+	<string name="action_next_song">Next song</string>
+	<string name="action_previous_song">Previous song</string>
+	<string name="action_pause">Pause</string>
 	<string name="action_new">New</string>
 	<string name="action_shuffle">Shuffle</string>
 	<string name="action_repeat">Repeat</string>
@@ -277,7 +280,7 @@
 	<string name="action_sleep_timer_enabled">Sleep timer - %1$s left </string>
 	<string name="action_disable_sleep_timer">Turn off timer</string>
 	<string name="option_playback_speed">Playback speed</string>
-	<string name="action_navigate_back">Back</string>
+	<string name="action_navigate_back">Navigate up</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Log in</string>
 	<string name="action_view_shares">Shares</string>
@@ -393,6 +396,9 @@
 	<string name="info_login_description_end">instance.</string>
 	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
 	<string name="info_streaming_quality">Higher quality presets will use more data. Transcoding can severely impact load times and cause lyrics to become unsynced. Select Lossless if you encounter any issues.</string>
+	<string name="info_repeat_off">Repeat off</string>
+	<string name="info_repeat_one">Repeat one</string>
+	<string name="info_repeat_all">Repeat all</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

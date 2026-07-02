@@ -32,6 +32,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
 import paige.navic.icons.outlined.Search
+import paige.navic.ui.components.common.TooltipBox
 import paige.navic.ui.components.sheets.AccountSheet
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
@@ -87,37 +88,43 @@ private fun Actions(
 	var accountSheetOpen by rememberSaveable { mutableStateOf(false) }
 
 	if (!isSearchEnabled) {
-		IconButton(
-			onClick = dropUnlessResumed {
-				platformContext.clickSound()
-				backStack.add(Screen.Search(nested = true))
+		TooltipBox(stringResource(Res.string.title_search)) {
+			IconButton(
+				onClick = dropUnlessResumed {
+					platformContext.clickSound()
+					backStack.add(Screen.Search(nested = true))
+				}
+			) {
+				Icon(
+					imageVector = Icons.Outlined.Search,
+					contentDescription = stringResource(Res.string.title_search)
+				)
 			}
-		) {
+		}
+	}
+
+	TooltipBox(stringResource(Res.string.title_settings)) {
+		IconButton(onClick = dropUnlessResumed {
+			platformContext.clickSound()
+			backStack.add(Screen.Settings.Root)
+		}) {
 			Icon(
-				imageVector = Icons.Outlined.Search,
-				contentDescription = stringResource(Res.string.title_search)
+				imageVector = Icons.Filled.Settings,
+				contentDescription = stringResource(Res.string.title_settings)
 			)
 		}
 	}
 
-	IconButton(onClick = dropUnlessResumed {
-		platformContext.clickSound()
-		backStack.add(Screen.Settings.Root)
-	}) {
-		Icon(
-			imageVector = Icons.Filled.Settings,
-			contentDescription = stringResource(Res.string.title_settings)
-		)
-	}
-
-	IconButton(onClick = {
-		platformContext.clickSound()
-		accountSheetOpen = true
-	}) {
-		Icon(
-			imageVector = Icons.Outlined.AccountCircle,
-			contentDescription = stringResource(Res.string.title_account)
-		)
+	TooltipBox(stringResource(Res.string.title_account)) {
+		IconButton(onClick = {
+			platformContext.clickSound()
+			accountSheetOpen = true
+		}) {
+			Icon(
+				imageVector = Icons.Outlined.AccountCircle,
+				contentDescription = stringResource(Res.string.title_account)
+			)
+		}
 	}
 
 	if (accountSheetOpen) {
