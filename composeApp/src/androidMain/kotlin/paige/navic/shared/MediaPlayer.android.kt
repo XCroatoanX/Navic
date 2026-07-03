@@ -334,13 +334,11 @@ class AndroidMediaPlayerViewModel(
 		} else {
 			if (isCellular) preferenceManager.streamingQualityCellular.containerAndroid else preferenceManager.streamingQualityWifi.containerAndroid
 		}
-		val uri = sessionManager.api.getStreamUrl(id, bitrate, container?.takeIf { it.isNotBlank() })
+		return sessionManager.api.getStreamUrl(id, bitrate, container?.takeIf { it.isNotBlank() })
 			.toUri()
 			.buildUpon()
 			.appendQueryParameter("estimateContentLength", "true")
 			.build()
-		Logger.i("MediaPlayer", "$uri")
-		return uri
 	}
 
 	private fun setupController() {
