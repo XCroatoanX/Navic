@@ -46,6 +46,7 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.ui.LocalSheetState
 import paige.navic.util.ui.rememberScreenCornerRadius
 import paige.navic.util.ui.toImageBitmap
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
@@ -100,7 +101,10 @@ class NowPlayingScene<T : Any>(
 				dragHandle = null,
 				shape = shape
 			) {
-				CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+				CompositionLocalProvider(
+					LocalLifecycleOwner provides lifecycleOwner,
+					LocalSheetState provides sheetState
+				) {
 					Box(Modifier.fillMaxSize()) {
 						entry.Content()
 					}
@@ -126,11 +130,8 @@ class NowPlayingScene<T : Any>(
 		maxWidth.hashCode() * 31 +
 		isTransparent.hashCode() * 31
 
-	override suspend fun onRemove() {
-		if (::sheetState.isInitialized) {
-			sheetState.hide()
-		}
-	}
+	// onRemove is intentionally not used, see the comment
+	// on LocalSheetState
 }
 
 class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {

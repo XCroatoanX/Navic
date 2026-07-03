@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_queue
 import navic.composeapp.generated.resources.count_songs
@@ -44,6 +46,7 @@ import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
+import paige.navic.util.ui.LocalSheetState
 import paige.navic.util.ui.draggableItemsIndexed
 import paige.navic.util.ui.rememberDraggableListState
 import kotlin.time.DurationUnit
@@ -102,6 +105,18 @@ fun QueueScreen() {
 		queue.size
 	)
 
+	val sheetState = LocalSheetState.current
+	val closeScope = rememberCoroutineScope()
+	val animateToDismiss = {
+		closeScope.launch {
+			sheetState.hide()
+		}.invokeOnCompletion {
+			if (!sheetState.isVisible) {
+				backStack.remove(Screen.Queue)
+			}
+		}
+	}
+
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
@@ -158,7 +173,7 @@ fun QueueScreen() {
 						platformContext.clickSound()
 						if (playerState.currentIndex != index) {
 							player.playAt(index)
-							backStack.remove(Screen.Queue)
+							animateToDismiss()
 						}
 					},
 					onRemove = {

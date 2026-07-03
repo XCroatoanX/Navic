@@ -28,6 +28,7 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kyant.capsule.ContinuousCapsule
 import paige.navic.ui.components.sheets.ModalBottomSheet
+import paige.navic.util.ui.LocalSheetState
 
 class BottomSheetScene<T : Any>(
 	override val key: Any,
@@ -58,7 +59,10 @@ class BottomSheetScene<T : Any>(
 				}
 			}
 		) {
-			CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+			CompositionLocalProvider(
+				LocalLifecycleOwner provides lifecycleOwner,
+				LocalSheetState provides sheetState
+			) {
 				entry.Content()
 			}
 		}
@@ -79,11 +83,8 @@ class BottomSheetScene<T : Any>(
 		entry.hashCode() * 31 +
 		properties.hashCode() * 31
 
-	override suspend fun onRemove() {
-		if (::sheetState.isInitialized) {
-			sheetState.hide()
-		}
-	}
+	// onRemove is intentionally not used, see the comment
+	// on LocalSheetState
 }
 
 class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
