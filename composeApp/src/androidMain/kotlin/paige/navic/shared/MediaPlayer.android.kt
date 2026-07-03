@@ -472,7 +472,7 @@ class AndroidMediaPlayerViewModel(
 	 */
 	private fun skipUnavailableSong() {
 		val currentSong = _uiState.value.currentSong ?: return
-		if (isExplicit(currentSong)) return
+		if (!isExplicit(currentSong)) return
 		Logger.i("MediaPlayer", "trying to skip unavailable song")
 		val queue = _uiState.value.queue
 		val currentIdx = queue.indexOf(currentSong)
@@ -481,7 +481,7 @@ class AndroidMediaPlayerViewModel(
 		// we loop back past our own starting point
 		val nextAvailableIdx = (1..queue.size)
 			.map { offset -> (currentIdx + offset) % queue.size }
-			.firstOrNull { index -> isExplicit(queue[index]) }
+			.firstOrNull { index -> !isExplicit(queue[index]) }
 
 		if (nextAvailableIdx == null) {
 			Logger.i("MediaPlayer", "pausing because this song is unavailable and there isn't anything to skip to")
