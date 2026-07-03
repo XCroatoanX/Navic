@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("UNCHECKED_CAST")
+
 package paige.navic.ui.navigation
 
 import androidx.compose.foundation.layout.Box
@@ -7,7 +10,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -43,92 +46,119 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.theme.NavicTheme
-import paige.navic.util.ui.LocalSheetState
 import paige.navic.util.ui.rememberScreenCornerRadius
 import paige.navic.util.ui.toImageBitmap
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
-@OptIn(ExperimentalMaterial3Api::class)
+class NowPlayingScene<T : Any>(
+	override val key: Any,
+	private val entry: NavEntry<T>,
+	override val previousEntries: List<NavEntry<T>>,
+	override val overlaidEntries: List<NavEntry<T>>,
+	private val maxWidth: Dp,
+	private val isTransparent: Boolean,
+	private val onBack: () -> Unit
+) : OverlayScene<T> {
+
+	override val entries = listOf(entry)
+
+	lateinit var sheetState: SheetState
+
+	override val content = @Composable {
+		sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+		val lifecycleOwner = rememberLifecycleOwner()
+		val screenCornerRadius = rememberScreenCornerRadius()
+
+		// TODO: see if there's a way to do this w out private api
+		@Suppress("INVISIBLE_REFERENCE")
+		val expandProgress = sheetState.anchoredDraggableState.progress(
+			from = SheetValue.Hidden,
+			to = SheetValue.Expanded
+		)
+		val shape = remember(expandProgress, screenCornerRadius) {
+			if (expandProgress == 1f) {
+				RectangleShape
+			} else {
+				ContinuousRoundedRectangle(
+					topStart = screenCornerRadius,
+					topEnd = screenCornerRadius
+				)
+			}
+		}
+
+		NavicTheme(colorSchemeForCurrentSong()) {
+			ModalBottomSheet(
+				containerColor = if (isTransparent) {
+					Color.Transparent
+				} else {
+					MaterialTheme.colorScheme.surface
+				},
+				onDismissRequest = onBack,
+				sheetState = sheetState,
+				sheetMaxWidth = maxWidth,
+				contentWindowInsets = { WindowInsets() },
+				dragHandle = null,
+				shape = shape
+			) {
+				CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+					Box(Modifier.fillMaxSize()) {
+						entry.Content()
+					}
+				}
+			}
+		}
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null || this::class != other::class) return false
+
+		other as NowPlayingScene<*>
+
+		return key == other.key
+			&& entry == other.entry
+			&& maxWidth == other.maxWidth
+			&& isTransparent == other.isTransparent
+	}
+
+	override fun hashCode() = key.hashCode() * 31 +
+		entry.hashCode() * 31 +
+		maxWidth.hashCode() * 31 +
+		isTransparent.hashCode() * 31
+
+	override suspend fun onRemove() {
+		if (::sheetState.isInitialized) {
+			sheetState.hide()
+		}
+	}
+}
+
 class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 
 	override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
 		val entry = entries.lastOrNull() ?: return null
-		val properties = entry.metadata[MetadataKey] ?: return null
 		val maxWidth = entry.metadata[MaxWidthKey] ?: return null
 		val isTransparent = entry.metadata[IsTransparentKey] ?: return null
 
-		return object : OverlayScene<T> {
-			@Suppress("UNCHECKED_CAST")
-			override val key = entry.contentKey as T
-			override val entries = listOf(entry)
-			override val previousEntries = entries.dropLast(1)
-			override val overlaidEntries = entries.dropLast(1)
-
-			override val content = @Composable {
-				val lifecycleOwner = rememberLifecycleOwner()
-				val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-				val screenCornerRadius = rememberScreenCornerRadius()
-				@Suppress("INVISIBLE_REFERENCE")
-				val expandProgress = sheetState.anchoredDraggableState.progress(
-					from = SheetValue.Hidden,
-					to = SheetValue.Expanded
-				)
-				val shape = remember(
-					expandProgress,
-					screenCornerRadius
-				) {
-					if (expandProgress == 1f) {
-						RectangleShape
-					} else {
-						ContinuousRoundedRectangle(
-							topStart = screenCornerRadius,
-							topEnd = screenCornerRadius
-						)
-					}
-				}
-				NavicTheme(colorSchemeForCurrentSong()) {
-					ModalBottomSheet(
-						containerColor = if (isTransparent) {
-							Color.Transparent
-						} else {
-							MaterialTheme.colorScheme.surface
-						},
-						onDismissRequest = onBack,
-						properties = properties,
-						sheetState = sheetState,
-						sheetMaxWidth = maxWidth,
-						contentWindowInsets = { WindowInsets() },
-						dragHandle = null,
-						shape = shape
-					) {
-						CompositionLocalProvider(
-							LocalLifecycleOwner provides lifecycleOwner,
-							LocalSheetState provides sheetState
-						) {
-							Box(Modifier.fillMaxSize()) {
-								entry.Content()
-							}
-						}
-					}
-				}
-			}
-
-			// could use onRemove for sheet animations but that will
-			// make sheets close if you layer them on top of each other
-		}
+		return NowPlayingScene(
+			key = entry.contentKey as T,
+			entry = entry,
+			previousEntries = entries.dropLast(1),
+			overlaidEntries = entries.dropLast(1),
+			maxWidth = maxWidth,
+			isTransparent = isTransparent,
+			onBack = onBack
+		)
 	}
 
 	companion object {
-		object MetadataKey : NavMetadataKey<ModalBottomSheetProperties>
 		object MaxWidthKey : NavMetadataKey<Dp>
 		object IsTransparentKey : NavMetadataKey<Boolean>
 
 		fun bottomSheet(
-			sheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
 			maxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
 			isTransparent: Boolean = false
 		) = metadata {
-			put(MetadataKey, sheetProperties)
 			put(MaxWidthKey, maxWidth)
 			put(IsTransparentKey, isTransparent)
 		}
