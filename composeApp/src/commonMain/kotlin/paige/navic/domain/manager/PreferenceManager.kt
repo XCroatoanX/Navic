@@ -52,11 +52,16 @@ class PreferenceManager(
 	var replayGainMode by preference(ReplayGainMode.Off)
 	var gaplessPlayback by preference(true)
 	var audioOffload by preference(false)
+
+	// TODO: better names and strings for these transcoding settings
 	var streamingQualityWifi by preference(StreamingQuality.Lossless)
 	var streamingQualityCellular by preference(StreamingQuality.Lossless)
 	var isAdvancedTranscodingActive by preference(false)
 	var customMaxBitrateWifi by preference(0)
 	var customMaxBitrateCellular by preference(0)
+	var customFormatWifi by preference("")
+	var customFormatCellular by preference("")
+
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var nowPlayingSongInfo by preference(true)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)

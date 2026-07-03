@@ -329,14 +329,18 @@ class AndroidMediaPlayerViewModel(
 		} else {
 			if (isCellular) preferenceManager.streamingQualityCellular.bitrateAndroid else preferenceManager.streamingQualityWifi.bitrateAndroid
 		}
-		val container =
+		val container = if (preferenceManager.isAdvancedTranscodingActive) {
+			if (isCellular) preferenceManager.customFormatCellular else preferenceManager.customFormatWifi
+		} else {
 			if (isCellular) preferenceManager.streamingQualityCellular.containerAndroid else preferenceManager.streamingQualityWifi.containerAndroid
-
-		return sessionManager.api.getStreamUrl(id, bitrate, container)
+		}
+		val uri = sessionManager.api.getStreamUrl(id, bitrate, container?.takeIf { it.isNotBlank() })
 			.toUri()
 			.buildUpon()
 			.appendQueryParameter("estimateContentLength", "true")
 			.build()
+		Logger.i("MediaPlayer", "$uri")
+		return uri
 	}
 
 	private fun setupController() {
@@ -410,7 +414,9 @@ class AndroidMediaPlayerViewModel(
 					snapshotFlow { preferenceManager.streamingQualityCellular },
 					snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
 					snapshotFlow { preferenceManager.customMaxBitrateWifi },
-					snapshotFlow { preferenceManager.customMaxBitrateCellular }
+					snapshotFlow { preferenceManager.customMaxBitrateCellular },
+					snapshotFlow { preferenceManager.customFormatWifi },
+					snapshotFlow { preferenceManager.customFormatCellular }
 				) { it }.collectLatest { args ->
 					@Suppress("UNCHECKED_CAST")
 					val downloadedMap = args[0] as Map<String, String>
