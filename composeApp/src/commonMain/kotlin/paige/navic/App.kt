@@ -75,6 +75,7 @@ import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
 import paige.navic.ui.screens.collection.CollectionDetailScreen
+import paige.navic.ui.screens.genre.GenreDetailScreen
 import paige.navic.ui.screens.genre.GenreListScreen
 import paige.navic.ui.screens.library.LibraryScreen
 import paige.navic.ui.screens.login.LoginScreen
@@ -285,8 +286,11 @@ private fun entryProvider(
 		entry<Screen.GenreList>(metadata = navtabMetadata) { key ->
 			GenreListScreen(key.nested)
 		}
+		entry<Screen.GenreDetail> { key ->
+			GenreDetailScreen(key.genreName)
+		}
 		entry<Screen.SongList>(metadata = navtabMetadata) { key ->
-			SongListScreen(key.nested, key.artistId, key.artistName, key.listType)
+			SongListScreen(key.nested, key.listType)
 		}
 
 		entry<Screen.RadioList>(metadata = navtabMetadata) { key ->

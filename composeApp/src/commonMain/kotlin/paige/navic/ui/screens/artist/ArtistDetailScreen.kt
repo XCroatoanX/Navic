@@ -75,6 +75,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
@@ -298,8 +299,7 @@ fun ArtistDetailScreen(
 													backStack.add(
 														Screen.SongList(
 															nested = true,
-															artistId = state.artist.id,
-															artistName = state.artist.name
+															listType = DomainSongListType.ByArtist(state.artist.id)
 														)
 													)
 												})
