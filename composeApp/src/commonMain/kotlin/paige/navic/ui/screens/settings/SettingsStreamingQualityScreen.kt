@@ -24,7 +24,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -51,7 +50,6 @@ import navic.composeapp.generated.resources.title_streaming_quality
 import navic.composeapp.generated.resources.title_wifi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.StreamingQuality
@@ -67,18 +65,12 @@ import paige.navic.ui.screens.settings.components.SettingSwitchRow
 @Composable
 fun SettingsStreamingQualityScreen() {
 	val preferenceManager = koinInject<PreferenceManager>()
-	val platformContext = LocalPlatformContext.current
 	val connectivityManager = koinInject<ConnectivityManager>()
 	val isOnline by connectivityManager.isOnline.collectAsStateWithLifecycle()
 	val isCellular by connectivityManager.isCellular.collectAsStateWithLifecycle()
 
 	Scaffold(
-		topBar = {
-			NestedTopBar(
-				{ Text(stringResource(Res.string.title_streaming_quality)) },
-				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-			)
-		},
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_streaming_quality)) }) },
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(

@@ -352,7 +352,7 @@ private fun entryProvider(
 		entry<Screen.Settings.About>(metadata = detailPane("settings")) {
 			SettingsAboutScreen()
 		}
-		entry<Screen.Settings.Acknowledgements>(metadata = detailPane("settings")) {
+		entry<Screen.Settings.Acknowledgements> {
 			SettingsAcknowledgementsScreen()
 		}
 		entry<Screen.Settings.DataStorage>(metadata = detailPane("settings")) {
