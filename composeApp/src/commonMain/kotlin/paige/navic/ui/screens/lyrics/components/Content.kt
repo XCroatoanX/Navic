@@ -44,6 +44,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun LyricsScreenContent(
 	data: LyricsResult?,
+	onRefresh: () -> Unit,
 	isSelecting: Boolean,
 	selectedIndices: ImmutableList<Int>,
 	onAddSelectedIndex: (Int) -> Unit,
@@ -66,7 +67,7 @@ fun LyricsScreenContent(
 	fun totalSelectedChars(): Int =
 		selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
 
-	if (lyrics.isNullOrEmpty()) return LyricsScreenPlaceholder()
+	if (lyrics.isNullOrEmpty()) return LyricsScreenPlaceholder(onRefresh = onRefresh)
 
 	val activeIndex = if (isSynced) {
 		lyrics.indexOfLast { line ->

@@ -64,7 +64,9 @@ fun LyricsScreen(
 	var wasPlayingBeforeSelection by rememberSaveable { mutableStateOf(false) }
 	var shareSheetOpen by rememberSaveable { mutableStateOf(false) }
 
-	val song = song ?: return LyricsScreenPlaceholder()
+	val song = song ?: return LyricsScreenPlaceholder(
+		onRefresh = { viewModel.refreshResults() }
+	)
 	val duration = song.duration
 	val progressState = playerState.progress
 	val currentDuration = duration * progressState.toDouble()
@@ -137,6 +139,7 @@ fun LyricsScreen(
 				is UiState.Success -> {
 					LyricsScreenContent(
 						data = lyricsState.data,
+						onRefresh = { viewModel.refreshResults() },
 						isSelecting = isSelecting,
 						selectedIndices = selectedIndices.toImmutableList(),
 						onAddSelectedIndex = { idx -> selectedIndices.add(idx) },
