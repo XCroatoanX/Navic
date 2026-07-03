@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.compose.runtime.snapshotFlow
 import androidx.core.net.toUri
@@ -25,12 +26,16 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.session.CommandButton
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionResult
 import androidx.media3.session.SessionToken
 import coil3.imageLoader
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +75,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import coil3.PlatformContext as CoilPlatformContext
 
+@OptIn(UnstableApi::class)
 class PlaybackService : MediaSessionService(), KoinComponent {
 	private var mediaSession: MediaSession? = null
 	private val serviceScope = MainScope()
@@ -82,7 +88,6 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	private val sessionManager: SessionManager by inject()
 	private val preferenceManager: PreferenceManager by inject()
 
-	@OptIn(UnstableApi::class)
 	override fun onCreate() {
 		super.onCreate()
 		val loadControl = DefaultLoadControl.Builder()
@@ -162,7 +167,19 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 		mediaSession = MediaSession.Builder(this, player)
 			.setSessionActivity(sessionPendingIntent)
+			.setCallback(MediaSessionCallback(player))
+			.setCustomLayout(makeButtons(player))
 			.build()
+
+		player.addListener(object : Player.Listener {
+			override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+				mediaSession?.setCustomLayout(makeButtons(player))
+			}
+
+			override fun onRepeatModeChanged(repeatMode: Int) {
+				mediaSession?.setCustomLayout(makeButtons(player))
+			}
+		})
 	}
 
 	override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
@@ -187,7 +204,80 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		stopSelf()
 	}
 
+	class MediaSessionCallback(private val player: ExoPlayer) : MediaSession.Callback {
+		override fun onConnect(
+			session: MediaSession,
+			controller: MediaSession.ControllerInfo
+		): MediaSession.ConnectionResult {
+			val sessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS
+				.buildUpon()
+				.add(SessionCommand(COMMAND_SHUFFLE, Bundle.EMPTY))
+				.add(SessionCommand(COMMAND_REPEAT, Bundle.EMPTY))
+				.build()
+
+			return MediaSession.ConnectionResult.accept(
+				sessionCommands,
+				MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS
+			)
+		}
+
+		override fun onCustomCommand(
+			session: MediaSession,
+			controller: MediaSession.ControllerInfo,
+			customCommand: SessionCommand,
+			args: Bundle
+		): ListenableFuture<SessionResult> {
+			when (customCommand.customAction) {
+				COMMAND_SHUFFLE -> {
+					player.shuffleModeEnabled = !player.shuffleModeEnabled
+				}
+
+				COMMAND_REPEAT -> {
+					player.repeatMode = when (player.repeatMode) {
+						Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
+						Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
+						else -> Player.REPEAT_MODE_OFF
+					}
+				}
+			}
+
+			return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+		}
+	}
+
 	companion object {
+		const val COMMAND_SHUFFLE = "COMMAND_SHUFFLE"
+		const val COMMAND_REPEAT = "COMMAND_REPEAT"
+
+		fun makeShuffleButton(enabled: Boolean): CommandButton {
+			val icon = if (enabled) {
+				CommandButton.ICON_SHUFFLE_ON
+			} else {
+				CommandButton.ICON_SHUFFLE_OFF
+			}
+			return CommandButton.Builder(icon)
+				.setDisplayName("Shuffle")
+				.setSessionCommand(SessionCommand(COMMAND_SHUFFLE, Bundle.EMPTY))
+				.build()
+		}
+
+		fun makeRepeatButton(mode: Int): CommandButton {
+			val icon = when (mode) {
+				Player.REPEAT_MODE_OFF -> CommandButton.ICON_REPEAT_OFF
+				Player.REPEAT_MODE_ALL -> CommandButton.ICON_REPEAT_ALL
+				else -> CommandButton.ICON_REPEAT_ONE
+			}
+			return CommandButton.Builder(icon)
+				.setDisplayName("Repeat")
+				.setSessionCommand(SessionCommand(COMMAND_REPEAT, Bundle.EMPTY))
+				.build()
+		}
+
+		fun makeButtons(player: Player) = listOf(
+			makeShuffleButton(player.shuffleModeEnabled),
+			makeRepeatButton(player.repeatMode)
+		)
+
 		fun newSessionToken(context: Context): SessionToken {
 			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
 		}
