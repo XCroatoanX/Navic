@@ -70,7 +70,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
-import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
@@ -108,7 +107,6 @@ fun ArtistDetailScreen(
 		key = artistId,
 		parameters = { parametersOf(artistId) }
 	)
-	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
@@ -295,7 +293,6 @@ fun ArtistDetailScreen(
 												style = MaterialTheme.typography.labelLarge,
 												color = MaterialTheme.colorScheme.primary,
 												modifier = Modifier.clickable(onClick = dropUnlessResumed {
-													platformContext.clickSound()
 													backStack.add(
 														Screen.SongList(
 															nested = true,

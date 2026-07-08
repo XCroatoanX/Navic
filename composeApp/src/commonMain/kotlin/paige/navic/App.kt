@@ -69,7 +69,7 @@ import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.components.sheets.SongDetailSheet
+import paige.navic.ui.screens.song.SongDetailSheet
 import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
@@ -106,6 +106,7 @@ import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.settings.SettingsStreamingQualityScreen
 import paige.navic.ui.screens.settings.SettingsThemesScreen
 import paige.navic.ui.screens.share.ShareListScreen
+import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
@@ -336,9 +337,15 @@ private fun entryProvider(
 		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
 			CollectionDetailScreen(key.collectionId, key.tab)
 		}
-		entry<Screen.SongDetail>(
+		entry<Screen.SongDetailScreen> { key ->
+			SongDetailScreen(
+				songId = key.songId,
+				initialCoverArtId = key.coverArtId
+			)
+		}
+		entry<Screen.SongDetailSheet>(
 			metadata = { key ->
-				BottomSheetSceneStrategy.bottomSheet(coverArtId = key.coverArtId ?: "")
+				BottomSheetSceneStrategy.bottomSheet(coverArtId = key.coverArtId)
 			}
 		) { key ->
 			SongDetailSheet(
