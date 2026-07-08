@@ -42,10 +42,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
@@ -67,6 +69,7 @@ import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
+import paige.navic.ui.components.sheets.SongDetailSheet
 import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
@@ -102,7 +105,6 @@ import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.settings.SettingsStreamingQualityScreen
 import paige.navic.ui.screens.settings.SettingsThemesScreen
 import paige.navic.ui.screens.share.ShareListScreen
-import paige.navic.ui.components.sheets.SongDetailSheet
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
@@ -208,6 +210,17 @@ fun App() {
 							remember { NowPlayingSceneStrategy() },
 							remember { BottomSheetSceneStrategy() },
 							rememberListDetailSceneStrategy()
+						),
+						entryDecorators = listOf(
+							rememberSaveableStateHolderNavEntryDecorator(),
+
+							// makes it so that ViewModels get destroyed if their
+							// associated screen is removed from the back stack
+							//
+							// this might not always be desirable, so the
+							// `PersistentViewModelStoreOwner` class is used for
+							// certain ViewModels to work around this
+							rememberViewModelStoreNavEntryDecorator()
 						),
 						onBack = {
 							if (backStack.size >= 2) {
