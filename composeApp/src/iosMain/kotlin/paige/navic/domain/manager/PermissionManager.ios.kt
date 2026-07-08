@@ -5,7 +5,7 @@ actual class PermissionManager {
 		//UIApplication.sharedApplication.openURL(NSURL(string = UIApplicationOpenSettingsURLString))
 	}
 	actual suspend fun requestLocalNetworkPermission(): Boolean {
-		// it's annoying to trigger this dialog on iOS
+		// it's annoying to trigger this dialogue on iOS
 		return true
 	}
 }

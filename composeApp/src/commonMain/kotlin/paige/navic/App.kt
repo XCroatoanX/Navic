@@ -69,8 +69,7 @@ import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.screens.song.SongDetailSheet
-import paige.navic.ui.components.snackbars.NavicSnackbar
+import paige.navic.ui.components.snackbars.NavicSnackBar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
 import paige.navic.ui.navigation.Screen
@@ -107,6 +106,7 @@ import paige.navic.ui.screens.settings.SettingsStreamingQualityScreen
 import paige.navic.ui.screens.settings.SettingsThemesScreen
 import paige.navic.ui.screens.share.ShareListScreen
 import paige.navic.ui.screens.song.SongDetailScreen
+import paige.navic.ui.screens.song.SongDetailSheet
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
@@ -127,7 +127,7 @@ private val config = SavedStateConfiguration {
 val LocalPlatformContext =
 	staticCompositionLocalOf<PlatformContext> { error("no platform context") }
 val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no backstack") }
-val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
+val LocalSnackBarState = staticCompositionLocalOf<SnackbarHostState> { error("no snack bar state") }
 val LocalSharedTransitionScope =
 	staticCompositionLocalOf<SharedTransitionScope> { error("no shared transition scope") }
 
@@ -154,12 +154,12 @@ fun App() {
 			Screen.Login
 		}
 	)
-	val snackbarState = remember { SnackbarHostState() }
+	val snackBarState = remember { SnackbarHostState() }
 	val snackBarManager = koinInject<SnackBarManager>()
 
 	LaunchedEffect(Unit) {
 		snackBarManager.events.collectLatest { event ->
-			snackbarState.showSnackbar(getString(event.resource, *event.args.toTypedArray()))
+			snackBarState.showSnackbar(getString(event.resource, *event.args.toTypedArray()))
 		}
 	}
 
@@ -184,7 +184,7 @@ fun App() {
 		CompositionLocalProvider(
 			LocalPlatformContext provides platformContext,
 			LocalNavStack provides backStack,
-			LocalSnackbarState provides snackbarState,
+			LocalSnackBarState provides snackBarState,
 			LocalSharedTransitionScope provides this@SharedTransitionLayout,
 			LocalBottomBarScrollManager provides scrollManager
 		) {
@@ -192,8 +192,8 @@ fun App() {
 				Scaffold(
 					modifier = Modifier.nestedScroll(scrollManager.connection),
 					snackbarHost = {
-						SnackbarHost(hostState = snackbarState) { snackbarData ->
-							NavicSnackbar(snackbarData = snackbarData)
+						SnackbarHost(hostState = snackBarState) { snackBarData ->
+							NavicSnackBar(snackBarData = snackBarData)
 						}
 					}
 				) { contentPadding ->

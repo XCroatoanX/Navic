@@ -1,9 +1,6 @@
 package paige.navic.util.core
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Build
-import android.view.SoundEffectConstants
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -18,7 +15,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.view.WindowCompat
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
@@ -51,11 +47,6 @@ actual fun rememberPlatformContext(): PlatformContext {
 	}
 	return remember(isDark, sizeClass) {
 		object : PlatformContext {
-			// TODO: remove this and usages of it as compose will do it by default in alpha03
-			override fun clickSound() {
-				view.playSoundEffect(SoundEffectConstants.CLICK)
-			}
-
 			override val platformType = PlatformType.Android
 			override val name = "Android ${Build.VERSION.SDK_INT}"
 			override val appVersion: String =

@@ -34,7 +34,7 @@ import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
-import paige.navic.ui.components.snackbars.ErrorSnackbar
+import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.LoginUiState
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.PersistentViewModelStoreOwner
@@ -187,7 +187,7 @@ fun LibraryScreen() {
 		(genresState as? UiState.Error)?.error
 	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
 
-	ErrorSnackbar(
+	ErrorSnackBar(
 		error = flattenedErrors?.let { Error(it) },
 		onClearError = {
 			albumsViewModel.clearError()

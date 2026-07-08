@@ -72,7 +72,7 @@ import navic.composeapp.generated.resources.action_share_lyrics
 import navic.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalSnackbarState
+import paige.navic.LocalSnackBarState
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.ShareManager
 import paige.navic.domain.models.DomainSong
@@ -100,7 +100,7 @@ fun LyricsShareSheet(
 	onShare: () -> Unit
 ) {
 	val shareManager = koinInject<ShareManager>()
-	val snackbarState = LocalSnackbarState.current
+	val snackBarState = LocalSnackBarState.current
 	val sheetState = rememberBottomSheetState(
 		initialValue = SheetValue.Hidden,
 		enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
@@ -308,7 +308,7 @@ fun LyricsShareSheet(
 								fileName = "lyrics.png"
 							)
 						} catch (e: Exception) {
-							snackbarState.showSnackbar(e.message ?: "Something went wrong.")
+							snackBarState.showSnackbar(e.message ?: "Something went wrong.")
 						} finally {
 							onShare()
 						}
