@@ -16,7 +16,7 @@ A modern Navidrome client for Android and iOS.
 ## Features
 
 * Customisable: large selection of settings and tweaks
-* Secure & private: zero permissions, telemetry, or analytics
+* Secure & private: minimal permissions, zero telemetry, and zero analytics
 * Integrated: shows up on the lock screen + quick settings
 * Lightweight & fast: zero bloat
 * Feature rich: covers almost the entirety of the Subsonic API
