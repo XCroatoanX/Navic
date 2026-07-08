@@ -37,7 +37,6 @@ koin = "4.2.2"
 
 # Plugins
 aboutLibraries = "15.0.3"
-ksp = "2.3.6"
 
 [libraries]
 # Compose
@@ -120,5 +119,5 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 valkyrie = { id = "io.github.composegears.valkyrie", version = "0.5.1" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ksp = { id = "com.google.devtools.ksp", version = "2.3.9" }
 androidx-room3 = { id = "androidx.room3", version.ref = "androidx-room3" }
