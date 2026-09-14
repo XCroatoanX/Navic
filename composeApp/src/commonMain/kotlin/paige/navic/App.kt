@@ -177,7 +177,8 @@ fun App() {
 				Scaffold(
 					modifier = Modifier.nestedScroll(scrollManager.connection),
 					bottomBar = {
-						if (isLoggedIn) {
+						val currentScreen = backStack.lastOrNull()
+						if (isLoggedIn && currentScreen !is Screen.Settings) {
 							RootBottomBar(scrolled = scrollManager.isTriggered)
 						}
 					},
