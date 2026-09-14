@@ -40,6 +40,7 @@ import navic.composeapp.generated.resources.title_radios
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.di.LocalBottomBarPadding
 import paige.navic.di.LocalBottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
@@ -116,7 +117,9 @@ fun RadioListScreen(
 				}
 			) { notScrolled ->
 				if (notScrolled) {
+					val bottomBarPadding = LocalBottomBarPadding.current
 					MediumFloatingActionButton(
+						modifier = Modifier.padding(bottom = bottomBarPadding),
 						shape = MaterialTheme.shapes.large,
 						containerColor = MaterialTheme.colorScheme.primary,
 						onClick = {

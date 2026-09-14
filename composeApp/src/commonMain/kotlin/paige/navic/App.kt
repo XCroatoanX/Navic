@@ -59,6 +59,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.jetbrains.compose.resources.getString
 import org.koin.compose.koinInject
+import paige.navic.di.LocalBottomBarPadding
 import paige.navic.di.LocalBottomBarScrollManager
 import paige.navic.di.LocalNavStack
 import paige.navic.di.LocalPlatformContext
@@ -199,63 +200,61 @@ fun App() {
 					},
 					contentWindowInsets = WindowInsets()
 				) { contentPadding ->
-					NavDisplay(
-						modifier = Modifier
-							.padding(
-								start = contentPadding
-									.calculateStartPadding(layoutDirection),
-								end = contentPadding
-									.calculateEndPadding(layoutDirection)
-							)
-							.fillMaxSize()
-							.background(MaterialTheme.colorScheme.surface),
-						backStack = backStack,
-						sceneStrategies = listOf(
-							remember { NowPlayingSceneStrategy() },
-							remember { BottomSheetSceneStrategy() },
-							rememberListDetailSceneStrategy()
-						),
-						entryDecorators = listOf(
-							rememberSaveableStateHolderNavEntryDecorator(),
+					CompositionLocalProvider(
+						LocalBottomBarPadding provides contentPadding.calculateBottomPadding()
+					) {
+						NavDisplay(
+							modifier = Modifier
+								.fillMaxSize()
+								.background(MaterialTheme.colorScheme.surface),
+							backStack = backStack,
+							sceneStrategies = listOf(
+								remember { NowPlayingSceneStrategy() },
+								remember { BottomSheetSceneStrategy() },
+								rememberListDetailSceneStrategy()
+							),
+							entryDecorators = listOf(
+								rememberSaveableStateHolderNavEntryDecorator(),
 
-							// makes it so that ViewModels get destroyed if their
-							// associated screen is removed from the back stack
-							//
-							// this might not always be desirable, so the
-							// `PersistentViewModelStoreOwner` class is used for
-							// certain ViewModels to work around this
-							rememberViewModelStoreNavEntryDecorator()
-						),
-						onBack = {
-							if (backStack.size >= 2) {
-								backStack.removeLastOrNull()
+								// makes it so that ViewModels get destroyed if their
+								// associated screen is removed from the back stack
+								//
+								// this might not always be desirable, so the
+								// `PersistentViewModelStoreOwner` class is used for
+								// certain ViewModels to work around this
+								rememberViewModelStoreNavEntryDecorator()
+							),
+							onBack = {
+								if (backStack.size >= 2) {
+									backStack.removeLastOrNull()
+								}
+							},
+							entryProvider = entryProvider(backStack),
+							transitionSpec = {
+								Material3Transitions.SharedXAxisEnterTransition(
+									density
+								) togetherWith Material3Transitions.SharedXAxisExitTransition(
+									density
+								)
+							},
+							popTransitionSpec = {
+								Material3Transitions.SharedXAxisPopEnterTransition(
+									density
+								) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
+									density
+								)
+							},
+							predictivePopTransitionSpec = {
+								slideInHorizontally(
+									animationSpec = tween(300, easing = EaseOutQuart),
+									initialOffsetX = { -it }
+								) togetherWith slideOutHorizontally(
+									animationSpec = tween(300, easing = EaseOutQuart),
+									targetOffsetX = { it }
+								)
 							}
-						},
-						entryProvider = entryProvider(backStack),
-						transitionSpec = {
-							Material3Transitions.SharedXAxisEnterTransition(
-								density
-							) togetherWith Material3Transitions.SharedXAxisExitTransition(
-								density
-							)
-						},
-						popTransitionSpec = {
-							Material3Transitions.SharedXAxisPopEnterTransition(
-								density
-							) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
-								density
-							)
-						},
-						predictivePopTransitionSpec = {
-							slideInHorizontally(
-								animationSpec = tween(300, easing = EaseOutQuart),
-								initialOffsetX = { -it }
-							) togetherWith slideOutHorizontally(
-								animationSpec = tween(300, easing = EaseOutQuart),
-								targetOffsetX = { it }
-							)
-						}
-					)
+						)
+					}
 				}
 				// version check is annoying to do on iOS
 				if (preferenceManager.checkForUpdates
