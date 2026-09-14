@@ -43,7 +43,6 @@ import kotlin.time.Duration
 
 @Composable
 fun StarredScreen() {
-	val platformContext = LocalPlatformContext.current
 	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
 	val preferenceManager = koinInject<PreferenceManager>()
 

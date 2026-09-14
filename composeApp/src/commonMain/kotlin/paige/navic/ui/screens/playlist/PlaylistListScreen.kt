@@ -73,7 +73,6 @@ import kotlin.time.Duration
 fun PlaylistListScreen(
 	nested: Boolean = false
 ) {
-	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	val selectedViewMode = preferenceManager.playlistListViewMode
 

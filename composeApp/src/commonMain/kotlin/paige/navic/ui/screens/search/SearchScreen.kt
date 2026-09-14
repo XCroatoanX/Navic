@@ -112,7 +112,6 @@ enum class SearchCategory(val res: StringResource) {
 fun SearchScreen(
 	nested: Boolean
 ) {
-	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val viewModel = koinViewModel<SearchViewModel>(

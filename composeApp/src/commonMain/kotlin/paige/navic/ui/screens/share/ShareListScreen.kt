@@ -55,7 +55,6 @@ fun ShareListScreen() {
 	val isRefreshingFlow by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
 	val shareManager = koinInject<ShareManager>()
-	val preferenceManager = koinInject<PreferenceManager>()
 	val snackBarState = LocalSnackBarState.current
 	val scope = rememberCoroutineScope()
 
