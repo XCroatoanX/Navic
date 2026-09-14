@@ -73,6 +73,7 @@ import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.generated.BuildInfo
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.components.snackbars.NavicSnackBar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
@@ -179,6 +180,11 @@ fun App() {
 			NavicTheme {
 				Scaffold(
 					modifier = Modifier.nestedScroll(scrollManager.connection),
+					bottomBar = {
+						if (isLoggedIn) {
+							RootBottomBar(scrolled = scrollManager.isTriggered)
+						}
+					},
 					snackbarHost = {
 						SnackbarHost(hostState = snackBarState) { snackBarData ->
 							NavicSnackBar(snackBarData = snackBarData)
