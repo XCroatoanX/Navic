@@ -11,10 +11,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -161,7 +158,6 @@ fun App() {
 	}
 
 	val density = LocalDensity.current
-	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
 	}
