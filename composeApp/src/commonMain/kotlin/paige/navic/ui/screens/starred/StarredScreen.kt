@@ -45,7 +45,6 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StarredScreen() {
-	val platformContext = LocalPlatformContext.current
 	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
 	val preferenceManager = koinInject<PreferenceManager>()
 

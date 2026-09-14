@@ -58,7 +58,6 @@ fun AlbumListScreen(
 	nested: Boolean = false,
 	listType: DomainAlbumListType
 ) {
-	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	val selectedViewMode = preferenceManager.albumListViewMode
 

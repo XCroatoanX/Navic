@@ -55,7 +55,6 @@ fun SongListScreen(
 	nested: Boolean,
 	listType: DomainSongListType
 ) {
-	val platformContext = LocalPlatformContext.current
 	val viewModel = koinViewModel<SongListViewModel>(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) },

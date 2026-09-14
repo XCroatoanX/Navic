@@ -72,7 +72,6 @@ fun CollectionDetailScreen(
 	collectionId: String,
 	tab: String
 ) {
-	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val viewModel = koinViewModel<CollectionDetailViewModel>(

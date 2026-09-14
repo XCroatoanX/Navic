@@ -58,7 +58,6 @@ fun ArtistListScreen(
 	nested: Boolean = false,
 	listType: DomainArtistListType
 ) {
-	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	val selectedViewMode = preferenceManager.artistListViewMode
 

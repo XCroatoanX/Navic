@@ -65,7 +65,6 @@ import paige.navic.ui.viewmodel.RootViewModel
 fun RadioListScreen(
 	nested: Boolean
 ) {
-	val platformContext = LocalPlatformContext.current
 	val scrollManager = LocalBottomBarScrollManager.current
 	val viewModel = koinViewModel<RadioListViewModel>(
 		viewModelStoreOwner = if (nested) {
