@@ -30,7 +30,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.di.LocalSnackBarState
-import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.ShareManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.ShareOff
