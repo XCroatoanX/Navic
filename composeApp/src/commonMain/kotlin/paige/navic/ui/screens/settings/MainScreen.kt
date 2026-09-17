@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -68,7 +70,7 @@ fun SettingsScreen() {
 	) { innerPadding ->
 		Column(
 			modifier = Modifier
-				.padding(innerPadding)
+				.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
 				.verticalScroll(rememberScrollState())
 				.padding(horizontal = 16.dp),
 			verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)
@@ -132,6 +134,7 @@ fun SettingsScreen() {
 					shapes = SegmentedListItemDefaults.segmentedShapes(index = 0, count = 1)
 				)
 			}
+			Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
 		}
 	}
 }
