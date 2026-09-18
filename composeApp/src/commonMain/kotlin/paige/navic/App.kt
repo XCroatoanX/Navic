@@ -367,7 +367,7 @@ private fun entryProvider(
 		}
 
 		// settings
-		entry<Screen.Settings.Root>(metadata = listPane("settings")) {
+		entry<Screen.Settings.Root>(metadata = listPane("settings", detailPlaceholder = { SettingsAppearanceScreen() })) {
 			SettingsScreen()
 		}
 		entry<Screen.Settings.Appearance>(metadata = detailPane("settings")) {
