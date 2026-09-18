@@ -69,7 +69,7 @@ fun AlbumListScreenListItem(
 					shape = preferenceManager.coverArtShape.decreasedShape
 				)
 			},
-			content = { MarqueeText(album.name) },
+			content = { MarqueeText(album.name ?: "[unknown album]") },
 			supportingContent = {
 				MarqueeText(
 					buildAnnotatedString {

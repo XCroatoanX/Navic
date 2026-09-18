@@ -247,7 +247,7 @@ fun StarredScreenContent(
 					.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 				ArtCarouselItem(
 					coverArtId = album.coverArtId,
-					title = album.name,
+					title = album.name ?: "[unknown album]",
 					subtitle = album.artistName,
 					contentDescription = null,
 					onSelect = { onSelectAlbum(album) },

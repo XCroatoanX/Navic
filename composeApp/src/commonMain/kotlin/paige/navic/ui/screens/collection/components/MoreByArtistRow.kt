@@ -57,7 +57,7 @@ fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 				.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 			ArtCarouselItem(
 				coverArtId = album.coverArtId,
-				title = album.name,
+				title = album.name ?: "[unknown album]",
 				contentDescription = album.name,
 				onSelect = { onSelect(album) },
 				onClick = dropUnlessResumed {

@@ -60,7 +60,7 @@ fun PlaylistListScreenGridItem(
 			},
 			onLongClick = onSelect,
 			coverArtId = playlist.coverArtId,
-			title = playlist.name,
+			title = playlist.name ?: "[unknown playlist]",
 			subtitle = buildString {
 				append(
 					pluralStringResource(

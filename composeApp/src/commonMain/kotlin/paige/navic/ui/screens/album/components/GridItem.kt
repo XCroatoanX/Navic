@@ -62,7 +62,7 @@ fun AlbumListScreenGridItem(
 			},
 			onLongClick = onSelect,
 			coverArtId = album.coverArtId,
-			title = album.name,
+			title = album.name ?: "[unknown album]",
 			subtitle = album.artistName,
 			id = album.id,
 			tab = tab

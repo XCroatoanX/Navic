@@ -67,7 +67,7 @@ fun PlaylistListScreenListItem(
 					shape = preferenceManager.coverArtShape.decreasedShape
 				)
 			},
-			content = { MarqueeText(playlist.name) },
+			content = { MarqueeText(playlist.name ?: "[unknown playlist]") },
 			supportingContent = {
 				MarqueeText(
 					text = buildAnnotatedString {
