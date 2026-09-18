@@ -269,11 +269,10 @@ private fun entryProvider(
 	val fadeSpec = ContentTransform(fadeIn(), fadeOut())
 
 	val navtabMetadata = if (backStack.size == 1)
-		listPane("root")
-			.plus(transitionSpec { fadeSpec })
+		transitionSpec { fadeSpec }
 			.plus(popTransitionSpec { fadeSpec })
 			.plus(predictivePopTransitionSpec { fadeSpec })
-	else listPane("root")
+	else emptyMap()
 	val imageViewMetadata = transitionSpec { ContentTransform(fadeIn(), ExitTransition.None) }
 		.plus(popTransitionSpec { ContentTransform(EnterTransition.None, fadeOut()) })
 		.plus(predictivePopTransitionSpec { ContentTransform(EnterTransition.None, fadeOut()) })
@@ -337,7 +336,7 @@ private fun entryProvider(
 		entry<Screen.PlaybackSpeed>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
 			PlaybackSpeedScreen()
 		}
-		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
+		entry<Screen.CollectionDetail> { key ->
 			CollectionDetailScreen(key.collectionId, key.tab)
 		}
 		entry<Screen.SongDetailScreen> { key ->
