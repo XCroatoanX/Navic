@@ -42,6 +42,7 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.icons.outlined.Delete
+import paige.navic.ui.util.withoutBottom
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingsGroup
 import paige.navic.ui.screens.settings.components.SettingsGroupDefaults
@@ -86,7 +87,7 @@ fun SettingsCustomHeadersScreen() {
 		) {
 			Column(
 				modifier = Modifier
-					.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+					.padding(innerPadding.withoutBottom())
 					.verticalScroll(rememberScrollState())
 					.padding(horizontal = 16.dp),
 				verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)

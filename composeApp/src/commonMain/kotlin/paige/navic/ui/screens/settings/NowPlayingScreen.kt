@@ -54,6 +54,7 @@ import paige.navic.ui.screens.settings.components.SettingsGroup
 import paige.navic.ui.screens.settings.components.SettingsGroupDefaults
 import paige.navic.ui.screens.settings.components.SettingsNavItem
 import paige.navic.ui.screens.settings.components.SettingsToggleItem
+import paige.navic.ui.util.withoutBottom
 import paige.navic.ui.screens.settings.dialogs.LyricsPrioritySheet
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 
@@ -82,7 +83,7 @@ fun SettingsNowPlayingScreen() {
 		) {
 			Column(
 				modifier = Modifier
-					.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+					.padding(innerPadding.withoutBottom())
 					.verticalScroll(rememberScrollState())
 					.padding(horizontal = 16.dp),
 				verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)

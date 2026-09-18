@@ -59,6 +59,7 @@ import paige.navic.ui.components.common.SegmentedListItem
 import paige.navic.ui.components.common.SegmentedListItemDefaults
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
+import paige.navic.ui.util.withoutBottom
 import paige.navic.ui.screens.settings.components.SettingsGroup
 import paige.navic.ui.screens.settings.components.SettingsGroupDefaults
 import paige.navic.ui.theme.defaultFont
@@ -70,7 +71,7 @@ fun SettingsScreen() {
 	) { innerPadding ->
 		Column(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+				.padding(innerPadding.withoutBottom())
 				.verticalScroll(rememberScrollState())
 				.padding(horizontal = 16.dp),
 			verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)

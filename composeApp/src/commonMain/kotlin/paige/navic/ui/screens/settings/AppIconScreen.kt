@@ -38,6 +38,7 @@ import org.koin.compose.koinInject
 import paige.navic.domain.manager.AppIconManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.AppIconVariant
+import paige.navic.ui.util.withoutBottom
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Info
 import paige.navic.ui.components.common.SegmentedListItem
@@ -60,7 +61,7 @@ fun SettingsAppIconScreen() {
 		) {
 			Column(
 				modifier = Modifier
-					.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+					.padding(innerPadding.withoutBottom())
 					.verticalScroll(rememberScrollState())
 					.padding(horizontal = 16.dp),
 				verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)

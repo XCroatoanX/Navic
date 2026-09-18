@@ -46,6 +46,7 @@ import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.screens.settings.components.SettingsChoiceItem
 import paige.navic.ui.screens.settings.components.SettingsGroup
 import paige.navic.ui.screens.settings.components.SettingsGroupDefaults
+import paige.navic.ui.util.withoutBottom
 
 @Composable
 fun SettingsEqualiserScreen() {
@@ -82,7 +83,7 @@ fun SettingsEqualiserScreen() {
 		) {
 			Column(
 				modifier = Modifier
-					.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+					.padding(innerPadding.withoutBottom())
 					.verticalScroll(rememberScrollState())
 					.padding(horizontal = 16.dp),
 				horizontalAlignment = Alignment.CenterHorizontally,

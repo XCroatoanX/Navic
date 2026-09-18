@@ -101,6 +101,7 @@ import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.NestedTopBarDefaults
 import paige.navic.ui.navigation.Screen
+import paige.navic.ui.util.withoutBottom
 import paige.navic.ui.screens.settings.components.SettingsChoiceItem
 import paige.navic.ui.screens.settings.components.SettingsGroup
 import paige.navic.ui.screens.settings.components.SettingsGroupDefaults
@@ -219,7 +220,7 @@ fun SettingsDataStorageScreen() {
 		CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
 			Column(
 				modifier = Modifier
-					.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+					.padding(innerPadding.withoutBottom())
 					.verticalScroll(rememberScrollState())
 					.padding(horizontal = 16.dp),
 				verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)

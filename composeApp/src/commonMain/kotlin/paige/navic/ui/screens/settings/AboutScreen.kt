@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.di.LocalPlatformContext
 import paige.navic.di.PlatformType
+import paige.navic.ui.util.withoutBottom
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.generated.BuildInfo
 import paige.navic.ui.components.common.SegmentedListItem
@@ -67,7 +68,7 @@ fun SettingsAboutScreen() {
 	) { innerPadding ->
 		Column(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+				.padding(innerPadding.withoutBottom())
 				.verticalScroll(rememberScrollState())
 				.padding(horizontal = 16.dp),
 			verticalArrangement = Arrangement.spacedBy(SettingsGroupDefaults.GapBetweenGroups)

@@ -55,6 +55,7 @@ import paige.navic.ui.screens.settings.components.SettingsGroup
 import paige.navic.ui.screens.settings.components.SettingsGroupDefaults
 import paige.navic.ui.screens.settings.components.SettingsRadioItem
 import paige.navic.ui.screens.settings.components.SettingsToggleItem
+import paige.navic.ui.util.withoutBottom
 
 @Composable
 fun SettingsStreamingQualityScreen() {
@@ -71,7 +72,7 @@ fun SettingsStreamingQualityScreen() {
 		) {
 			Column(
 				modifier = Modifier
-					.padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+					.padding(innerPadding.withoutBottom())
 					.verticalScroll(rememberScrollState())
 					.padding(horizontal = 16.dp)
 			) {
