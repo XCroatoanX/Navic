@@ -181,7 +181,9 @@ fun App() {
 				val useSidebar = platformContext.sizeClass.widthSizeClass != WindowWidthSizeClass.Compact &&
 					platformContext.sizeClass.heightSizeClass != WindowHeightSizeClass.Compact
 				val currentScreen = backStack.lastOrNull()
-				val showNavigation = isLoggedIn && currentScreen !is Screen.Settings
+				val showNavigation = isLoggedIn &&
+					currentScreen !is Screen.Settings &&
+					currentScreen !is Screen.Login
 
 				Row(modifier = Modifier.fillMaxSize()) {
 					if (useSidebar && showNavigation) {
