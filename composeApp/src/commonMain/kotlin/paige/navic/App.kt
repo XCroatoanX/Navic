@@ -111,6 +111,7 @@ import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.settings.SettingsStreamingQualityScreen
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import paige.navic.ui.screens.settings.SettingsThemesScreen
 import paige.navic.ui.screens.share.ShareListScreen
 import paige.navic.ui.screens.song.SongDetailScreen
@@ -177,7 +178,8 @@ fun App() {
 			LocalBottomBarScrollManager provides scrollManager
 		) {
 			NavicTheme {
-				val useSidebar = platformContext.sizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+				val useSidebar = platformContext.sizeClass.widthSizeClass != WindowWidthSizeClass.Compact &&
+					platformContext.sizeClass.heightSizeClass != WindowHeightSizeClass.Compact
 				val currentScreen = backStack.lastOrNull()
 				val showNavigation = isLoggedIn && currentScreen !is Screen.Settings
 
@@ -190,10 +192,10 @@ fun App() {
 							.weight(1f)
 							.nestedScroll(scrollManager.connection),
 						bottomBar = {
-							if (showNavigation) {
+							if (showNavigation && !useSidebar) {
 								RootBottomBar(
 									scrolled = scrollManager.isTriggered,
-									hideBottomBar = useSidebar
+									hideBottomBar = false
 								)
 							}
 						},

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -81,7 +83,11 @@ fun SideBar(
 		drawerContainerColor = containerColor,
 		windowInsets = windowInsets
 	) {
-		Column(Modifier.padding(horizontal = 12.dp)) {
+		Column(
+			modifier = Modifier
+				.fillMaxHeight()
+				.padding(horizontal = 12.dp)
+		) {
 			Spacer(Modifier.padding(top = 16.dp))
 			Text(
 				text = stringResource(Res.string.app_name),
@@ -90,45 +96,53 @@ fun SideBar(
 				modifier = Modifier.padding(horizontal = 16.dp)
 			)
 
-
 			Spacer(Modifier.padding(top = 16.dp))
 			HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-			Spacer(Modifier.padding(top = 16.dp))
+			Spacer(Modifier.padding(top = 8.dp))
 
-			tabs.forEach { tab ->
-				val item = when (tab.id) {
-					NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
-					NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
-					NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
-					NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
-					NavbarTab.Id.SEARCH -> NavItem.SEARCH
-					NavbarTab.Id.GENRES -> NavItem.GENRES
-					NavbarTab.Id.SONGS -> NavItem.SONGS
-					NavbarTab.Id.RADIOS -> NavItem.RADIOS
-				}
-				val selected = currentActiveTab?.let { it::class == item.destination::class } ?: false
+			Column(
+				modifier = Modifier
+					.weight(1f)
+					.verticalScroll(rememberScrollState())
+			) {
+				Spacer(Modifier.padding(top = 8.dp))
+				tabs.forEach { tab ->
+					val item = when (tab.id) {
+						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+						NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+						NavbarTab.Id.SEARCH -> NavItem.SEARCH
+						NavbarTab.Id.GENRES -> NavItem.GENRES
+						NavbarTab.Id.SONGS -> NavItem.SONGS
+						NavbarTab.Id.RADIOS -> NavItem.RADIOS
+					}
+					val selected = currentActiveTab?.let { it::class == item.destination::class } ?: false
 
-				NavigationDrawerItem(
-					label = { Text(stringResource(item.label)) },
-					selected = selected,
-					onClick = dropUnlessResumed {
-						onTabSelected(item.destination)
-					},
-					icon = {
-						if (selected) {
-							val painter = animatedTabIconPainter(item.destination)
-							if (painter != null) {
-								Icon(painter = painter, null)
+					NavigationDrawerItem(
+						label = { Text(stringResource(item.label)) },
+						selected = selected,
+						onClick = dropUnlessResumed {
+							onTabSelected(item.destination)
+						},
+						icon = {
+							if (selected) {
+								val painter = animatedTabIconPainter(item.destination)
+								if (painter != null) {
+									Icon(painter = painter, contentDescription = null)
+								} else {
+									Icon(item.icon, contentDescription = null)
+								}
 							} else {
-								Icon(item.icon, null)
+								Icon(item.iconUnselected, contentDescription = null)
 							}
-						} else {
-							Icon(item.iconUnselected, null)
-						}
-					},
-					modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-				)
+						},
+						modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+					)
+				}
 			}
+
+			SidebarMiniPlayer()
 		}
 	}
 }
