@@ -1,62 +1,33 @@
 package paige.navic.ui.screens.settings.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.set
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import paige.navic.domain.manager.NavbarManager
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.ui.core.UiState
 
 class NavtabsViewModel(
-	private val settings: Settings
+	private val navbarManager: NavbarManager
 ) : ViewModel() {
-	private val json = Json
 
-	val state: StateFlow<UiState<NavbarConfig>>
-		field = MutableStateFlow<UiState<NavbarConfig>>(UiState.Loading())
-
-	init {
-		try {
-			state.value = UiState.Success(loadConfig())
-		} catch (e: Exception) {
-			state.value = UiState.Error(e)
-		}
-	}
-
-	private fun loadConfig(): NavbarConfig {
-		val raw = settings.getStringOrNull(NavbarConfig.KEY)
-			?: return NavbarConfig.default
-		val config: NavbarConfig = json.decodeFromString(raw)
-		return config.takeIf { it.version == NavbarConfig.VERSION }
-			?: NavbarConfig.default
-	}
-
-	private fun setConfig(newConfig: NavbarConfig) {
-		state.value = UiState.Success(newConfig)
-		settings[NavbarConfig.KEY] = json.encodeToString(newConfig)
-	}
+	val state: StateFlow<UiState<NavbarConfig>> = navbarManager.config
+		.map { UiState.Success(it) }
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5000),
+			initialValue = UiState.Success(navbarManager.config.value)
+		)
 
 	fun move(from: Int, to: Int) {
-		val config = (state.value as UiState.Success).data
-		setConfig(
-			config.copy(
-				tabs = config.tabs.toMutableList().apply {
-					add(to, removeAt(from))
-				}
-			))
+		navbarManager.move(from, to)
 	}
 
 	fun toggleVisibility(id: NavbarTab.Id) {
-		val config = (state.value as UiState.Success).data
-		setConfig(
-			config.copy(
-				tabs = config.tabs.map {
-					if (it.id == id) it.copy(visible = !it.visible) else it
-				}
-			)
-		)
+		navbarManager.toggleVisibility(id)
 	}
 }

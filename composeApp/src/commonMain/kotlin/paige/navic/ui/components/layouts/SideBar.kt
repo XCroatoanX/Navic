@@ -89,39 +89,7 @@ fun SideBar(
 				fontWeight = FontWeight.Bold,
 				modifier = Modifier.padding(horizontal = 16.dp)
 			)
-			val currentTitle = tabs.find { tab ->
-				val dest = when (tab.id) {
-					NavbarTab.Id.LIBRARY -> Screen.Library()
-					NavbarTab.Id.ALBUMS -> Screen.AlbumList()
-					NavbarTab.Id.PLAYLISTS -> Screen.PlaylistList()
-					NavbarTab.Id.ARTISTS -> Screen.ArtistList()
-					NavbarTab.Id.SEARCH -> Screen.Search()
-					NavbarTab.Id.GENRES -> Screen.GenreList()
-					NavbarTab.Id.SONGS -> Screen.SongList()
-					NavbarTab.Id.RADIOS -> Screen.RadioList()
-				}
-				currentActiveTab?.let { it::class == dest::class } ?: false
-			}?.let { tab ->
-				when (tab.id) {
-					NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
-					NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
-					NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
-					NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
-					NavbarTab.Id.SEARCH -> NavItem.SEARCH
-					NavbarTab.Id.GENRES -> NavItem.GENRES
-					NavbarTab.Id.SONGS -> NavItem.SONGS
-					NavbarTab.Id.RADIOS -> NavItem.RADIOS
-				}.label
-			}
 
-			if (currentTitle != null) {
-				Text(
-					text = stringResource(currentTitle),
-					style = MaterialTheme.typography.labelMedium,
-					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-				)
-			}
 
 			Spacer(Modifier.padding(top = 16.dp))
 			HorizontalDivider(Modifier.padding(horizontal = 16.dp))
