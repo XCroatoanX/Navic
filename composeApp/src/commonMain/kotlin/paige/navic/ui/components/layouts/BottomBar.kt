@@ -19,19 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.dropUnlessResumed
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.title_albums
-import navic.composeapp.generated.resources.title_artists
-import navic.composeapp.generated.resources.title_genres
-import navic.composeapp.generated.resources.title_library
-import navic.composeapp.generated.resources.title_playlists
-import navic.composeapp.generated.resources.title_radios
-import navic.composeapp.generated.resources.title_search
-import navic.composeapp.generated.resources.title_songs
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -42,80 +31,12 @@ import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.domain.models.settings.NavigationBarLabelVisibility
 import paige.navic.domain.models.settings.NavigationBarStyle
-import paige.navic.icons.Icons
-import paige.navic.icons.filled.Album
-import paige.navic.icons.filled.Artist
-import paige.navic.icons.filled.Genre
-import paige.navic.icons.filled.LibraryMusic
-import paige.navic.icons.filled.Radio
-import paige.navic.icons.outlined.Album
-import paige.navic.icons.outlined.Artist
-import paige.navic.icons.outlined.Genre
-import paige.navic.icons.outlined.LibraryMusic
-import paige.navic.icons.outlined.Note
-import paige.navic.icons.outlined.PlaylistPlay
-import paige.navic.icons.outlined.Radio
-import paige.navic.icons.outlined.Search
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.NavItem
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.util.animatedTabIconPainter
 import paige.navic.ui.viewmodel.RootViewModel
-
-private enum class NavItem(
-	val destination: Screen,
-	val icon: ImageVector,
-	val iconUnselected: ImageVector = icon,
-	val label: StringResource
-) {
-	LIBRARY(
-		destination = Screen.Library(),
-		icon = Icons.Filled.LibraryMusic,
-		iconUnselected = Icons.Outlined.LibraryMusic,
-		label = Res.string.title_library
-	),
-	ALBUMS(
-		destination = Screen.AlbumList(),
-		icon = Icons.Filled.Album,
-		iconUnselected = Icons.Outlined.Album,
-		label = Res.string.title_albums
-	),
-	PLAYLISTS(
-		destination = Screen.PlaylistList(),
-		icon = Icons.Outlined.PlaylistPlay,
-		label = Res.string.title_playlists
-	),
-	ARTISTS(
-		destination = Screen.ArtistList(),
-		icon = Icons.Filled.Artist,
-		iconUnselected = Icons.Outlined.Artist,
-		label = Res.string.title_artists
-	),
-	SEARCH(
-		destination = Screen.Search(),
-		icon = Icons.Outlined.Search,
-		iconUnselected = Icons.Outlined.Search,
-		label = Res.string.title_search
-	),
-	GENRES(
-		destination = Screen.GenreList(),
-		icon = Icons.Filled.Genre,
-		iconUnselected = Icons.Outlined.Genre,
-		label = Res.string.title_genres
-	),
-	SONGS(
-		destination = Screen.SongList(),
-		icon = Icons.Outlined.Note,
-		iconUnselected = Icons.Outlined.Note,
-		label = Res.string.title_songs
-	),
-	RADIOS(
-		destination = Screen.RadioList(),
-		icon = Icons.Filled.Radio,
-		iconUnselected = Icons.Outlined.Radio,
-		label = Res.string.title_radios
-	)
-}
 
 @Composable
 fun BottomBar(

@@ -12,6 +12,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,7 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +73,7 @@ import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.generated.BuildInfo
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.RootBottomBar
+import paige.navic.ui.components.layouts.RootSideBar
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.components.snackbars.NavicSnackBar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
@@ -174,80 +177,93 @@ fun App() {
 			LocalBottomBarScrollManager provides scrollManager
 		) {
 			NavicTheme {
-				Scaffold(
-					modifier = Modifier.nestedScroll(scrollManager.connection),
-					bottomBar = {
-						val currentScreen = backStack.lastOrNull()
-						if (isLoggedIn && currentScreen !is Screen.Settings) {
-							RootBottomBar(scrolled = scrollManager.isTriggered)
-						}
-					},
-					snackbarHost = {
-						SnackbarHost(hostState = snackBarState) { snackBarData ->
-							NavicSnackBar(snackBarData = snackBarData)
-						}
-					},
-					contentWindowInsets = WindowInsets()
-				) { contentPadding ->
-					CompositionLocalProvider(
-						LocalBottomBarPadding provides contentPadding.calculateBottomPadding()
-					) {
-						NavDisplay(
-							modifier = Modifier
-								.fillMaxSize()
-								.background(MaterialTheme.colorScheme.surface),
-							backStack = backStack,
-							sceneStrategies = listOf(
-								remember { NowPlayingSceneStrategy() },
-								remember { BottomSheetSceneStrategy() },
-								rememberListDetailSceneStrategy()
-							),
-							entryDecorators = listOf(
-								rememberSaveableStateHolderNavEntryDecorator(),
+				val useSidebar = platformContext.sizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+				val currentScreen = backStack.lastOrNull()
+				val showNavigation = isLoggedIn && currentScreen !is Screen.Settings
 
-								// makes it so that ViewModels get destroyed if their
-								// associated screen is removed from the back stack
-								//
-								// this might not always be desirable, so the
-								// `PersistentViewModelStoreOwner` class is used for
-								// certain ViewModels to work around this
-								rememberViewModelStoreNavEntryDecorator()
-							),
-							onBack = {
-								if (backStack.size >= 2) {
-									backStack.removeLastOrNull()
-								}
-							},
-							entryProvider = entryProvider(backStack),
-							sharedTransitionScope = this@SharedTransitionLayout,
-							transitionSpec = {
-								Material3Transitions.SharedXAxisEnterTransition(
-									density
-								) togetherWith Material3Transitions.SharedXAxisExitTransition(
-									density
+				Row(modifier = Modifier.fillMaxSize()) {
+					if (useSidebar && showNavigation) {
+						RootSideBar()
+					}
+					Scaffold(
+						modifier = Modifier
+							.weight(1f)
+							.nestedScroll(scrollManager.connection),
+						bottomBar = {
+							if (showNavigation) {
+								RootBottomBar(
+									scrolled = scrollManager.isTriggered,
+									hideBottomBar = useSidebar
 								)
-							},
-							popTransitionSpec = {
-								Material3Transitions.SharedXAxisPopEnterTransition(
-									density
-								) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
-									density
-								)
-							},
-							predictivePopTransitionSpec = {
-								if (preferenceManager.enablePredictiveBackAnimations) {
-									slideInHorizontally(
-										animationSpec = tween(300, easing = EaseOutQuart),
-										initialOffsetX = { -it }
-									) togetherWith slideOutHorizontally(
-										animationSpec = tween(300, easing = EaseOutQuart),
-										targetOffsetX = { it }
-									)
-								} else {
-									ContentTransform(EnterTransition.None, ExitTransition.None)
-								}
 							}
-						)
+						},
+						snackbarHost = {
+							SnackbarHost(hostState = snackBarState) { snackBarData ->
+								NavicSnackBar(snackBarData = snackBarData)
+							}
+						},
+						contentWindowInsets = WindowInsets()
+					) { contentPadding ->
+						CompositionLocalProvider(
+							LocalBottomBarPadding provides contentPadding.calculateBottomPadding()
+						) {
+							NavDisplay(
+								modifier = Modifier
+									.fillMaxSize()
+									.background(MaterialTheme.colorScheme.surface),
+								backStack = backStack,
+								sceneStrategies = listOf(
+									remember { NowPlayingSceneStrategy() },
+									remember { BottomSheetSceneStrategy() },
+									rememberListDetailSceneStrategy()
+								),
+								entryDecorators = listOf(
+									rememberSaveableStateHolderNavEntryDecorator(),
+
+									// makes it so that ViewModels get destroyed if their
+									// associated screen is removed from the back stack
+									//
+									// this might not always be desirable, so the
+									// `PersistentViewModelStoreOwner` class is used for
+									// certain ViewModels to work around this
+									rememberViewModelStoreNavEntryDecorator()
+								),
+								onBack = {
+									if (backStack.size >= 2) {
+										backStack.removeLastOrNull()
+									}
+								},
+								entryProvider = entryProvider(backStack),
+								sharedTransitionScope = this@SharedTransitionLayout,
+								transitionSpec = {
+									Material3Transitions.SharedXAxisEnterTransition(
+										density
+									) togetherWith Material3Transitions.SharedXAxisExitTransition(
+										density
+									)
+								},
+								popTransitionSpec = {
+									Material3Transitions.SharedXAxisPopEnterTransition(
+										density
+									) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
+										density
+									)
+								},
+								predictivePopTransitionSpec = {
+									if (preferenceManager.enablePredictiveBackAnimations) {
+										slideInHorizontally(
+											animationSpec = tween(300, easing = EaseOutQuart),
+											initialOffsetX = { -it }
+										) togetherWith slideOutHorizontally(
+											animationSpec = tween(300, easing = EaseOutQuart),
+											targetOffsetX = { it }
+										)
+									} else {
+										ContentTransform(EnterTransition.None, ExitTransition.None)
+									}
+								}
+							)
+						}
 					}
 				}
 				// version check is annoying to do on iOS

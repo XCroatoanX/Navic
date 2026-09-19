@@ -26,6 +26,7 @@ fun RootBottomBar(
 	modifier: Modifier = Modifier,
 	shadows: Boolean = true,
 	hideMiniPlayer: Boolean = false,
+	hideBottomBar: Boolean = false,
 	bottomBarWindowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
@@ -60,7 +61,7 @@ fun RootBottomBar(
 			},
 			enabled = !scrolled
 		)
-		BottomBar(
+		if (!hideBottomBar) BottomBar(
 			containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
 				NavigationBarDefaults.containerColor.copy(alpha = 0f)
 			else NavigationBarDefaults.containerColor,
