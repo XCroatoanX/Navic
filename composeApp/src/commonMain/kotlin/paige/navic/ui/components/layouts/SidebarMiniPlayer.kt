@@ -118,19 +118,21 @@ fun SidebarMiniPlayer(
 		visible = hasSong || !preferenceManager.hideIfIdle,
 		modifier = modifier
 	) {
-		val colorScheme = if (preferenceManager.dynamicTheming) {
+		val dynamicColorScheme = if (preferenceManager.dynamicTheming) {
 			rememberColorSchemeForCurrentSong(forceDark = false)
 		} else {
 			null
 		}
 
-		NavicTheme(colorScheme = colorScheme) {
+
+		NavicTheme(colorScheme = dynamicColorScheme) {
 			Surface(
 				modifier = Modifier
 					.padding(horizontal = 8.dp, vertical = 12.dp)
 					.fillMaxWidth(),
 				shape = RoundedCornerShape(28.dp),
 				color = MaterialTheme.colorScheme.surfaceContainerHigh,
+				contentColor = MaterialTheme.colorScheme.onSurface,
 				tonalElevation = 2.dp,
 				onClick = onClick
 			) {
@@ -169,7 +171,10 @@ fun SidebarMiniPlayer(
 					Column(Modifier.fillMaxWidth()) {
 						MarqueeText(
 							text = song?.title ?: stringResource(Res.string.info_not_playing),
-							style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+							style = MaterialTheme.typography.titleMedium.copy(
+								color = MaterialTheme.colorScheme.onSurface,
+								fontWeight = FontWeight.Medium
+							),
 							modifier = Modifier.height(24.dp)
 						)
 						MarqueeText(
